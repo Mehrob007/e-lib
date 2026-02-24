@@ -1,4 +1,6 @@
 import { InputT } from "@/types/input";
+import { ChangeEvent, useState } from "react";
+import ReactInputMask from "@mona-health/react-input-mask";
 
 export default function Input({
   value,
@@ -8,11 +10,19 @@ export default function Input({
   type = "text",
   className,
   id,
-  error,
+  errors,
   style,
 }: InputT) {
+  const [focus, setFocus] = useState(false);
+
+  const handleSubmit = (event: ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    const cleanPhone = event.target.value.replace(/\D/g, "");
+    onChange(cleanPhone);
+  };
+
   return (
-    <label>
+    <label className={`input__element ${!focus ? "input__focus" : ""}`}>
       {title && <span>{title}</span>}
       {type === "phone" ? (
         <ReactInputMask
@@ -24,15 +34,26 @@ export default function Input({
           title="Телефон"
           id="phone-input"
           className="form-control"
-          // placeholder={!focus ? "Телефон" : ""}
+          placeholder={!focus ? "Телефон" : ""}
           onFocus={setFocus.bind(null, true)}
           onBlur={setFocus.bind(null, false)}
           style={style}
           required
         />
       ) : (
-        <input type={type} />
+        <input
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={!focus ? placeholder : ""}
+          className={className}
+          id={id}
+          style={style}
+        />
       )}
+      <p className="input__error" style={{ opacity: errors?.[id] ? 1 : 0 }}>
+        {errors?.[id]}
+      </p>
     </label>
   );
 }

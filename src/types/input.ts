@@ -6,6 +6,6 @@ export interface InputT {
   type?: string;
   className?: string;
   id: string;
-  error?: { [key: string]: string };
+  errors?: { [key: string]: string };
   style?: React.CSSProperties;
 }

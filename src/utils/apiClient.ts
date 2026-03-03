@@ -95,7 +95,7 @@ apiClient.interceptors.response.use(
 
       try {
         const refreshToken = getRefreshToken();
-        const response = getNewToken(refreshToken);
+        const response = await getNewToken(refreshToken);
 
         const newAccessToken = response.data.data.accessToken;
         if (typeof window !== "undefined") {

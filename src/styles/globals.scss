@@ -1,0 +1,317 @@
+/* Global Styles for e-lib */
+
+// Variables
+$primary-color: #2962ff;
+$secondary-color: #ff5b3a;
+$white: #0a0a0a;
+$white: #fff;
+$black: #000;
+$grey: #e1e1e1;
+$card-bg: rgba(255, 255, 255, 0.05);
+$border-color: rgba(255, 255, 255, 0.1);
+$error-color: #ff4d4d;
+$color-pl: #505050;
+$color-title: #070707;
+
+$font-family:
+  "Palatino Linotype",
+  "Inter",
+  system-ui,
+  -apple-system,
+  sans-serif;
+$font-family-2: SF Pro Display;
+// Reset
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  // background-color: $white;
+  color: $black;
+  font-family: $font-family;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+// Input Elements
+.input__element {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 8px;
+
+  span {
+    font-size: 16px;
+    font-weight: 600;
+    opacity: 0.7;
+    margin-left: 4px;
+    color: $color-title;
+  }
+  // input {
+  // }
+
+  input,
+  .form-control {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    background: $card-bg;
+    // border: 1px solid $border-color;
+    border: 1px solid $grey;
+    border-radius: 12px;
+    color: $color-pl;
+    font-size: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 4px rgba($primary-color, 0.15);
+    }
+
+    &::placeholder {
+      color: $color-pl;
+    }
+  }
+
+  // Handle mask-input specific styling if needed
+  .form-control {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.input__error {
+  font-size: 12px;
+  color: $error-color;
+  margin-top: 4px;
+  margin-left: 4px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+// Login Page
+.login__page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  background: #f0f7ff;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0%;
+    background:
+      radial-gradient(circle at 10% 20%, #ffffff 0%, transparent 40%),
+      radial-gradient(circle at 90% 10%, #82b1ff 0%, transparent 50%),
+      radial-gradient(circle at 30% 70%, #0091ff 0%, transparent 60%),
+      radial-gradient(circle at 70% 80%, #0091ff 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, #e3f2fd 0%, transparent 100%);
+    filter: blur(80px);
+    animation: meshAnimation 15s ease-in-out infinite alternate;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.9;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(130, 177, 255, 0.1) 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  main {
+    width: 100%;
+    max-width: 420px;
+    z-index: 1;
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .login__content {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 32px;
+    padding: 48px;
+    box-shadow:
+      0 20px 40px -10px rgba(0, 76, 255, 0.05),
+      0 0 0 1px rgba(0, 76, 255, 0.02);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .login__header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // background: rgba($primary-color, 0.1);
+  }
+
+  .login-icon {
+    // width: 44px;
+    // height: 44px;
+    color: white;
+  }
+
+  .login__form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+// Button
+.button {
+  background: $primary-color;
+  color: $white;
+  border: none;
+  border-radius: 14px;
+  height: 52px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  // margin-top: 12px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.component__main {
+  opacity: 1;
+  > div {
+    display: flex;
+    > div {
+      flex: 1;
+      // padding: ;
+      border: 1px solid #dadada;
+    }
+  }
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 44px;
+  height: 97px;
+  // width: calc(100% - 66px);
+  width: 100%;
+  padding: 0 33px;
+  background-color: $primary-color;
+  > svg {
+    cursor: pointer;
+  }
+  > h1 {
+    color: $white;
+    font-family: $font-family-2;
+    font-weight: 500;
+    font-style: Medium;
+    font-size: 32px;
+    line-height: 160%;
+    letter-spacing: 0.34px;
+    vertical-align: middle;
+  }
+}
+
+.left__menu {
+  padding: 29px 28px;
+  // width: calc(113px - 56px);
+  height: calc(100vh - 97px);
+  // flex: 0;
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes meshAnimation {
+  0% {
+    transform: scale(1) translate(0%, 0%) rotate(0deg);
+  }
+  33% {
+    transform: scale(1.1) translate(3%, 5%) rotate(2deg);
+  }
+  66% {
+    transform: scale(1.2) translate(-3%, 3%) rotate(-2deg);
+  }
+  100% {
+    transform: scale(1) translate(0%, 0%) rotate(0deg);
+  }
+}

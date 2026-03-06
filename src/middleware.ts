@@ -9,11 +9,11 @@ export function middleware(request: NextRequest) {
 
   const isAdminRoute = ADMIN_ROUTES.some((route) => pathname.startsWith(route));
 
-  if (isAdminRoute && userRole !== "ADMIN") {
-    const url = request.nextUrl.clone();
-    url.pathname = "/forbidden";
-    return NextResponse.redirect(url);
-  }
+  // if (isAdminRoute && userRole !== "ADMIN") {
+  //   const url = request.nextUrl.clone();
+  //   url.pathname = "/forbidden";
+  //   return NextResponse.redirect(url);
+  // }
 
   return NextResponse.next();
 }

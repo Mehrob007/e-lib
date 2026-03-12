@@ -248,37 +248,37 @@ button {
 
 .component__main {
   opacity: 1;
+  > header {
+    display: flex;
+    align-items: center;
+    gap: 44px;
+    height: 97px;
+    // width: calc(100% - 66px);
+    width: 100%;
+    padding: 0 33px;
+    background-color: $primary-color;
+    > svg {
+      cursor: pointer;
+    }
+    > h1 {
+      color: $white;
+      font-family: $font-family-2;
+      font-weight: 500;
+      font-style: Medium;
+      font-size: 32px;
+      line-height: 160%;
+      letter-spacing: 0.34px;
+      vertical-align: middle;
+    }
+  }
   > div {
     display: flex;
+    gap: 68px;
+    padding-right: 68px;
     > div {
       flex: 1;
       // padding: ;
-      border: 1px solid #dadada;
     }
-  }
-}
-
-header {
-  display: flex;
-  align-items: center;
-  gap: 44px;
-  height: 97px;
-  // width: calc(100% - 66px);
-  width: 100%;
-  padding: 0 33px;
-  background-color: $primary-color;
-  > svg {
-    cursor: pointer;
-  }
-  > h1 {
-    color: $white;
-    font-family: $font-family-2;
-    font-weight: 500;
-    font-style: Medium;
-    font-size: 32px;
-    line-height: 160%;
-    letter-spacing: 0.34px;
-    vertical-align: middle;
   }
 }
 
@@ -286,6 +286,35 @@ header {
   padding: 29px 28px;
   // width: calc(113px - 56px);
   height: calc(100vh - 97px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 40px;
+  border: 1px solid #dadada;
+  > nav {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    div {
+      position: relative;
+    }
+    div::before {
+      width: 51px;
+      height: 51px;
+      position: absolute;
+      content: "";
+      border-radius: 50px;
+      border: none;
+      padding: 6px;
+      top: -6px;
+      left: -6px;
+      z-index: -1;
+    }
+    .active::before {
+      background-color: #0091ff;
+      //  border-radius: ;
+    }
+  }
   // flex: 0;
 }
 

@@ -9,9 +9,9 @@ export default function Component({ children }: { children: React.ReactNode }) {
   const pathName = usePathname();
   return (
     <main className="component__main">
-      {!pathName?.includes("login") && <Header />}
+      {pathName?.includes("admin") && <Header />}
       <div>
-        {!pathName?.includes("login") && <LeftMenu open={openMenu} />}
+        {pathName?.includes("admin") && <LeftMenu open={openMenu} />}
         {children}
       </div>
     </main>

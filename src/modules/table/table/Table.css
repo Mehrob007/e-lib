@@ -1,0 +1,151 @@
+:root {
+  --table-primary: #2962ff;
+  --table-header-bg: #e3f2fd;
+  --table-header-text: #1a1a1a;
+  --table-border: #e0e0e0;
+  --table-hover: #f5f9ff;
+  --table-text-main: #333333;
+  --table-text-secondary: #666666;
+}
+
+.table__items {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.table__header {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), 1fr);
+  background-color: var(--table-header-bg);
+  padding: 12px 24px;
+  align-items: center;
+  border-bottom: 1px solid var(--table-border);
+}
+
+.table__header > div {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--table-header-text);
+  text-align: left;
+}
+
+.table__item {
+  display: flex;
+  flex-direction: column;
+}
+
+.table__row {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), 1fr);
+  padding: 16px 24px;
+  align-items: center;
+  border-bottom: 1px solid var(--table-border);
+  transition: background-color 0.2s ease;
+}
+
+.table__row:last-child {
+  border-bottom: none;
+}
+
+.table__row:hover {
+  background-color: var(--table-hover);
+}
+
+.table__row span {
+  font-size: 14px;
+  color: var(--table-text-main);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ── Custom Column Styles ────────────────────────────────────── */
+
+/* First column with avatar */
+.table__cell-avatar {
+  color: #bdbdbd;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table__cell-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  > button{
+     
+  }
+}
+
+/* Management/Actions column */
+.table__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  background-color: var(--table-primary);
+  color: white;
+  transition: opacity 0.2s;
+  font-size: 16px;
+}
+
+.action-btn:hover {
+  opacity: 0.8;
+}
+
+.action-btn.delete {
+  background-color: var(--table-primary);
+}
+
+/* Footer Add Button */
+.table__footer {
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+}
+
+.add-btn {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--table-primary);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.add-btn:hover {
+  color: #1a4cd8;
+}
+
+.add-btn-icon {
+  font-size: 20px;
+}
+
+/* Empty State */
+.table__empty {
+  padding: 40px;
+  text-align: center;
+  color: var(--table-text-secondary);
+  font-style: italic;
+}

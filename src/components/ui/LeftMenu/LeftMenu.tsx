@@ -1,7 +1,10 @@
-import IconMenuAdmin from "@/../public/icons/icon-menu-admin.svg";
-// import IconMenuAdminActive from "@/../public/icons/icon-menu-admin-active.svg";
-import IconMenuFiles from "@/../public/icons/icon-menu-files.svg";
-import LogoutIcon from "@/../public/icons/logout-icon.svg";
+import {
+  TbChartLine,
+  TbPlayerPlay,
+  TbSitemap,
+  TbUser,
+  TbLogout,
+} from "react-icons/tb";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -9,14 +12,24 @@ export default function LeftMenu({ open }: { open: boolean }) {
   const pathName = usePathname();
   const menuList = [
     {
-      title: "Администраторы",
-      icon: <IconMenuAdmin />,
-      href: "/admin/super-admin",
+      title: "Статистика",
+      icon: <TbChartLine size={26} strokeWidth={1.5} />,
+      href: "/admin/statistics",
+    },
+    {
+      title: "Контент",
+      icon: <TbPlayerPlay size={26} strokeWidth={1.5} />,
+      href: "/admin/elements",
     },
     {
       title: "Категории",
-      icon: <IconMenuFiles />,
-      href: "/admin/catalog",
+      icon: <TbSitemap size={26} strokeWidth={1.5} />,
+      href: "/admin/category",
+    },
+    {
+      title: "Администраторы",
+      icon: <TbUser size={26} strokeWidth={1.5} />,
+      href: "/admin/super-admin",
     },
   ];
 
@@ -24,12 +37,19 @@ export default function LeftMenu({ open }: { open: boolean }) {
     <main className={`left__menu ${open ? "open__left_menu" : ""}`}>
       <nav>
         {menuList.map((e, i) => (
-          <div key={i} className={pathName === e.href ? "active" : ""}>
-            <Link href={e.href}>{e.icon}</Link>
+          <div
+            key={i}
+            className={`menu-icon-wrapper ${pathName === e.href ? "active" : ""}`}
+          >
+            <Link href={e.href}>
+              <span className="menu-icon-circle">{e.icon}</span>
+            </Link>
           </div>
         ))}
       </nav>
-      <LogoutIcon />
+      <span className="menu-icon-circle">
+        <TbLogout size={26} strokeWidth={1.5} />
+      </span>
     </main>
   );
 }

@@ -1,7 +1,13 @@
-import React from 'react'
+import { redirect } from "next/navigation"
+import { useEffect } from "react"
 
-export default function page() {
+export default function Page() {
+  useEffect(() => {
+    redirect("/admin/statistics")
+  }, [])
   return (
-    <div>page</div>
+    <div>
+      
+    </div>
   )
 }

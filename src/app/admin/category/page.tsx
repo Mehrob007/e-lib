@@ -1,6 +1,6 @@
 "use client";
 import { getCategorysREQ } from "@/api/category";
-import ModalCategory from "@/components/ui/modal/ModalCatalog";
+import ModalCategory from "@/components/ui/modal/ModalCategory";
 import { LIMIT_REQ } from "@/const/def";
 import { HeaderTableCategory } from "@/const/table";
 import TableItems from "@/modules/table/table/TableItems";
@@ -11,7 +11,7 @@ import { IoFolderOpen } from "react-icons/io5";
 
 export default function Page() {
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [folderLine, _setFolderLine] = useState<folderLine[] | null>(() => {
     if (typeof window === "undefined") return null;
     const saved = localStorage.getItem("folderLine");

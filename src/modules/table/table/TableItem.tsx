@@ -1,15 +1,17 @@
+"use client";
 import { TableItemT, ItemT } from "@/types/table";
-import { FaUserCircle, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useState } from "react";
-import { FiEdit2 } from "react-icons/fi";
 import { RiDeleteBin4Fill } from "react-icons/ri";
 import { AiFillEdit } from "react-icons/ai";
+import { dataT } from "@/types/useFormStore";
 
 export default function TableItem({
   keys,
   data,
   styleTable,
   personIcon,
+  onClick,
 }: TableItemT) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -20,7 +22,7 @@ export default function TableItem({
     if (index === 0) {
       return (
         <div className="table__cell-with-icon">
-          {personIcon ? <FaUserCircle className="table__cell-avatar" /> : ""}
+          {personIcon}
           <span>
             {typeof value === "object" && "name" in value
               ? value.name
@@ -38,9 +40,7 @@ export default function TableItem({
       return (
         <div className="table__cell-with-icon">
           <span>{showPassword ? String(value) : "*****"}</span>
-          <button
-            onClick={() => setShowPassword(!showPassword)}
-          >
+          <button onClick={() => setShowPassword(!showPassword)}>
             {showPassword ? (
               <FaEyeSlash color="#666" />
             ) : (
@@ -56,7 +56,11 @@ export default function TableItem({
   };
 
   return (
-    <div className="table__row" style={styleTable}>
+    <div
+      className="table__row"
+      style={styleTable}
+      onClick={() => onClick && onClick(data as dataT)}
+    >
       {keys.map((key, i) => (
         <span key={i}>{renderValue(key, data[key], i)}</span>
       ))}

@@ -19,17 +19,17 @@ export default function TableItems({
   onFilter = false,
   openModalAdd,
   personIcon,
+  onClick,
 }: TableItemsT) {
-  // Adjust column count to account for the management column
   const colsCount = (header?.length || 0) + 1;
   const gridStyle = { "--cols": colsCount } as React.CSSProperties;
 
   return (
-    <div className="table__items" style={gridStyle}>
+    <div className="table__items" style={{ ...gridStyle, ...styles }}>
       {header && (
         <div className="table__header" style={styleHeader}>
-          {header.map((e) => (
-            <TableHeader name={e.name} key={e.key} />
+          {header.map((e, i) => (
+            <TableHeader name={e.name} key={i} />
           ))}
           <TableHeader name="Управление" key="actions" />
         </div>
@@ -38,6 +38,7 @@ export default function TableItems({
         {items?.data && items.data.length > 0 ? (
           items.data.map((e, i) => (
             <TableItem
+              onClick={onClick}
               styleTable={styleTable}
               personIcon={personIcon}
               key={i}
@@ -49,8 +50,8 @@ export default function TableItems({
           <div className="table__empty">Нет элементов</div>
         )}
       </main>
-      <div className="table__footer">
-        <button className="add-btn" onClick={openModalAdd}>
+      <div className="table__footer" onClick={openModalAdd}>
+        <button className="add-btn">
           <GoPlus className="add-btn-icon" />
           Добавить
         </button>

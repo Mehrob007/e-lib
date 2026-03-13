@@ -12,12 +12,16 @@
   width: 100%;
   background: #ffffff;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: auto;
+  position: relative;
+  max-height: calc(100vh - 97px);
   display: flex;
   flex-direction: column;
 }
 
 .table__header {
+  position: sticky;
+  top: 0;
   display: grid;
   grid-template-columns: repeat(var(--cols, 4), 1fr);
   background-color: var(--table-header-bg);
@@ -28,7 +32,7 @@
 
 .table__header > div {
   font-weight: 600;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--table-header-text);
   text-align: left;
 }
@@ -56,7 +60,7 @@
 }
 
 .table__row span {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--table-text-main);
   display: flex;
   align-items: center;
@@ -73,13 +77,20 @@
   align-items: center;
   justify-content: center;
 }
+.table__cell-folder {
+  color: #2962ff;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
 
 .table__cell-with-icon {
   display: flex;
   align-items: center;
   gap: 12px;
-  > button{
-     
+  > button {
   }
 }
 
@@ -115,27 +126,36 @@
 
 /* Footer Add Button */
 .table__footer {
+  position: sticky;
+  bottom: 0;
+  background-color: #fff;
   padding: 16px 24px;
   display: flex;
   align-items: center;
+
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.table__footer:hover > .add-btn {
+  /* color: #fff !important; */
+}
+
+.table__footer:hover {
+  background-color: #e3f2fd;
+  /* color: #fff !important; */
 }
 
 .add-btn {
   display: flex;
   align-items: center;
   gap: 2px;
-  color: var(--table-primary);
   font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  background: none;
+  font-size: 16px;
+  /* background: none; */
+  color: #1a4cd8;
+  transition: all 0.2s;
   border: none;
   padding: 0;
-  transition: color 0.2s;
-}
-
-.add-btn:hover {
-  color: #1a4cd8;
 }
 
 .add-btn-icon {

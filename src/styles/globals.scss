@@ -25,6 +25,7 @@ $font-family-2: SF Pro Display;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: serif !important;
 }
 
 html,
@@ -67,6 +68,30 @@ button {
   border: none;
   background: none;
   font-family: inherit;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  > span {
+    width: 60px;
+    height: 60px;
+    border-radius: 50px;
+    border: 7px solid #e1e1e1;
+    border-top: 7px solid #2962ff;
+    animation: loadingAnim 0.7s linear infinite;
+  }
+}
+
+@keyframes loadingAnim {
+  0% {
+    rotate: 0deg;
+  }
+  100% {
+    rotate: 360deg;
+  }
 }
 
 // Input Elements

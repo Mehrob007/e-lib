@@ -4,7 +4,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useState } from "react";
 import { RiDeleteBin4Fill } from "react-icons/ri";
 import { AiFillEdit } from "react-icons/ai";
-import { dataT } from "@/types/useFormStore";
+import { folderLine } from "@/types/category";
 
 export default function TableItem({
   keys,
@@ -59,7 +59,7 @@ export default function TableItem({
     <div
       className="table__row"
       style={styleTable}
-      onClick={() => onClick && onClick(data as dataT)}
+      onClick={() => onClick && onClick(data as folderLine)}
     >
       {keys.map((key, i) => (
         <span key={i}>{renderValue(key, data[key], i)}</span>

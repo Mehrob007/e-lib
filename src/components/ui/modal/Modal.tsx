@@ -8,7 +8,7 @@ import "./Modal.css";
 
 interface Props {
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (setLoading: (v: boolean) => void) => void;
 }
 
 export default function ModalUser({ onClose, onSuccess }: Props) {
@@ -21,26 +21,19 @@ export default function ModalUser({ onClose, onSuccess }: Props) {
 
   const onSend = async () => {
     const valid = validate({
-      name: { required: true },
-      code: { required: true },
-      user_letter: { required: true },
+      username: { required: true },
+      phone_number: { required: true },
+      pussword: { required: true },
     });
 
     if (!valid) return;
 
     try {
-      setLoading(true);
-      await postUserREQ({
-        name: data.name as string,
-        code: +data.code as number,
-        user_letter: data.user_letter as string,
-      });
-      onSuccess();
+      await postUserREQ(data);
+      onSuccess(setLoading);
       onClose();
-    } catch {
-      // ошибки обрабатываются через apiClient (toast)
-    } finally {
-      setLoading(false);
+    } catch (e) {
+      console.error(e);
     }
   };
 

@@ -24,6 +24,7 @@ export type FilterREQ = {
 };
 
 export interface TableItemsT {
+  loading?: boolean;
   header?: TableHeaderT[];
   items?: { data: ItemT[] | null; keys: string[] };
   styles?: styleT;

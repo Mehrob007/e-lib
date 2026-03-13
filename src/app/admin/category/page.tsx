@@ -1,7 +1,7 @@
 "use client";
 import { getCategorysREQ } from "@/api/category";
 import ModalCategory from "@/components/ui/modal/ModalCategory";
-import { LIMIT_REQ } from "@/const/def";
+import { LIMIT_REQ, LONG_GET_ADMIN } from "@/const/def";
 import { HeaderTableCategory } from "@/const/table";
 import TableItems from "@/modules/table/table/TableItems";
 import { folderLine } from "@/types/category";
@@ -29,23 +29,33 @@ export default function Page() {
   const [data, setData] = useState<ItemT[] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const fetchData = useCallback(async (page?: number, parentId?: string) => {
-    try {
-      const res = await getCategorysREQ({
-        lang: "tj",
-        _limit: LIMIT_REQ,
-        _offset: page,
-        _parent_id: parentId,
-      });
-      return res as unknown as ItemT[];
-    } catch (e) {
-      console.error(e);
-      return null;
-    }
-  }, []);
+  const fetchData = useCallback(
+    async (
+      setLoading: (v: boolean) => void,
+      page?: number,
+      parentId?: string,
+    ) => {
+      setLoading(true);
+      try {
+        const res = await getCategorysREQ({
+          lang: LONG_GET_ADMIN,
+          _limit: LIMIT_REQ,
+          _offset: page,
+          _parent_id: parentId,
+        });
+        if (res) setLoading(false);
+        return res as unknown as ItemT[];
+      } catch (e) {
+        console.error(e);
+        setLoading(false);
+        return null;
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
-    fetchData(page, parentId).then((d) => {
+    fetchData(setLoading, page, parentId).then((d) => {
       if (d) setData(d);
     });
   }, [page, parentId, fetchData]);
@@ -79,6 +89,7 @@ export default function Page() {
           </div>
         </header>
         <TableItems
+          loading={loading}
           styleHeader={{ gridTemplateColumns: "1fr 100px" }}
           styleTable={{
             gridTemplateColumns: "1fr 100px",

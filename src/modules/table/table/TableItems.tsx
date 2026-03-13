@@ -3,6 +3,7 @@ import TableHeader from "./TableHeader";
 import TableItem from "./TableItem";
 import "./Table.css";
 import { GoPlus } from "react-icons/go";
+import Loading from "@/components/ui/loading/Loading";
 
 export default function TableItems({
   header,
@@ -14,12 +15,13 @@ export default function TableItems({
   styles,
   setPage,
   page,
-  filterREQ = { SortType: "desc" },
-  setFilterREQ,
-  onFilter = false,
+  // filterREQ = { SortType: "desc" },
+  // setFilterREQ,
+  // onFilter = false,
   openModalAdd,
   personIcon,
   onClick,
+  loading = false,
 }: TableItemsT) {
   const colsCount = (header?.length || 0) + 1;
   const gridStyle = { "--cols": colsCount } as React.CSSProperties;
@@ -35,19 +37,23 @@ export default function TableItems({
         </div>
       )}
       <main className="table__item">
-        {items?.data && items.data.length > 0 ? (
-          items.data.map((e, i) => (
-            <TableItem
-              onClick={onClick}
-              styleTable={styleTable}
-              personIcon={personIcon}
-              key={i}
-              keys={items.keys}
-              data={e}
-            />
-          ))
+        {loading ? (
+          items?.data && items.data.length > 0 ? (
+            items.data.map((e, i) => (
+              <TableItem
+                onClick={onClick}
+                styleTable={styleTable}
+                personIcon={personIcon}
+                key={i}
+                keys={items.keys}
+                data={e}
+              />
+            ))
+          ) : (
+            <div className="table__empty">Нет элементов</div>
+          )
         ) : (
-          <div className="table__empty">Нет элементов</div>
+          <Loading />
         )}
       </main>
       <div className="table__footer" onClick={openModalAdd}>

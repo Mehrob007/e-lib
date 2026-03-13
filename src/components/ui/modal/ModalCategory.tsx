@@ -3,12 +3,16 @@ import Input from "@/components/elements/input/Input";
 import { useFormStore } from "@/hooks/useFormStore";
 import { useEffect, useState } from "react";
 import { LuX } from "react-icons/lu";
-import "./Modal.css";
 import { postCategoryREQ } from "@/api/category";
+import "./Modal.css";
 
 interface Props {
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (
+    setLoading: (v: boolean) => void,
+    page?: number,
+    parentId?: string,
+  ) => void;
 }
 
 export default function ModalCategory({ onClose, onSuccess }: Props) {
@@ -27,18 +31,11 @@ export default function ModalCategory({ onClose, onSuccess }: Props) {
     if (!valid) return;
 
     try {
-      setLoading(true);
-      await postCategoryREQ({
-        tj_name: data.tj_name as string,
-        ru_name: data.ru_name as string,
-        en_name: data.en_name as string,
-      });
-      onSuccess();
+      await postCategoryREQ(data);
+      onSuccess(setLoading);
       onClose();
-    } catch {
-      // ошибки обрабатываются через apiClient (toast)
-    } finally {
-      setLoading(false);
+    } catch (e) {
+      console.error(e);
     }
   };
 

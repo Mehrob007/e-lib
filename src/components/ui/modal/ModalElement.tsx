@@ -8,7 +8,7 @@ import { postElementREQ } from "@/api/element";
 
 interface Props {
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (setLoading: (v: boolean) => void) => void;
 }
 
 export default function ModalELement({ onClose, onSuccess }: Props) {
@@ -25,20 +25,12 @@ export default function ModalELement({ onClose, onSuccess }: Props) {
     });
 
     if (!valid) return;
-
     try {
-      setLoading(true);
-      await postElementREQ({
-        tj_name: data.tj_name as string,
-        ru_name: data.ru_name as string,
-        en_name: data.en_name as string,
-      });
-      onSuccess();
+      await postElementREQ(data);
+      onSuccess(setLoading);
       onClose();
-    } catch {
-      // ошибки обрабатываются через apiClient (toast)
-    } finally {
-      setLoading(false);
+    } catch (e) {
+      console.error(e);
     }
   };
 

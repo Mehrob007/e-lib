@@ -9,22 +9,26 @@ import { FaUserCircle } from "react-icons/fa";
 
 export default function Specialty() {
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ItemT[] | null>(null);
   // const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (setLoading: (v: boolean) => void) => {
+    setLoading(true);
     try {
       const res = await getUsersREQ();
+      if (res) setLoading(false);
       return res as unknown as ItemT[];
     } catch (e) {
+      setLoading(false);
       console.error(e);
       return null;
     }
   }, []);
 
   useEffect(() => {
-    fetchData().then((d) => {
+    fetchData(setLoading).then((d) => {
       if (d) setData(d);
     });
   }, [page, fetchData]);
@@ -34,6 +38,7 @@ export default function Specialty() {
       <div className="user__content">
         {
           <TableItems
+            loading={loading}
             styleHeader={{ gridTemplateColumns: "1fr 1fr 1fr 100px" }}
             styleTable={{ gridTemplateColumns: "1fr 1fr 1fr 100px" }}
             header={HeaderTableUser}

@@ -1,20 +1,16 @@
 "use client";
-// import { getSpecialtysREQ } from "@/api/specialty";
-import Button from "@/components/elements/button/Button";
-// import DashboardLayout from "@/components/ui/sidebar/DashboardLayout";
-import Input from "@/components/elements/input/Input";
 import { HeaderTableUser } from "@/const/table";
 import { ItemT } from "@/types/table";
 import { useCallback, useEffect, useState } from "react";
 import TableItems from "@/modules/table/table/TableItems";
-import Modal from "@/components/ui/modal/Modal";
 import { getUsersREQ } from "@/api/user";
-// import "./specialty.css";
+import ModalUser from "@/components/ui/modal/Modal";
+import { FaUserCircle } from "react-icons/fa";
 
 export default function Specialty() {
   const [page, setPage] = useState(1);
   const [data, setData] = useState<ItemT[] | null>(null);
-  const [search, setSearch] = useState("");
+  // const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchData = useCallback(async () => {
@@ -31,38 +27,33 @@ export default function Specialty() {
     fetchData().then((d) => {
       if (d) setData(d);
     });
-  }, [page, fetchData, search]);
-
-  useEffect(() => {
-    if (!isModalOpen) {
-      fetchData().then((d) => {
-        if (d) setData(d);
-      });
-    }
-  }, [isModalOpen, fetchData]);
+  }, [page, fetchData]);
 
   return (
     <>
-      <div className="specialty__content">
-        <TableItems
-          styleHeader={{ gridTemplateColumns: "repeat(var(--cols, 3), 1fr)" }}
-          styleTable={{ gridTemplateColumns: "repeat(var(--cols, 3), 1fr)" }}
-          header={HeaderTableUser}
-          items={{
-            data: [
-              { username: "test", phone_number: "test", password: "test" },
-            ],
-            keys: HeaderTableUser.map((e) => e.key),
-          }}
-          setPage={setPage}
-          page={page}
-          openModalAdd={() => setIsModalOpen(true)}
-          personIcon={true}
-        />
+      <div className="user__content">
+        {
+          <TableItems
+            styleHeader={{ gridTemplateColumns: "1fr 1fr 1fr 100px" }}
+            styleTable={{ gridTemplateColumns: "1fr 1fr 1fr 100px" }}
+            header={HeaderTableUser}
+            items={{
+              data: data,
+              keys: HeaderTableUser.map((e) => e.key),
+            }}
+            setPage={setPage}
+            page={page}
+            openModalAdd={() => setIsModalOpen(true)}
+            personIcon={<FaUserCircle className="table__cell-avatar" />}
+          />
+        }
       </div>
 
       {isModalOpen && (
-        <Modal onClose={() => setIsModalOpen(false)} onSuccess={fetchData} />
+        <ModalUser
+          onClose={() => setIsModalOpen(false)}
+          onSuccess={fetchData}
+        />
       )}
     </>
   );

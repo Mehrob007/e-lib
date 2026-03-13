@@ -1,5 +1,7 @@
 import { StaticImageData } from "next/image";
 import { styleT } from "./def";
+import { ReactElement } from "react";
+import { folderLine } from "./category";
 
 export interface ItemT {
   [key: string]:
@@ -23,7 +25,7 @@ export type FilterREQ = {
 
 export interface TableItemsT {
   header?: TableHeaderT[];
-  items?: { data: ItemT[]; keys: string[] };
+  items?: { data: ItemT[] | null; keys: string[] };
   styles?: styleT;
   styleHeader?: styleT;
   styleTable?: styleT;
@@ -37,12 +39,14 @@ export interface TableItemsT {
   setFilterREQ?: (value: FilterREQ) => void;
   onFilter?: boolean;
   openModalAdd: () => void;
-  personIcon?: boolean;
+  personIcon?: ReactElement;
+  onClick?: (data: folderLine) => void;
 }
 
 export interface TableItemT {
   keys: string[];
   data: ItemT;
   styleTable?: styleT;
-  personIcon?: boolean;
+  personIcon?: ReactElement;
+  onClick?: (data: folderLine) => void;
 }

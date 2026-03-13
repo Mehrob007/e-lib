@@ -2,6 +2,7 @@
   position: fixed;
   top: 0;
   left: 0;
+  max-width: 100vw !important;
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.4);
@@ -103,7 +104,7 @@
   border: 1px solid #e0e0e0;
   padding: 0 20px;
   text-align: center;
-  font-size: 14px;
+  font-size: 16px;
   color: #333;
   outline: none;
   transition:

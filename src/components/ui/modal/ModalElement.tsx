@@ -1,17 +1,17 @@
 "use client";
-import { postUserREQ } from "@/api/user";
 import Input from "@/components/elements/input/Input";
 import { useFormStore } from "@/hooks/useFormStore";
 import { useEffect, useState } from "react";
 import { LuX } from "react-icons/lu";
 import "./Modal.css";
+import { postElementREQ } from "@/api/element";
 
 interface Props {
   onClose: () => void;
   onSuccess: () => void;
 }
 
-export default function ModalUser({ onClose, onSuccess }: Props) {
+export default function ModalELement({ onClose, onSuccess }: Props) {
   const { errors, data, setData, validate, setClear } = useFormStore();
   const [loading, setLoading] = useState(false);
 
@@ -21,19 +21,17 @@ export default function ModalUser({ onClose, onSuccess }: Props) {
 
   const onSend = async () => {
     const valid = validate({
-      name: { required: true },
-      code: { required: true },
-      user_letter: { required: true },
+      tj_name: { required: true },
     });
 
     if (!valid) return;
 
     try {
       setLoading(true);
-      await postUserREQ({
-        name: data.name as string,
-        code: +data.code as number,
-        user_letter: data.user_letter as string,
+      await postElementREQ({
+        tj_name: data.tj_name as string,
+        ru_name: data.ru_name as string,
+        en_name: data.en_name as string,
       });
       onSuccess();
       onClose();
@@ -57,27 +55,27 @@ export default function ModalUser({ onClose, onSuccess }: Props) {
         <div className="modal__form">
           <div className="modal__grid">
             <Input
-              id="username"
-              title="Имя"
-              placeholder="Введите имя"
+              id="tj_name"
+              title="Таджикский"
+              placeholder="Введите таджикский"
               value={data?.name as string}
-              onChange={(v) => setData("username", v)}
+              onChange={(v) => setData("tj_name", v)}
               errors={errors}
             />
             <Input
-              id="phone_number"
-              title="Логин"
-              placeholder="Введите логин"
+              id="ru_name"
+              title="Русский"
+              placeholder="Введите русский"
               value={data?.code as string}
-              onChange={(v) => setData("phone_number", v)}
+              onChange={(v) => setData("ru_name", v)}
               errors={errors}
             />
             <Input
-              id="password"
-              title="Пароль"
-              placeholder="Введите пароль"
+              id="en_name"
+              title="Английский"
+              placeholder="Введите английский"
               value={data?.code as string}
-              onChange={(v) => setData("password", v)}
+              onChange={(v) => setData("en_name", v)}
               errors={errors}
             />
           </div>

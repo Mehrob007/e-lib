@@ -14,21 +14,22 @@ export default function Specialty() {
   // const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const fetchData = useCallback(async (setLoading: (v: boolean) => void) => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const res = await getUsersREQ();
-      if (res) setLoading(false);
       return res as unknown as ItemT[];
     } catch (e) {
-      setLoading(false);
       console.error(e);
       return null;
+    } finally {
+      setLoading(false);
     }
   }, []);
 
+
   useEffect(() => {
-    fetchData(setLoading).then((d) => {
+    fetchData().then((d) => {
       if (d) setData(d);
     });
   }, [page, fetchData]);

@@ -8,11 +8,7 @@ import "./Modal.css";
 
 interface Props {
   onClose: () => void;
-  onSuccess: (
-    setLoading: (v: boolean) => void,
-    page?: number,
-    parentId?: string,
-  ) => void;
+  onSuccess: () => void;
 }
 
 export default function ModalCategory({ onClose, onSuccess }: Props) {
@@ -29,13 +25,15 @@ export default function ModalCategory({ onClose, onSuccess }: Props) {
     });
 
     if (!valid) return;
-
+    setLoading(true);
     try {
       await postCategoryREQ(data);
-      onSuccess(setLoading);
+      onSuccess();
       onClose();
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoading(false);
     }
   };
 

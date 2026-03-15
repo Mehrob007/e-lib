@@ -21,7 +21,7 @@ export const getCategorysREQ = async ({
         _offset: _offset,
       },
     });
-    return res?.data;
+    return res.data;
   } catch (e) {
     console.error(e);
   }
@@ -34,7 +34,7 @@ export const postCategoryREQ = async (data: dataT) => {
       {},
       { params: data },
     );
-    return res?.data;
+    return res.data;
   } catch (e) {
     console.error(e);
   }

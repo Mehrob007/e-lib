@@ -12,21 +12,21 @@ export default function Page() {
   const [data, setData] = useState<ItemT[] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const fetchData = useCallback(async (setLoading: (v: boolean) => void) => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const res = await getElementsREQ();
-      if (res) setLoading(false);
       return res as unknown as ItemT[];
     } catch (e) {
-      setLoading(false);
       console.error(e);
       return null;
+    } finally {
+      setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchData(setLoading).then((d) => {
+    fetchData().then((d) => {
       if (d) setData(d);
     });
   }, [page, fetchData]);

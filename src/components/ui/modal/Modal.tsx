@@ -8,7 +8,7 @@ import "./Modal.css";
 
 interface Props {
   onClose: () => void;
-  onSuccess: (setLoading: (v: boolean) => void) => void;
+  onSuccess: () => void;
 }
 
 export default function ModalUser({ onClose, onSuccess }: Props) {
@@ -27,13 +27,15 @@ export default function ModalUser({ onClose, onSuccess }: Props) {
     });
 
     if (!valid) return;
-
+    setLoading(true);
     try {
       await postUserREQ(data);
-      onSuccess(setLoading);
+      onSuccess();
       onClose();
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoading(false);
     }
   };
 

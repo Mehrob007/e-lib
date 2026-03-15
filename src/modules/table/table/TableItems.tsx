@@ -37,7 +37,7 @@ export default function TableItems({
         </div>
       )}
       <main className="table__item">
-        {loading ? (
+        {!loading ? (
           items?.data && items.data.length > 0 ? (
             items.data.map((e, i) => (
               <TableItem

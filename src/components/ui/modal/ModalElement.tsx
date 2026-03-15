@@ -8,7 +8,7 @@ import { postElementREQ } from "@/api/element";
 
 interface Props {
   onClose: () => void;
-  onSuccess: (setLoading: (v: boolean) => void) => void;
+  onSuccess: () => void;
 }
 
 export default function ModalELement({ onClose, onSuccess }: Props) {
@@ -25,12 +25,15 @@ export default function ModalELement({ onClose, onSuccess }: Props) {
     });
 
     if (!valid) return;
+    setLoading(true);
     try {
       await postElementREQ(data);
-      onSuccess(setLoading);
+      onSuccess();
       onClose();
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -25,40 +25,35 @@ export default function Page() {
       localStorage.setItem("folderLine", JSON.stringify(value));
     }
   };
-  const [parentId, setParentId] = useState("");
   const [data, setData] = useState<ItemT[] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const fetchData = useCallback(
-    async (
-      setLoading: (v: boolean) => void,
-      page?: number,
-      parentId?: string,
-    ) => {
-      setLoading(true);
-      try {
-        const res = await getCategorysREQ({
-          lang: LONG_GET_ADMIN,
-          _limit: LIMIT_REQ,
-          _offset: page,
-          _parent_id: parentId,
-        });
-        if (res) setLoading(false);
-        return res as unknown as ItemT[];
-      } catch (e) {
-        console.error(e);
-        setLoading(false);
-        return null;
-      }
-    },
-    [],
-  );
+  const fetchData = useCallback(async (page?: number, parentId?: string) => {
+    setLoading(true);
+    try {
+      const res = await getCategorysREQ({
+        lang: LONG_GET_ADMIN,
+        _limit: LIMIT_REQ,
+        _offset: page,
+        _parent_id: parentId,
+      });
+      console.log("res", res);
+
+      return res as unknown as ItemT[];
+    } catch (e) {
+      console.error(e);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    fetchData(setLoading, page, parentId).then((d) => {
+    const parentId = folderLine?.[folderLine?.length - 1]?.id;
+    fetchData(page, parentId).then((d) => {
       if (d) setData(d);
     });
-  }, [page, parentId, fetchData]);
+  }, [page, folderLine, fetchData]);
   return (
     <>
       <div className="category__content">
@@ -66,7 +61,6 @@ export default function Page() {
           <IoFolderOpen
             className="table__cell-folder"
             onClick={() => {
-              setParentId("");
               setFolderLine(null);
             }}
           />
@@ -77,7 +71,6 @@ export default function Page() {
                 <span
                   key={i}
                   onClick={() => {
-                    setParentId(e.id);
                     setFolderLine(folderLine.slice(0, i + 1));
                   }}
                 >
@@ -105,7 +98,6 @@ export default function Page() {
           page={page}
           openModalAdd={() => setIsModalOpen(true)}
           onClick={(data) => {
-            setParentId(data?.id);
             setFolderLine([...(folderLine ?? []), data]);
           }}
           personIcon={<IoFolderOpen size={30} className="table__cell-folder" />}

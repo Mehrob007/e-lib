@@ -28,7 +28,7 @@ export default function Page() {
   const [data, setData] = useState<ItemT[] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const fetchData = useCallback(async (page?: number, parentId?: string) => {
+  const fetchData = useCallback(async (parentId?: string) => {
     setLoading(true);
     try {
       const res = await getCategorysREQ({
@@ -39,7 +39,7 @@ export default function Page() {
       });
       console.log("res", res);
 
-      return res as unknown as ItemT[];
+      return res as ItemT[];
     } catch (e) {
       console.error(e);
       return null;
@@ -50,7 +50,7 @@ export default function Page() {
 
   useEffect(() => {
     const parentId = folderLine?.[folderLine?.length - 1]?.id;
-    fetchData(page, parentId).then((d) => {
+    fetchData(parentId).then((d) => {
       if (d) setData(d);
     });
   }, [page, folderLine, fetchData]);
@@ -106,8 +106,10 @@ export default function Page() {
 
       {isModalOpen && (
         <ModalCategory
+          setDataTable={setData}
           onClose={() => setIsModalOpen(false)}
           onSuccess={fetchData}
+          parentId={folderLine?.[folderLine?.length - 1]?.id}
         />
       )}
     </>

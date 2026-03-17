@@ -5,15 +5,23 @@ import { useEffect, useState } from "react";
 import { LuX } from "react-icons/lu";
 import "./Modal.css";
 import { postElementREQ } from "@/api/element";
+import ModalELementStage from "./ModalElementStage";
+import { ItemT } from "@/types/table";
 
 interface Props {
   onClose: () => void;
   onSuccess: () => void;
+  defPather?: ItemT;
 }
 
-export default function ModalELement({ onClose, onSuccess }: Props) {
+export default function ModalELement({
+  onClose,
+  onSuccess,
+  defPather,
+}: Props) {
   const { errors, data, setData, validate, setClear } = useFormStore();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<string | null>("");
+  const [stage, setStage] = useState(0);
 
   useEffect(() => {
     setClear();
@@ -21,11 +29,11 @@ export default function ModalELement({ onClose, onSuccess }: Props) {
 
   const onSend = async () => {
     const valid = validate({
-      tj_name: { required: true },
+      // tj_name: { required: true },
     });
 
     if (!valid) return;
-    setLoading(true);
+    setLoading("send");
     try {
       await postElementREQ(data);
       onSuccess();
@@ -33,7 +41,7 @@ export default function ModalELement({ onClose, onSuccess }: Props) {
     } catch (e) {
       console.error(e);
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
   };
 
@@ -47,44 +55,36 @@ export default function ModalELement({ onClose, onSuccess }: Props) {
           </button>
         </header>
 
+        <ModalELementStage stage={stage} defPather={defPather} />
+
         <div className="modal__form">
           <div className="modal__grid">
-            <Input
+            {/* <Input
               id="tj_name"
               title="Таджикский"
               placeholder="Введите таджикский"
               value={data?.name as string}
               onChange={(v) => setData("tj_name", v)}
               errors={errors}
-            />
-            <Input
-              id="ru_name"
-              title="Русский"
-              placeholder="Введите русский"
-              value={data?.code as string}
-              onChange={(v) => setData("ru_name", v)}
-              errors={errors}
-            />
-            <Input
-              id="en_name"
-              title="Английский"
-              placeholder="Введите английский"
-              value={data?.code as string}
-              onChange={(v) => setData("en_name", v)}
-              errors={errors}
-            />
+            /> */}
           </div>
 
           <footer className="modal__footer">
-            <button className="modal__btn-cancel" onClick={onClose}>
+            <button
+              className="modal__btn-cancel"
+              onClick={() => {
+                onClose();
+              }}
+            >
               Отмена
             </button>
             <button
               className="modal__btn-save"
-              onClick={onSend}
-              disabled={loading}
+              onClick={() => setStage((prev) => (prev += 1))}
+              disabled={loading?.includes("send")}
             >
-              {loading ? "Сохранение..." : "Сохранить"}
+              {/* {loading?.includes("send") ? "Сохранение..." : "Сохранить"} */}
+              Далее
             </button>
           </footer>
         </div>

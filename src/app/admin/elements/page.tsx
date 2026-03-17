@@ -5,17 +5,19 @@ import { HeaderTableELement } from "@/const/table";
 import TableItems from "@/modules/table/table/TableItems";
 import { ItemT } from "@/types/table";
 import { useCallback, useEffect, useState } from "react";
+import Header from "./Header";
 
 export default function Page() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ItemT[] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [category, setCategory] = useState<ItemT>();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getElementsREQ();
+      const res = await getElementsREQ(category?.id as string);
       return res as unknown as ItemT[];
     } catch (e) {
       console.error(e);
@@ -26,14 +28,16 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    fetchData().then((d) => {
-      if (d) setData(d);
-    });
-  }, [page, fetchData]);
+    if (category) {
+      fetchData().then((d) => {
+        if (d) setData(d);
+      });
+    }
+  }, [page, fetchData, category]);
   return (
     <>
       <div className="elements__content">
-        <header></header>
+        <Header setCategory={setCategory} category={category} />
         <TableItems
           loading={loading}
           styleHeader={{ gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 100px" }}
@@ -56,6 +60,7 @@ export default function Page() {
         <ModalELement
           onClose={() => setIsModalOpen(false)}
           onSuccess={fetchData}
+          defPather={category}
         />
       )}
     </>

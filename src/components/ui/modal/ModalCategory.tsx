@@ -5,13 +5,21 @@ import { useEffect, useState } from "react";
 import { LuX } from "react-icons/lu";
 import { postCategoryREQ } from "@/api/category";
 import "./Modal.css";
+import { ItemT } from "@/types/table";
 
 interface Props {
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (parentId?: string) => Promise<ItemT[] | null>;
+  parentId?: string;
+  setDataTable: (v: ItemT[]) => void;
 }
 
-export default function ModalCategory({ onClose, onSuccess }: Props) {
+export default function ModalCategory({
+  onClose,
+  onSuccess,
+  parentId,
+  setDataTable,
+}: Props) {
   const { errors, data, setData, validate, setClear } = useFormStore();
   const [loading, setLoading] = useState(false);
 
@@ -27,8 +35,14 @@ export default function ModalCategory({ onClose, onSuccess }: Props) {
     if (!valid) return;
     setLoading(true);
     try {
-      await postCategoryREQ(data);
-      onSuccess();
+      await postCategoryREQ({
+        ...data,
+        ...(parentId && { _parent_id: parentId }),
+      });
+      // onSuccess(parentId);
+      onSuccess(parentId).then((d) => {
+        if (d) setDataTable(d);
+      });
       onClose();
     } catch (e) {
       console.error(e);

@@ -1,9 +1,11 @@
-import React from "react";
+interface Props {
+  styles?: { [key: string]: string };
+}
 
-export default function Loading() {
+export default function Loading({ styles }: Props) {
   return (
     <div className="loading">
-      <span></span>
+      <span style={styles}></span>
     </div>
   );
 }

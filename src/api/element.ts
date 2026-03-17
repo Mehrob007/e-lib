@@ -1,9 +1,9 @@
 import { dataT } from "@/types/useFormStore";
 import apiClient from "@/utils/apiClient";
 
-export const getElementsREQ = async (id?: string) => {
+export const getElementsREQ = async (id: string) => {
   try {
-    const res = await apiClient("categorys" + (id ? "/" + id : ""));
+    const res = await apiClient(`/get_routes/category/${id}/content`);
     return res.data;
   } catch (e) {
     console.error(e);

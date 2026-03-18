@@ -1,7 +1,7 @@
 "use client";
 import { getCategorysREQ } from "@/api/category";
 import ModalCategory from "@/components/ui/modal/ModalCategory";
-import { LIMIT_REQ, LONG_GET_ADMIN } from "@/const/def";
+import { LIMIT_REQ, LANG_GET_ADMIN } from "@/const/def";
 import { HeaderTableCategory } from "@/const/table";
 import TableItems from "@/modules/table/table/TableItems";
 import { folderLine } from "@/types/category";
@@ -32,7 +32,7 @@ export default function Page() {
     setLoading(true);
     try {
       const res = await getCategorysREQ({
-        lang: LONG_GET_ADMIN,
+        lang: LANG_GET_ADMIN,
         _limit: LIMIT_REQ,
         _offset: page,
         _parent_id: parentId,

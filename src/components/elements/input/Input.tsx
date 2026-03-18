@@ -18,7 +18,7 @@ export default function Input({
   const handleSubmit = (event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const cleanPhone = event.target.value.replace(/\D/g, "");
-    onChange(cleanPhone);
+    onChange && onChange(cleanPhone);
   };
 
   return (
@@ -39,16 +39,18 @@ export default function Input({
           onBlur={setFocus.bind(null, false)}
           style={style}
           required
+          readOnly={!onChange}
         />
       ) : (
         <input
           type={type}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => onChange?.(e.target.value)}
           placeholder={!focus ? placeholder : ""}
           className={className}
           id={id}
           style={style}
+          readOnly={!onChange}
         />
       )}
       <p className="input__error" style={{ opacity: errors?.[id] ? 1 : 0 }}>

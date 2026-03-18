@@ -1,6 +1,6 @@
 "use client";
 import { getElementsREQ } from "@/api/element";
-import ModalELement from "@/components/ui/modal/ModalElement";
+import ModalELement from "@/components/ui/modal/ModalElement/ModalElement";
 import { HeaderTableELement } from "@/const/table";
 import TableItems from "@/modules/table/table/TableItems";
 import { ItemT } from "@/types/table";

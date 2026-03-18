@@ -1,6 +1,6 @@
 import { getCategorysREQ } from "@/api/category";
 import Loading from "@/components/ui/loading/Loading";
-import { LONG_GET_ADMIN } from "@/const/def";
+import { LANG_GET_ADMIN } from "@/const/def";
 import { ItemT } from "@/types/table";
 import { useCallback, useEffect, useState } from "react";
 
@@ -16,7 +16,7 @@ export default function Header({ setCategory, category }: Props) {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getCategorysREQ({ lang: LONG_GET_ADMIN });
+      const res = await getCategorysREQ({ lang: LANG_GET_ADMIN });
       return res as unknown as ItemT[];
     } catch (e) {
       console.error(e);
@@ -49,7 +49,7 @@ export default function Header({ setCategory, category }: Props) {
           </div>
         ))
       ) : (
-        <Loading styles={{ width: "35px", height: "35px" }} />
+        <Loading styles={{ width: "35px", height: "35px", borderWidth: "5px" }} />
       )}
     </header>
   );

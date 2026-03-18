@@ -1,3 +1,4 @@
+import { categoryT } from "@/const/api";
 import { dataT } from "@/types/useFormStore";
 import apiClient from "@/utils/apiClient";
 
@@ -6,12 +7,7 @@ export const getCategorysREQ = async ({
   _parent_id,
   _limit,
   _offset,
-}: {
-  lang: string;
-  _parent_id?: string;
-  _limit?: number;
-  _offset?: number;
-}) => {
+}: categoryT) => {
   try {
     const res = await apiClient("/get_routes/category", {
       params: {

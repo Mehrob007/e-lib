@@ -6,6 +6,7 @@ import { folderLine } from "./category";
 export interface ItemT {
   [key: string]:
     | string
+    | boolean
     | number
     | StaticImageData
     | { name: string }

@@ -1,6 +1,6 @@
 export interface InputT {
   value: string;
-  onChange: (e: string) => void;
+  onChange?: (e: string) => void;
   title?: string;
   placeholder?: string;
   type?: string;
@@ -13,7 +13,7 @@ export interface InputT {
 export interface SelectT {
   value: string;
   onChange: (e: string) => void;
-  options: { value: string; label: string }[];
+  options: { value: string; label: string;}[];
   title?: string;
   placeholder?: string;
   className?: string;

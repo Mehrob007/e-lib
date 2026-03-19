@@ -1,2 +1,2 @@
-export const LIMIT_REQ = 10
-export const LONG_GET_ADMIN = "tj"
+export const LIMIT_REQ = 10;
+export const LANG_GET_ADMIN = "tj";

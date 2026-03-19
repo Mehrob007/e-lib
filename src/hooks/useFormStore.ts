@@ -7,7 +7,14 @@ interface FormState {
   errors: { [key: string]: string };
   setData: (
     field: string,
-    value: string | number | FileList | string[] | File | (File | string)[] | boolean
+    value:
+      | string
+      | number
+      | FileList
+      | string[]
+      | File
+      | (File | string)[]
+      | boolean,
   ) => void;
   setDataMony: (data: {
     [key: string]: string | number | FileList | string[] | File | boolean;

@@ -1,0 +1,205 @@
+.stage-two {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  /* width: 100%; */
+  width: 790px;
+}
+
+.stage-two__main {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.stage-two__upload-cover {
+  width: 100%;
+  height: 340px;
+  background: #d9d9d9;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.2s;
+}
+
+.stage-two__upload-cover:hover {
+  background: #cccccc;
+}
+
+.stage-two__upload-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stage-two__upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #333;
+  font-weight: 500;
+  text-align: center;
+  font-size: 18px;
+  font-family: serif;
+}
+
+.stage-two__delete-cover {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background: #2962ff;
+  color: white;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stage-two__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stage-two__upload-file-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stage-two__upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: serif;
+}
+
+.stage-two__upload-btn.uploaded {
+  border-color: #4caf50;
+  background: #f1f8e9;
+}
+
+.stage-two__delete-file {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stage-two__input-row {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 4px;
+}
+
+.stage-two__input-row label {
+  font-size: 14px;
+  color: #999;
+  font-family: serif;
+}
+
+.stage-two__input-row input {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding: 4px 0;
+  width: 100%;
+  background: transparent;
+}
+
+.stage-two__annotation {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.stage-two__annotation label {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+  font-family: serif;
+}
+
+.stage-two__annotation textarea {
+  width: 100%;
+  height: 80px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 12px;
+  outline: none;
+  resize: none;
+  font-size: 14px;
+}
+
+.stage-two__annotation textarea:focus {
+  border-color: #2962ff;
+}
+
+/* Override Select component styles for this stage */
+.stage-two .input__element {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stage-two .input__element span {
+  font-size: 14px;
+  color: #999;
+  font-family: serif;
+}
+
+.stage-two .select__wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.stage-two select {
+  width: 100%;
+  height: 38px;
+  border-radius: 19px;
+  border: 1px solid #e0e0e0;
+  padding: 0 16px;
+  font-size: 14px;
+  outline: none;
+  appearance: none;
+  background: white;
+  font-family: serif;
+}
+
+.stage-two select:focus {
+  border-color: #2962ff;
+}
+
+.stage-two .select__arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}

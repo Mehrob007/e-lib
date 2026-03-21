@@ -1,7 +1,11 @@
-export default function page() {
-  return (
-    <div>
-      
-    </div>
-  )
+"use client";
+
+import { redirect } from "next/navigation";
+import { useEffect } from "react";
+
+export default function Page() {
+  useEffect(() => {
+    redirect("./home");
+  }, []);
+  return <div></div>;
 }

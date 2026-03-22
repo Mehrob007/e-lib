@@ -11,13 +11,18 @@ export default function Select({
   id,
   errors,
   style,
+  labelStyle,
+  inputStyle,
 }: SelectT) {
   const [focus, setFocus] = useState(false);
 
   return (
-    <label className={`input__element ${focus ? "input__focus" : ""}`}>
+    <label
+      style={inputStyle}
+      className={`input__element ${focus ? "input__focus" : ""}`}
+    >
       {title && <span>{title}</span>}
-      <div className="select__wrapper">
+      <div className="select__wrapper" style={labelStyle}>
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -56,9 +61,11 @@ export default function Select({
           </svg>
         </div>
       </div>
-      <p className="input__error" style={{ opacity: errors?.[id] ? 1 : 0 }}>
-        {errors?.[id]}
-      </p>
+      {errors && (
+        <p className="input__error" style={{ opacity: errors?.[id] ? 1 : 0 }}>
+          {errors?.[id]}
+        </p>
+      )}
     </label>
   );
 }

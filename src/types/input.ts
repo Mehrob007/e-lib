@@ -13,11 +13,13 @@ export interface InputT {
 export interface SelectT {
   value: string;
   onChange: (e: string) => void;
-  options: { value: string; label: string;}[];
+  options: { value: string; label: string }[];
   title?: string;
   placeholder?: string;
   className?: string;
   id: string;
   errors?: { [key: string]: string };
   style?: React.CSSProperties;
+  labelStyle?: React.CSSProperties;
+  inputStyle?: React.CSSProperties;
 }

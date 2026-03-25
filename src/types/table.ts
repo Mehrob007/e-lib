@@ -32,8 +32,8 @@ export interface TableItemsT {
   styleHeader?: styleT;
   styleTable?: styleT;
   //   renderItems,
-  editItem?: (id: number) => void;
-  deleteItem?: (id: number) => void;
+  editItem?: (id: string) => void;
+  deleteItem?: (id: string) => void;
   setPage?: (value: number) => void;
   page?: number;
   //   activeButton
@@ -51,4 +51,5 @@ export interface TableItemT {
   styleTable?: styleT;
   personIcon?: ReactElement;
   onClick?: (data: folderLine) => void;
+  deleteItem?: (id: string) => void;
 }

@@ -35,3 +35,14 @@ export const postCategoryREQ = async (data: dataT) => {
     console.error(e);
   }
 };
+
+export const deleteBranchREQ = async (branch_id: string) => {
+  try {
+    const res = await apiClient.delete(
+      "other_routes/delete_branch/" + branch_id,
+    );
+    return res.data;
+  } catch (e) {
+    console.error(e);
+  }
+};

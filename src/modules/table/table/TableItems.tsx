@@ -47,6 +47,7 @@ export default function TableItems({
                 key={i}
                 keys={items.keys}
                 data={e}
+                deleteItem={deleteItem}
               />
             ))
           ) : (

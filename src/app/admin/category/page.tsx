@@ -1,5 +1,5 @@
 "use client";
-import { getCategorysREQ } from "@/api/category";
+import { deleteBranchREQ, getCategorysREQ } from "@/api/category";
 import ModalCategory from "@/components/ui/modal/ModalCategory";
 import { LIMIT_REQ, LANG_GET_ADMIN } from "@/const/def";
 import { HeaderTableCategory } from "@/const/table";
@@ -48,6 +48,15 @@ export default function Page() {
     }
   }, []);
 
+  const deleteItem = async (id: string) => {
+    try {
+      const res = await deleteBranchREQ(id);
+      console.log("delete category: ", res);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
     const parentId = folderLine?.[folderLine?.length - 1]?.id;
     fetchData(parentId).then((d) => {
@@ -82,6 +91,7 @@ export default function Page() {
           </div>
         </header>
         <TableItems
+          deleteItem={deleteItem}
           loading={loading}
           styleHeader={{ gridTemplateColumns: "1fr 100px" }}
           styleTable={{

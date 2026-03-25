@@ -12,6 +12,7 @@ export default function TableItem({
   styleTable,
   personIcon,
   onClick,
+  deleteItem,
 }: TableItemT) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -68,7 +69,11 @@ export default function TableItem({
         <button className="action-btn edit" title="Edit">
           <AiFillEdit />
         </button>
-        <button className="action-btn delete" title="Delete">
+        <button
+          onClick={() => deleteItem && deleteItem(data?.id as string)}
+          className="action-btn delete"
+          title="Delete"
+        >
           <RiDeleteBin4Fill />
         </button>
       </div>

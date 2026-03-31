@@ -15,17 +15,29 @@ export default function Page() {
   const [category, setCategory] = useState<ItemT>();
 
   const fetchData = useCallback(async () => {
+    if (!category?.id) return null;
     setLoading(true);
     try {
-      const res = await getElementsREQ(category?.id as string);
-      return res as unknown as ItemT[];
+      const res = await getElementsREQ(category.id as string);
+      // Flatten details into top-level fields for table display
+      const items = (res as unknown as ItemT[])?.map((item) => {
+        const details =
+          (item.details as { [key: string]: string | number }) || {};
+        return {
+          ...item,
+          author: details.author || "—",
+          year: details.year || "—",
+          pages: details.pages || "—",
+        } as ItemT;
+      });
+      return items || null;
     } catch (e) {
       console.error(e);
       return null;
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [category]);
 
   useEffect(() => {
     if (category) {

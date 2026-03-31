@@ -7,10 +7,13 @@ import { useFormStore } from "@/hooks/useFormStore";
 import Button from "@/components/elements/button/Button";
 import { useState } from "react";
 import { postAuthREQ } from "@/api/auth";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const { data, errors, validate, setData } = useFormStore();
   const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
 
   const onSend = async () => {
     const dataValid = {
@@ -23,10 +26,13 @@ export default function Login() {
       const valid = validate(dataValid);
       if (!valid) return;
       const res = await postAuthREQ({
-        phone_snumber: String(data.login),
+        phone_number: String(data.login),
         password: String(data.password),
       });
-      console.log("Login result:", res);
+      localStorage.setItem("access_token", res.access_token);
+      localStorage.setItem("refresh_token", res.refresh_token);
+      router.push("./admin");
+      // console.log("Login result:", res);
       // Handle success (e.g., redirect or store token)
     } catch (e) {
       console.error(e);

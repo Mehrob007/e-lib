@@ -1,32 +1,35 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-
-const ADMIN_ROUTES = ["/admin"];
+import { decodeJwt } from "jose";
 
 export function middleware(request: NextRequest) {
-  const userRole = request.cookies.get("user-role")?.value || "GUEST";
-  const pathname = request.nextUrl.pathname;
+  const token = request.cookies.get("access_token")?.value;
+  const { pathname } = request.nextUrl;
 
-  const isAdminRoute = ADMIN_ROUTES.some((route) => pathname.startsWith(route));
+  if (pathname.startsWith("/admin")) {
+    if (!token) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
 
-  // if (isAdminRoute && userRole !== "ADMIN") {
-  //   const url = request.nextUrl.clone();
-  //   url.pathname = "/forbidden";
-  //   return NextResponse.redirect(url);
-  // }
+    try {
+      const payload = decodeJwt(token);
+
+      if (payload.role !== "Admin" || payload.role !== "Superadmin") {
+        console.log("Access denied: User is not an Admin");
+        return NextResponse.redirect(new URL("/", request.url));
+      }
+    } catch (error) {
+      console.error("Invalid token:", error);
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+  }
 
   return NextResponse.next();
 }
 
+// Настройка путей, на которых будет срабатывать Middleware
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/admin/:path*", // Все вложенные пути админки
   ],
 };

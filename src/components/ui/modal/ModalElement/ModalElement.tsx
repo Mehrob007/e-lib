@@ -1,9 +1,12 @@
 "use client";
-import Input from "@/components/elements/input/Input";
 import { useFormStore } from "@/hooks/useFormStore";
 import { useEffect, useState } from "react";
 import { LuCheck, LuX } from "react-icons/lu";
-import { postElementREQ } from "@/api/element";
+import {
+  getPresignedUrlREQ,
+  postSaveContentREQ,
+  putFileREQ,
+} from "@/api/element";
 import ModalELementStage from "./ModalElementStage";
 import { ItemT } from "@/types/table";
 import { motion, AnimatePresence } from "framer-motion";
@@ -60,14 +63,70 @@ export default function ModalELement({ onClose, onSuccess, defPather }: Props) {
     });
 
     if (!valid) return;
-    setLoading("send");
+
+    // Extract branch_id (deepest selected branch, UUID only)
+    let branchId = "";
+    let highestIndex = 0;
+    Object.keys(data).forEach((key) => {
+      if (key.startsWith("branch")) {
+        const index = parseInt(key.replace("branch", ""), 10);
+        if (index > highestIndex && data[key]) {
+          highestIndex = index;
+          branchId = (data[key] as string).split("|")[0];
+        }
+      }
+    });
+
+    if (!branchId) {
+      console.error("No branch selected");
+      return;
+    }
+
+    const file = data.file as File;
+    if (!file) {
+      console.error("No file selected");
+      return;
+    }
+
+    setLoading("upload");
     try {
-      await postElementREQ(data);
+      // Step 1: Get Presigned URL
+      const presignedData = await getPresignedUrlREQ(branchId, file.name);
+      if (!presignedData) throw new Error("Failed to get presigned URL");
+
+      // Step 2: Upload file to MinIO
+      setLoading("uploading");
+      await putFileREQ(presignedData.upload_url, file);
+
+      // Step 3: Upload preview (cover) if preview_upload_url is available
+      const coverFile = data.photo as File;
+      if (coverFile && presignedData.preview_upload_url) {
+        setLoading("uploading_preview");
+        await putFileREQ(presignedData.preview_upload_url, coverFile);
+      }
+
+      // Step 4: Save metadata to DB
+      setLoading("saving");
+      const payload = {
+        branch_id: branchId,
+        name: data.name,
+        details: {
+          author: data.author || "",
+          pages: data.pages || "",
+          year: data.year || "",
+          annotation: data.annotation || "",
+          lang_id: data.lang_id || "",
+          object_key: presignedData.object_key,
+          preview_key: presignedData.preview_key,
+        },
+      };
+
+      await postSaveContentREQ(payload);
+
       onSuccess();
       onClose();
     } catch (e) {
       console.error(e);
-    } finally {
       setLoading(null);
     }
   };
@@ -78,7 +137,7 @@ export default function ModalELement({ onClose, onSuccess, defPather }: Props) {
 
   useEffect(() => {
     setData("type", "");
-  }, []);
+  }, [setData]);
 
   return (
     <motion.div
@@ -151,13 +210,15 @@ export default function ModalELement({ onClose, onSuccess, defPather }: Props) {
             <button
               className="modal__btn-save"
               onClick={() => (stage === 2 ? onSend() : next())}
-              disabled={loading?.includes("send")}
+              disabled={!!loading}
             >
-              {loading?.includes("send")
-                ? "Сохранение..."
-                : stage === 2
-                  ? "Сохранить"
-                  : "Далее"}
+              {loading === "upload" || loading === "uploading"
+                ? "Загрузка файла..."
+                : loading === "saving"
+                  ? "Сохранение..."
+                  : stage === 2
+                    ? "Сохранить"
+                    : "Далее"}
             </button>
           </footer>
         </div>

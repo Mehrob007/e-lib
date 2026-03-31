@@ -22,7 +22,27 @@ export default function BookCard({
   return (
     <div className="book-card">
       <div className="book-card__image">
-        <Image src={image} alt={title} fill style={{ objectFit: "cover" }} />
+        {image ? (
+          <Image src={image} alt={title} fill style={{ objectFit: "cover" }} />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#fff",
+              fontSize: "14px",
+              fontWeight: 500,
+              textAlign: "center",
+              padding: "8px",
+            }}
+          >
+            {title}
+          </div>
+        )}
       </div>
       <div className="book-card__content">
         <h3 className="book-card__title">{title}</h3>

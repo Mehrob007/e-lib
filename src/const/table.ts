@@ -26,23 +26,23 @@ export const HeaderTableCategory = [
 
 export const HeaderTableELement = [
   {
-    name: "Обложка",
-    key: "tj_name",
-  },
-  {
     name: "Название",
-    key: "",
+    key: "name",
   },
   {
-    name: "Тип",
-    key: "",
+    name: "Автор",
+    key: "author",
   },
   {
-    name: "Ветка",
-    key: "",
+    name: "Год",
+    key: "year",
+  },
+  {
+    name: "Страницы",
+    key: "pages",
   },
   {
     name: "Дата",
-    key: "",
+    key: "created",
   },
 ];

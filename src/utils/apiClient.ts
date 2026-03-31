@@ -6,14 +6,14 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 
 const getToken = () => {
   if (typeof window !== "undefined") {
-    return localStorage.getItem("accessToken");
+    return localStorage.getItem("access_token");
   }
   return null;
 };
 
 const getRefreshToken = () => {
   if (typeof window !== "undefined") {
-    return localStorage.getItem("refreshToken");
+    return localStorage.getItem("refresh_token");
   }
   return null;
 };
@@ -94,12 +94,12 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshToken = getRefreshToken();
-        const response = await getNewToken(refreshToken);
+        const refresh_token = getRefreshToken();
+        const response = await getNewToken(refresh_token);
 
-        const newAccessToken = response.data.data.accessToken;
+        const newAccessToken = response.data.data.access_token;
         if (typeof window !== "undefined") {
-          localStorage.setItem("accessToken", newAccessToken);
+          localStorage.setItem("access_token", newAccessToken);
         }
 
         apiClient.defaults.headers.common["Authorization"] =
@@ -111,8 +111,8 @@ apiClient.interceptors.response.use(
       } catch (err) {
         processQueue(err);
         if (typeof window !== "undefined") {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
         }
         // document.location.href = "/login";
         return Promise.reject(err);

@@ -13,13 +13,16 @@ export function middleware(request: NextRequest) {
 
     try {
       const payload = decodeJwt(token);
+      const role = payload.role as string;
 
-      if (payload.role !== "Admin" && payload.role !== "Superadmin") {
+      console.log("Middleware: decoded role:", role);
+
+      if (role !== "Admin" && role !== "Superadmin") {
         console.log("Access denied: User is not an Admin");
         return NextResponse.redirect(new URL("/", request.url));
       }
     } catch (error) {
-      console.error("Invalid token:", error);
+      console.error("Middleware: Invalid token:", error);
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }

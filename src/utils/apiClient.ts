@@ -20,6 +20,10 @@ const getRefreshToken = () => {
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${getToken()}`,
+  },
 });
 
 // Добавляем Authorization перед каждым запросом
@@ -100,6 +104,7 @@ apiClient.interceptors.response.use(
         const newAccessToken = response.data.data.access_token;
         if (typeof window !== "undefined") {
           localStorage.setItem("access_token", newAccessToken);
+          document.cookie = `access_token=${newAccessToken}; path=/; max-age=86400; SameSite=Lax`;
         }
 
         apiClient.defaults.headers.common["Authorization"] =
@@ -113,6 +118,10 @@ apiClient.interceptors.response.use(
         if (typeof window !== "undefined") {
           localStorage.removeItem("access_token");
           localStorage.removeItem("refresh_token");
+          document.cookie =
+            "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+          document.cookie =
+            "refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         }
         // document.location.href = "/login";
         return Promise.reject(err);

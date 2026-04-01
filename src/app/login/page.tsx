@@ -8,6 +8,7 @@ import Button from "@/components/elements/button/Button";
 import { useState } from "react";
 import { postAuthREQ } from "@/api/auth";
 import { useRouter } from "next/navigation";
+import { decodeJwt } from "jose";
 
 export default function Login() {
   const { data, errors, validate, setData } = useFormStore();
@@ -18,7 +19,7 @@ export default function Login() {
   const onSend = async () => {
     const dataValid = {
       login: { required: true },
-      password: { required: true, maxLength: 6 }, // typical max length, matching user's intent but fixing typo
+      password: { required: true, maxLength: 6 },
     };
 
     setLoading(true);
@@ -29,13 +30,32 @@ export default function Login() {
         phone_number: String(data.login),
         password: String(data.password),
       });
-      localStorage.setItem("access_token", res.access_token);
-      localStorage.setItem("refresh_token", res.refresh_token);
-      router.push("./admin");
-      // console.log("Login result:", res);
-      // Handle success (e.g., redirect or store token)
+
+      if (res) {
+        const { access_token, refresh_token } = res;
+
+        // Store tokens for API client
+        localStorage.setItem("access_token", access_token);
+        localStorage.setItem("refresh_token", refresh_token);
+
+        // Store tokens in cookies for Middleware
+        document.cookie = `access_token=${access_token}; path=/; max-age=86400; SameSite=Lax`;
+        document.cookie = `refresh_token=${refresh_token}; path=/; max-age=604800; SameSite=Lax`;
+
+        // Decode token to check role
+        const payload = decodeJwt(access_token);
+        const role = payload.role as string;
+
+        console.log("Login success, role:", role);
+
+        if (role === "Admin" || role === "Superadmin") {
+          router.push("/admin/elements");
+        } else {
+          router.push("/");
+        }
+      }
     } catch (e) {
-      console.error(e);
+      console.error("Login error:", e);
     } finally {
       setLoading(false);
     }

@@ -5,7 +5,7 @@ import SectionHeader from "../../components/ui/section/SectionHeader";
 import BookCard from "../../components/ui/cards/BookCard";
 import { useCallback, useEffect, useState } from "react";
 import { getCategorysREQ } from "@/api/category";
-import { getElementsREQ } from "@/api/element";
+import { getElementsMainREQ } from "@/api/element";
 import { LANG_GET_ADMIN } from "@/const/def";
 import { ItemT } from "@/types/table";
 import Loading from "@/components/ui/loading/Loading";
@@ -44,9 +44,7 @@ export default function Page() {
       const allContent: BookItem[] = [];
       for (const cat of categories) {
         try {
-          const content = (await getElementsREQ(
-            cat.id as string,
-          )) as unknown as ItemT[];
+          const content = (await getElementsMainREQ()) as unknown as ItemT[];
           if (content?.length) {
             const mapped = content.map((item) => {
               const details = (item.details as { [key: string]: string }) || {};

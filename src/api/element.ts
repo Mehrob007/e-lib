@@ -3,7 +3,24 @@ import apiClient from "@/utils/apiClient";
 
 export const getElementsREQ = async (id: string) => {
   try {
-    const res = await apiClient(` /library/category/${id}/content`);
+    const res = await apiClient(`library/category/${id}/content`);
+    return res.data;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const getCategoryContentREQ = async (
+  id: string,
+  params?: {
+    sort_field?: string;
+    sort_order?: "asc" | "desc";
+    _limit?: number;
+    _offset?: number;
+  },
+) => {
+  try {
+    const res = await apiClient(`library/category/${id}/content`, { params });
     return res.data;
   } catch (e) {
     console.error(e);
@@ -24,9 +41,18 @@ export const getPresignedUrlREQ = async (
   filename: string,
 ) => {
   try {
-    const res = await apiClient(`/admin/content/${branch_id}/presigned`, {
+    const res = await apiClient(`admin/content/${branch_id}/presigned`, {
       params: { filename },
     });
+    return res.data;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const getElementsMainREQ = async () => {
+  try {
+    const res = await apiClient("library/main");
     return res.data;
   } catch (e) {
     console.error(e);
@@ -52,7 +78,12 @@ export const putFileREQ = async (url: string, file: File) => {
 
 export const postSaveContentREQ = async (data: Record<string, unknown>) => {
   try {
-    const res = await apiClient.post("/admin/save_content", data);
+    const res = await apiClient.post("/admin/save_content", data, {
+      params: {
+        name: data?.name as string,
+        branch_id: data?.branch_id as string,
+      },
+    });
     return res.data;
   } catch (e) {
     console.error(e);
@@ -62,7 +93,7 @@ export const postSaveContentREQ = async (data: Record<string, unknown>) => {
 
 export const getContentDetailsREQ = async (content_id: string) => {
   try {
-    const res = await apiClient(`//admin/content/${content_id}`);
+    const res = await apiClient(`/admin/content/${content_id}`);
     return res.data;
   } catch (e) {
     console.error(e);
@@ -74,7 +105,7 @@ export const getDownloadUrlREQ = async (
   expires: number = 600,
 ) => {
   try {
-    const res = await apiClient(`/ /library/download_content/${content_id}`, {
+    const res = await apiClient(`/library/download_content/${content_id}`, {
       params: { expires },
     });
     return res.data;

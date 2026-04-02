@@ -54,7 +54,7 @@ export default function Page() {
                 title: (item.name as string) || "—",
                 author: details.author || "—",
                 date: (item.created as string)?.split("T")?.[0] || "—",
-                image: details.preview_key || "",
+                image: details.preview_url || "",
                 type: (contentType === "book"
                   ? "text"
                   : contentType) as BookItem["type"],

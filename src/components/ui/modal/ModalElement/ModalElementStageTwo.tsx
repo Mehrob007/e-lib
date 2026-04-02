@@ -158,8 +158,8 @@ export default function ModalElementStageTwo() {
             <label>Год издания:</label>
             <input
               type="text"
-              value={(data?.year as string) || ""}
-              onChange={(e) => setData("year", e.target.value)}
+              value={(data?.created as string) || ""}
+              onChange={(e) => setData("created", e.target.value)}
               placeholder="2025"
             />
           </div>

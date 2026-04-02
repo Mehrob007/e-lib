@@ -3,8 +3,9 @@ import Input from "@/components/elements/input/Input";
 import Select from "@/components/elements/select/Select";
 import { LANG_GET_ADMIN } from "@/const/def";
 import { useFormStore } from "@/hooks/useFormStore";
+import { SelectT } from "@/types/input";
 import { ItemT } from "@/types/table";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface Props {
   defPather?: ItemT;
@@ -13,22 +14,38 @@ interface Props {
 export default function ModalElementStageZero({ defPather }: Props) {
   const { errors, data, setData, validate } = useFormStore();
   const [loading, setLoading] = useState<boolean>(false);
+  const [options, setOptions] = useState<{ value: string; label: string }[]>(
+    [],
+  );
 
-  const onSend = async () => {
-    const valid = validate({
-      // tj_name: { required: true },
-    });
-    if (!valid) return;
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      await getCategorysREQ({ lang: LANG_GET_ADMIN });
+      const res = await getCategorysREQ({
+        lang: LANG_GET_ADMIN,
+        _parent_id: defPather?.id as string,
+      });
+      return res as unknown as ItemT[];
     } catch (e) {
       console.error(e);
+      return null;
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
+  useEffect(() => {
+    fetchData().then((d) => {
+      if (d) {
+        setOptions(
+          d?.map((e) => ({
+            value: e.id as string,
+            label: e.name as string,
+          })),
+        );
+      }
+    });
+  }, [fetchData]);
   return (
     <div className="modal__stage">
       <Input
@@ -43,12 +60,11 @@ export default function ModalElementStageZero({ defPather }: Props) {
         id="type"
         title="Тип"
         value={(data?.type as string) || ""}
-        onChange={(e) => setData("type", e)}
-        options={[
-          { value: "1", label: "Видео" },
-          { value: "2", label: "Аудио" },
-          { value: "3", label: "Текст" },
-        ]}
+        onChange={(e) => {
+          setData("defPatherId", e);
+          setTimeout(() => setData("type", e), 10);
+        }}
+        options={options}
         placeholder="Выберите тип"
         errors={errors}
       />

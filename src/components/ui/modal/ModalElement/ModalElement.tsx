@@ -37,7 +37,7 @@ export default function ModalELement({ onClose, onSuccess, defPather }: Props) {
       );
       if (!valid) return;
       setStage(1);
-      setData("defPatherId", defPather?.id as string);
+      // setData("defPatherId", defPather?.id as string);
     } else if (stage === 1) {
       setStage(2);
     }
@@ -111,13 +111,14 @@ export default function ModalELement({ onClose, onSuccess, defPather }: Props) {
         branch_id: branchId,
         name: data.name,
         details: {
+          type: presignedData?.type,
           author: data.author || "",
           pages: data.pages || "",
-          year: data.year || "",
+          created: data.created || "",
           annotation: data.annotation || "",
           lang_id: data.lang_id || "",
-          object_key: presignedData.object_key,
-          preview_key: presignedData.preview_key,
+          file_url: presignedData.file_url,
+          preview_url: presignedData.preview_url,
         },
       };
 

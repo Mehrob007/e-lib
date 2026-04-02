@@ -70,9 +70,6 @@ export default function ModalElementStageOne() {
     });
   }, [fetchData, paramsREQ]);
 
-  console.log("test if", !fetchData || !paramsREQ?._parent_id);
-  console.log("data", data);
-
   return (
     <div className="modal__stage">
       <>

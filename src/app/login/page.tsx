@@ -33,26 +33,19 @@ export default function Login() {
 
       if (res) {
         const { access_token, refresh_token } = res;
-
-        // Store tokens for API client
         localStorage.setItem("access_token", access_token);
         localStorage.setItem("refresh_token", refresh_token);
-
-        // Store tokens in cookies for Middleware
         document.cookie = `access_token=${access_token}; path=/; max-age=86400; SameSite=Lax`;
         document.cookie = `refresh_token=${refresh_token}; path=/; max-age=604800; SameSite=Lax`;
-
-        // Decode token to check role
         const payload = decodeJwt(access_token);
         const role = payload.role as string;
-
-        console.log("Login success, role:", role);
-
-        if (role === "Admin" || role === "Superadmin") {
-          router.push("/admin/elements");
-        } else {
-          router.push("/");
-        }
+        setTimeout(() => {
+          if (role === "Admin" || role === "Superadmin") {
+            router.push("/admin/elements");
+          } else {
+            router.push("/");
+          }
+        }, 100);
       }
     } catch (e) {
       console.error("Login error:", e);

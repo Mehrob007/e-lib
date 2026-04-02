@@ -35,7 +35,7 @@ export const HeaderTableELement = [
   },
   {
     name: "Год",
-    key: "year",
+    key: "created",
   },
   {
     name: "Страницы",

@@ -79,10 +79,10 @@ export const putFileREQ = async (url: string, file: File) => {
 export const postSaveContentREQ = async (data: Record<string, unknown>) => {
   try {
     const res = await apiClient.post("/admin/save_content", data, {
-      params: {
-        name: data?.name as string,
-        branch_id: data?.branch_id as string,
-      },
+      // params: {
+      //   name: data?.name as string,
+      //   branch_id: data?.branch_id as string,
+      // },
     });
     return res.data;
   } catch (e) {
@@ -114,10 +114,10 @@ export const getDownloadUrlREQ = async (
   }
 };
 
-export const confirmUploadREQ = async (object_key: string) => {
+export const confirmUploadREQ = async (file_url: string) => {
   try {
     const res = await apiClient.post("/admin/confirm_upload", null, {
-      params: { object_key },
+      params: { file_url },
     });
     return res.data;
   } catch (e) {

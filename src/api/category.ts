@@ -25,11 +25,7 @@ export const getCategorysREQ = async ({
 
 export const postCategoryREQ = async (data: dataT) => {
   try {
-    const res = await apiClient.post(
-      "/admin/save_category",
-      {},
-      { params: data },
-    );
+    const res = await apiClient.post("/admin/save_category", data);
     return res.data;
   } catch (e) {
     console.error(e);

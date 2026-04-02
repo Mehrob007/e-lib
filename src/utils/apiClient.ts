@@ -22,14 +22,13 @@ export const apiClient = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${getToken()}`,
   },
 });
 
 // Добавляем Authorization перед каждым запросом
 apiClient.interceptors.request.use((config) => {
   const token = getToken();
-  if (token) {
+  if (token && !config.headers.Authorization) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -77,12 +76,12 @@ apiClient.interceptors.response.use(
     );
     const isSearch = url?.toLowerCase().includes("search");
 
-    if (isMutation && !isSearch && error.response?.status !== 401) {
+    if (isMutation && !isSearch && error.response?.status !== 403) {
       globalState.getState().setToast({ active: true, type: "error" });
     }
 
     console.log("error.response.status", error.response?.status);
-    if (!error.response?.status && !originalRequest._retry) {
+    if (error.response?.status === 403 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve: (t) => resolve(t), reject });
@@ -101,7 +100,8 @@ apiClient.interceptors.response.use(
         const refresh_token = getRefreshToken();
         const response = await getNewToken(refresh_token);
 
-        const newAccessToken = response.data.data.access_token;
+        const newAccessToken =
+          response.data?.access_token || response.access_token;
         if (typeof window !== "undefined") {
           localStorage.setItem("access_token", newAccessToken);
           document.cookie = `access_token=${newAccessToken}; path=/; max-age=86400; SameSite=Lax`;
@@ -114,6 +114,7 @@ apiClient.interceptors.response.use(
 
         return apiClient(originalRequest);
       } catch (err) {
+        console.error("Token refresh failed, clearing session:", err);
         processQueue(err);
         if (typeof window !== "undefined") {
           localStorage.removeItem("access_token");

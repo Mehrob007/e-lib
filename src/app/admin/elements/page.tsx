@@ -26,7 +26,7 @@ export default function Page() {
         return {
           ...item,
           author: details.author || "—",
-          year: details.year || "—",
+          created: details.created || "—",
           pages: details.pages || "—",
         } as ItemT;
       });

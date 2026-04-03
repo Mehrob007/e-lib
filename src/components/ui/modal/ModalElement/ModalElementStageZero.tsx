@@ -3,7 +3,6 @@ import Input from "@/components/elements/input/Input";
 import Select from "@/components/elements/select/Select";
 import { LANG_GET_ADMIN } from "@/const/def";
 import { useFormStore } from "@/hooks/useFormStore";
-import { SelectT } from "@/types/input";
 import { ItemT } from "@/types/table";
 import { useCallback, useEffect, useState } from "react";
 
@@ -12,7 +11,7 @@ interface Props {
 }
 
 export default function ModalElementStageZero({ defPather }: Props) {
-  const { errors, data, setData, validate } = useFormStore();
+  const { errors, data, setData } = useFormStore();
   const [loading, setLoading] = useState<boolean>(false);
   const [options, setOptions] = useState<{ value: string; label: string }[]>(
     [],

@@ -3,7 +3,9 @@ import LogoHeaderHome from "@/../public/icons/logo-header-home.svg";
 import SearchInput from "@/components/elements/input/SearchInput";
 import Select from "@/components/elements/select/Select";
 import { usePathname, useRouter } from "next/navigation";
-export default function HeaderHome() {
+import Image from "next/image";
+
+export default function HeaderHome({ logo }: { logo?: string }) {
   const pathName = usePathname();
   const router = useRouter();
 
@@ -11,7 +13,21 @@ export default function HeaderHome() {
 
   return (
     <div className="header-home">
-      <LogoHeaderHome />
+      {logo ? (
+        <Image
+          src={`/${logo}`}
+          alt="Logo"
+          width={40}
+          height={40}
+          style={{ objectFit: "contain", cursor: "pointer" }}
+          onClick={() => router?.push("/home")}
+        />
+      ) : (
+        <LogoHeaderHome
+          onClick={() => router?.push("/home")}
+          style={{ cursor: "pointer" }}
+        />
+      )}
       <nav>
         <span
           className={pathName === "/home" ? "active" : ""}

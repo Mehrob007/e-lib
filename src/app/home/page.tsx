@@ -9,6 +9,7 @@ import { getElementsMainREQ } from "@/api/element";
 import { LANG_GET_ADMIN } from "@/const/def";
 import { ItemT } from "@/types/table";
 import Loading from "@/components/ui/loading/Loading";
+import { useBranding } from "@/hooks/useBranding";
 
 interface BookItem {
   id: string;
@@ -29,6 +30,7 @@ const TYPE_LABELS: Record<string, string> = {
 export default function Page() {
   const [books, setBooks] = useState<BookItem[]>([]);
   const [loading, setLoading] = useState<string | null>("");
+  const branding = useBranding();
 
   const fetchContent = useCallback(async () => {
     setLoading("content");
@@ -40,33 +42,33 @@ export default function Page() {
 
       if (!categories?.length) return;
 
-      // Fetch content from all root categories
       const allContent: BookItem[] = [];
-      for (const cat of categories) {
-        try {
-          const content = (await getElementsMainREQ()) as unknown as ItemT[];
-          if (content?.length) {
-            const mapped = content.map((item) => {
-              const details = (item.details as { [key: string]: string }) || {};
-              const contentType = (details.type || "book") as string;
-              return {
-                id: item.id as string,
-                title: (item.name as string) || "—",
-                author: details.author || "—",
-                date: (item.created as string)?.split("T")?.[0] || "—",
-                image: details.preview_url || "",
-                type: (contentType === "book"
-                  ? "text"
-                  : contentType) as BookItem["type"],
-                typeLabel: TYPE_LABELS[contentType] || "Матн",
-              };
-            });
-            allContent.push(...mapped);
-          }
-        } catch (e) {
-          console.error(e);
+
+      // Fetch content (global main content)
+      try {
+        const content = (await getElementsMainREQ()) as unknown as ItemT[];
+        if (content?.length) {
+          const mapped = content.map((item) => {
+            const details = (item.details as { [key: string]: string }) || {};
+            const contentType = (details.type || "book") as string;
+            return {
+              id: item.id as string,
+              title: (item.name as string) || "—",
+              author: details.author || "—",
+              date: (item.created as string)?.split("T")?.[0] || "—",
+              image: details.preview_url || "",
+              type: (contentType === "book"
+                ? "text"
+                : contentType) as BookItem["type"],
+              typeLabel: TYPE_LABELS[contentType] || "Матн",
+            };
+          });
+          allContent.push(...mapped);
         }
+      } catch (e) {
+        console.error(e);
       }
+
       setBooks(allContent);
     } catch (e) {
       console.error(e);
@@ -93,7 +95,7 @@ export default function Page() {
 
   return (
     <div className="home-page">
-      <HeaderHome />
+      <HeaderHome logo={branding?.logo as string} />
       <div className="home-page__content" style={{ padding: "0 40px" }}>
         <HeroBanner />
         <SectionHeader title="ХОНАНДАГОН" onViewAll={() => {}} />

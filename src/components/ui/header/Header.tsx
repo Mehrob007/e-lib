@@ -1,13 +1,25 @@
 "use client";
 import BurgerItem from "@/../public/icons/burger-btn.svg";
+import Image from "next/image";
 
-export default function Header() {
+export default function Header({ logo }: { logo?: string }) {
   return (
     <header>
       <BurgerItem aria-label="burger-btn" className="burger-btn" />
-      <h1>
-        Library eDonish <span>|</span> Admin
-      </h1>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        {logo && (
+          <Image
+            src={`/${logo}`}
+            alt="Logo"
+            width={40}
+            height={40}
+            style={{ objectFit: "contain" }}
+          />
+        )}
+        <h1>
+          Library eDonish <span>|</span> Admin
+        </h1>
+      </div>
     </header>
   );
 }

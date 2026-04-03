@@ -5,6 +5,7 @@ import { useState } from "react";
 import { RiDeleteBin4Fill } from "react-icons/ri";
 import { AiFillEdit } from "react-icons/ai";
 import { folderLine } from "@/types/category";
+import Image from "next/image";
 
 export default function TableItem({
   keys,
@@ -20,7 +21,7 @@ export default function TableItem({
     if (value === null || value === undefined) return "—";
 
     // Handle special "Avatar" column logic for the first column if it's "name" or similar
-    if (index === 0) {
+    if (index === 0 && key !== "preview_url") {
       return (
         <div className="table__cell-with-icon">
           {personIcon}
@@ -48,6 +49,30 @@ export default function TableItem({
               <FaEye color="#666" />
             )}
           </button>
+        </div>
+      );
+    }
+
+    // Handle Images if key matches
+    if (key === "preview_url" && typeof value === "string") {
+      return (
+        <div
+          style={{
+            width: "40px",
+            height: "40px",
+            position: "relative",
+            overflow: "hidden",
+            borderRadius: "4px",
+            margin: "0 auto",
+          }}
+        >
+          <Image
+            src={`/${value}`}
+            alt="Favicon"
+            fill
+            sizes="40px"
+            style={{ objectFit: "contain" }}
+          />
         </div>
       );
     }

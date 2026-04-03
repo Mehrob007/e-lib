@@ -25,9 +25,7 @@ export default function Page() {
           (item.details as { [key: string]: string | number }) || {};
         return {
           ...item,
-          author: details.author || "—",
-          created: details.created || "—",
-          pages: details.pages || "—",
+          ...details,
         } as ItemT;
       });
       return items || null;
@@ -46,15 +44,20 @@ export default function Page() {
       });
     }
   }, [page, fetchData, category]);
+
+  console.log("data", data);
+
   return (
     <>
       <div className="elements__content">
         <Header setCategory={setCategory} category={category} />
         <TableItems
           loading={loading}
-          styleHeader={{ gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 100px" }}
+          styleHeader={{
+            gridTemplateColumns: "80px 1.5fr 1fr 100px 100px 100px",
+          }}
           styleTable={{
-            gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 100px",
+            gridTemplateColumns: "80px 1.5fr 1fr 100px 100px 100px",
           }}
           styles={{ height: "calc(100vh - 198px)" }}
           header={HeaderTableELement}

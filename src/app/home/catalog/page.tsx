@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import HeaderHome from "@/components/ui/header/HeaderHome";
 import CatalogTopBar from "@/components/ui/nav/CatalogTopBar";
 import CatalogSideNav from "@/components/ui/nav/CatalogSideNav";
@@ -11,7 +12,7 @@ import { getCategoryContentREQ } from "@/api/element";
 import { LANG_GET_ADMIN } from "@/const/def";
 import { ItemT } from "@/types/table";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
-import "./catalog.scss";
+// import "./catalog.scss";
 
 interface ContentItem {
   id: string;
@@ -30,14 +31,26 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 export default function CatalogPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <CatalogContent />
+    </Suspense>
+  );
+}
+
+function CatalogContent() {
   const [categories, setCategories] = useState<ItemT[]>([]);
-  const [subCategories, setSubCategories] = useState<any[]>([]);
+  const [subCategories, setSubCategories] = useState<
+    { id: string; name: string; type: "audio" | "video" | "text" }[]
+  >([]);
   const [activeCategoryId, setActiveCategoryId] = useState<string>("");
   const [activeSubCategoryId, setActiveSubCategoryId] = useState<string>("");
   const [content, setContent] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
+  const searchParams = useSearchParams();
+  const categoryIdParam = searchParams.get("category_id");
   const limit = 10;
 
   const fetchRootCategories = useCallback(async () => {
@@ -47,12 +60,16 @@ export default function CatalogPage() {
       })) as unknown as ItemT[];
       if (res?.length) {
         setCategories(res);
-        setActiveCategoryId(res[0].id as string);
+        if (categoryIdParam) {
+          setActiveCategoryId(categoryIdParam);
+        } else {
+          setActiveCategoryId(res[0].id as string);
+        }
       }
     } catch (e) {
       console.error(e);
     }
-  }, []);
+  }, [categoryIdParam]);
 
   const fetchSubCategories = useCallback(async (parentId: string) => {
     try {
@@ -71,7 +88,13 @@ export default function CatalogPage() {
             ? "audio"
             : "text",
       }));
-      setSubCategories(mapped || []);
+      setSubCategories(
+        (mapped || []) as {
+          id: string;
+          name: string;
+          type: "audio" | "video" | "text";
+        }[],
+      );
       if (mapped?.length) {
         setActiveSubCategoryId(mapped[0].id);
       } else {

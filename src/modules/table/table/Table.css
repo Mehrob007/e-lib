@@ -28,6 +28,7 @@
   padding: 12px 24px;
   align-items: center;
   border-bottom: 1px solid var(--table-border);
+  z-index: 99;
 }
 
 .table__header > div {

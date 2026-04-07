@@ -72,7 +72,7 @@ export default function ModalELement({
     if (!valid) return;
 
     // Extract branch_id (deepest selected branch, UUID only)
-    let branchId = editItem?.branch_id || "";
+    let branchId = (editItem?.branch_id as string) || "";
     if (!branchId) {
       let highestIndex = 0;
       Object.keys(data).forEach((key) => {
@@ -96,14 +96,15 @@ export default function ModalELement({
 
     setLoading("upload");
     try {
-      let fileUrl = editItem?.file_url;
-      let previewUrl = editItem?.preview_url;
-      let type = editItem?.details?.type;
+      const editDetails = (editItem?.details as Record<string, unknown>) || {};
+      let fileUrl = editItem?.file_url as string;
+      let previewUrl = editItem?.preview_url as string;
+      let type = editDetails.type as string;
 
       if (file || coverFile) {
         setLoading("uploading");
         const presignedData = await getPresignedUrlREQ(
-          branchId,
+          branchId as string,
           file?.name || "file",
         );
         if (!presignedData) throw new Error("Failed to get presigned URL");
@@ -114,9 +115,9 @@ export default function ModalELement({
           type = presignedData.type as string;
         }
 
-        if (coverFile && presignedData.preview_upload_url) {
+        if (coverFile && presignedData.upload_preview_url) {
           setLoading("uploading_preview");
-          await putFileREQ(presignedData.preview_upload_url, coverFile);
+          await putFileREQ(presignedData.upload_preview_url, coverFile);
           previewUrl = presignedData.preview_url;
         }
       }
@@ -124,20 +125,18 @@ export default function ModalELement({
       // Step 4: Save metadata to DB
       setLoading("saving");
 
-      const editDetails = (editItem?.details as Record<string, any>) || {};
-
       const payload = {
         branch_id: branchId,
         name: data.name as string,
         details: {
-          type: type || editDetails.type || "",
+          type: (type as string) || (editDetails.type as string) || "",
           author: (data.author as string) || "",
           pages: (data.pages as string) || "",
           created: (data.created as string) || "",
           annotation: (data.annotation as string) || "",
           lang_id: (data.lang_id as string) || "",
-          file_url: fileUrl as string,
-          preview_url: previewUrl as string,
+          file_url: (fileUrl as string) || "",
+          preview_url: (previewUrl as string) || "",
         },
       };
 
@@ -160,7 +159,7 @@ export default function ModalELement({
   useEffect(() => {
     if (editItem) {
       // Pre-fill form for editing
-      const details = (editItem.details as Record<string, any>) || {};
+      const details = (editItem.details as ItemT) || {};
       setData("name", editItem.name as string);
       setData("author", (editItem.author || details.author || "") as string);
       setData("pages", (editItem.pages || details.pages || "") as string);

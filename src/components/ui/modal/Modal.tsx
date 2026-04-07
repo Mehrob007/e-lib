@@ -20,9 +20,9 @@ export default function ModalUser({ onClose, onSuccess, editUser }: Props) {
 
   useEffect(() => {
     if (editUser) {
-      setData("username", editUser.username);
-      setData("phone_number", editUser.phone_number);
-      setData("password", editUser.password || "");
+      setData("username", editUser.username as string);
+      setData("phone_number", editUser.phone_number as string);
+      setData("password", (editUser.password as string) || "");
     } else {
       setClear();
     }
@@ -39,7 +39,7 @@ export default function ModalUser({ onClose, onSuccess, editUser }: Props) {
     setLoading(true);
     try {
       if (editUser) {
-        await editUserById(editUser.id, data);
+        await editUserById(editUser.id as string, data);
       } else {
         await postUserREQ(data);
       }

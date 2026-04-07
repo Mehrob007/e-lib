@@ -4,10 +4,8 @@ import HeroBanner from "../../components/ui/banner/HeroBanner";
 import SectionHeader from "../../components/ui/section/SectionHeader";
 import BookCard from "../../components/ui/cards/BookCard";
 import { useCallback, useEffect, useState } from "react";
-import { getCategorysREQ } from "@/api/category";
+import { useRouter } from "next/navigation";
 import { getElementsMainREQ } from "@/api/element";
-import { LANG_GET_ADMIN } from "@/const/def";
-import { ItemT } from "@/types/table";
 import Loading from "@/components/ui/loading/Loading";
 import { useBranding } from "@/hooks/useBranding";
 
@@ -19,6 +17,8 @@ interface BookItem {
   image: string;
   type: "text" | "video" | "audio";
   typeLabel: string;
+  category_name: string;
+  category_id: string;
 }
 
 const TYPE_LABELS: Record<string, string> = {
@@ -28,77 +28,63 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 export default function Page() {
-  const [books, setBooks] = useState<BookItem[]>([]);
-  const [loading, setLoading] = useState<string | null>("");
+  const router = useRouter();
+  const [groupedBooks, setGroupedBooks] = useState<Record<string, BookItem[]>>(
+    {},
+  );
+  const [loading, setLoading] = useState<boolean>(false);
   const branding = useBranding();
 
   const fetchContent = useCallback(async () => {
-    setLoading("content");
+    setLoading(true);
     try {
-      // Get root categories
-      const categories = (await getCategorysREQ({
-        lang: LANG_GET_ADMIN,
-      })) as unknown as ItemT[];
+      const content = (await getElementsMainREQ()) as unknown as Record<
+        string,
+        unknown
+      >[];
+      if (content?.length) {
+        const groups: Record<string, BookItem[]> = {};
 
-      if (!categories?.length) return;
+        content.forEach((item) => {
+          const contentType = (item.type || "book") as string;
+          const book: BookItem = {
+            id: (item.content_id as string) || (item.id as string) || "",
+            title: (item.title as string) || (item.name as string) || "—",
+            author: (item.author as string) || "—",
+            date: (item.created as string) || "—",
+            image: (item.preview_url as string) || "",
+            category_name: (item.category_name as string) || "Другое",
+            category_id: (item.category_id as string) || "",
+            type: (contentType === "book"
+              ? "text"
+              : contentType) as BookItem["type"],
+            typeLabel: TYPE_LABELS[contentType] || "Матн",
+          };
 
-      const allContent: BookItem[] = [];
+          if (!groups[book.category_name]) {
+            groups[book.category_name] = [];
+          }
+          groups[book.category_name].push(book);
+        });
 
-      // Fetch content (global main content)
-      try {
-        const content = (await getElementsMainREQ()) as unknown as ItemT[];
-        if (content?.length) {
-          const mapped = content.map((item) => {
-            const details = (item.details as { [key: string]: string }) || {};
-            const contentType = (details.type || "book") as string;
-            return {
-              id: item.id as string,
-              title: (item.name as string) || "—",
-              author: details.author || "—",
-              date: (item.created as string)?.split("T")?.[0] || "—",
-              image: details.preview_url || "",
-              type: (contentType === "book"
-                ? "text"
-                : contentType) as BookItem["type"],
-              typeLabel: TYPE_LABELS[contentType] || "Матн",
-            };
-          });
-          allContent.push(...mapped);
-        }
-      } catch (e) {
-        console.error(e);
+        setGroupedBooks(groups);
       }
-
-      setBooks(allContent);
     } catch (e) {
       console.error(e);
     } finally {
-      setLoading(null);
-    }
-  }, []);
-
-  const getCategory = useCallback(async () => {
-    try {
-      const res = await getCategorysREQ({
-        lang: LANG_GET_ADMIN,
-      });
-      console.log(res);
-    } catch (e) {
-      console.error(e);
+      setLoading(false);
     }
   }, []);
 
   useEffect(() => {
     fetchContent();
-    getCategory();
-  }, [fetchContent, getCategory]);
+  }, [fetchContent]);
 
   return (
     <div className="home-page">
       <HeaderHome logo={branding?.logo as string} />
       <div className="home-page__content" style={{ padding: "0 40px" }}>
         <HeroBanner />
-        <SectionHeader title="ХОНАНДАГОН" onViewAll={() => {}} />
         {loading ? (
           <div
             style={{
@@ -111,20 +97,37 @@ export default function Page() {
               styles={{ width: "40px", height: "40px", borderWidth: "5px" }}
             />
           </div>
-        ) : books.length > 0 ? (
-          <div className="book-grid">
-            {books.map((book) => (
-              <BookCard
-                key={book.id}
-                title={book.title}
-                author={book.author}
-                date={book.date}
-                image={book.image}
-                type={book.type}
-                typeLabel={book.typeLabel}
+        ) : Object.keys(groupedBooks).length > 0 ? (
+          Object.entries(groupedBooks).map(([categoryName, books]) => (
+            <div
+              key={categoryName}
+              className="content-home"
+              style={{ marginBottom: "40px" }}
+            >
+              <SectionHeader
+                title={categoryName}
+                onViewAll={() =>
+                  router.push(
+                    `/home/catalog?category_id=${books[0].category_id}`,
+                  )
+                }
               />
-            ))}
-          </div>
+              <div className="book-grid">
+                {books.map((book) => (
+                  <BookCard
+                    key={book.id}
+                    id={book.id}
+                    title={book.title}
+                    author={book.author}
+                    date={book.date}
+                    image={book.image}
+                    type={book.type}
+                    typeLabel={book.typeLabel}
+                  />
+                ))}
+              </div>
+            </div>
+          ))
         ) : (
           <p style={{ textAlign: "center", color: "#888", padding: "40px" }}>
             Контент пока не добавлен

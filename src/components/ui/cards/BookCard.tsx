@@ -1,8 +1,10 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import TypeBadge, { ContentType } from "@/components/elements/badge/TypeBadge";
 
 interface Props {
+  id: string;
   title: string;
   author: string;
   date: string;
@@ -12,6 +14,7 @@ interface Props {
 }
 
 export default function BookCard({
+  id,
   title,
   author,
   date,
@@ -20,10 +23,15 @@ export default function BookCard({
   typeLabel,
 }: Props) {
   return (
-    <div className="book-card">
+    <Link href={`/home/catalog/${id}`} className="book-card">
       <div className="book-card__image">
         {image ? (
-          <Image src={image} alt={title} fill style={{ objectFit: "cover" }} />
+          <Image
+            src={image.startsWith("http") ? image : `/${image}`}
+            alt={title}
+            fill
+            style={{ objectFit: "cover" }}
+          />
         ) : (
           <div
             style={{
@@ -50,6 +58,6 @@ export default function BookCard({
         <p className="book-card__date">{date}</p>
         <TypeBadge type={type} label={typeLabel} />
       </div>
-    </div>
+    </Link>
   );
 }

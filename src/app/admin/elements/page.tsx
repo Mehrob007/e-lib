@@ -92,10 +92,10 @@ export default function Page() {
         <TableItems
           loading={loading}
           styleHeader={{
-            gridTemplateColumns: "150px 1.5fr 1fr 100px 100px 100px",
+            gridTemplateColumns: "200px 1.5fr 1fr 100px 100px 100px",
           }}
           styleTable={{
-            gridTemplateColumns: "150px 1.5fr 1fr 100px 100px 100px",
+            gridTemplateColumns: "200px 1.5fr 1fr 100px 100px 100px",
           }}
           styles={{ height: "calc(100vh - 198px)" }}
           header={HeaderTableELement}

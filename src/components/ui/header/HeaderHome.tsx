@@ -15,7 +15,7 @@ export default function HeaderHome({ logo }: { logo?: string }) {
     <div className="header-home">
       {logo ? (
         <Image
-          src={`/${logo}`}
+          src={logo.startsWith("http") ? logo : `/${logo}`}
           alt="Logo"
           width={40}
           height={40}

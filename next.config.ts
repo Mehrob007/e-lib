@@ -9,6 +9,15 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "squalidly-nonoccult-tori.ngrok-free.dev",
+        pathname: "/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

@@ -1,0 +1,221 @@
+@import "../../../../styles/variables";
+
+.book-details-page {
+  background-color: #fff;
+  min-height: 100vh;
+  max-width: 100% !important;
+  .breadcrumbs-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px 40px;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .back-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #2962ff;
+    color: #fff;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #1e88e5;
+      transform: translateX(-4px);
+    }
+  }
+
+  .breadcrumbs {
+    font-size: 16px;
+    color: #a0a0a0;
+    font-weight: 500;
+
+    span:last-child {
+      color: #333;
+    }
+  }
+
+  .details-content {
+    display: flex;
+    gap: 60px;
+    padding: 0 40px 60px;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .main-column {
+    display: flex;
+    gap: 40px;
+    flex: 1;
+  }
+
+  .cover-section {
+    width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .book-cover {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      background: #e0e0e0;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .description-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      margin-top: 10px;
+      text-align: center;
+    }
+  }
+
+  .info-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-top: 40px;
+
+    .metadata-list {
+      display: flex;
+      flex-direction: column;
+      gap: 50px;
+    }
+
+    .metadata-item {
+      display: flex;
+      gap: 12px;
+      font-size: 18px;
+      line-height: 1.4;
+
+      .label {
+        color: #808080;
+        min-width: 100px;
+      }
+
+      .value {
+        color: #333;
+        font-weight: 600;
+      }
+    }
+
+    .actions-block {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-top: 20px;
+
+      .read-button {
+        background: #fff;
+        color: #333;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 100px;
+        padding: 12px 60px;
+        font-size: 18px;
+        font-weight: 700;
+        transition: all 0.2s ease;
+
+        &:hover {
+          border-color: #2962ff;
+          color: #2962ff;
+          background: #f0f7ff;
+        }
+      }
+
+      .download-btn {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        font-size: 24px;
+        transition: color 0.2s;
+
+        &:hover {
+          color: #2962ff;
+        }
+      }
+    }
+  }
+
+  .sidebar {
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    .sidebar-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      padding: 12px 24px;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 100px;
+      width: fit-content;
+    }
+
+    .related-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .side-book-card {
+      display: flex;
+      gap: 16px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+
+      &:hover {
+        opacity: 0.8;
+      }
+
+      .side-cover {
+        width: 80px;
+        height: 110px;
+        background: #e0e0e0;
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .side-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+
+        h4 {
+          font-size: 14px;
+          font-weight: 700;
+          color: #333;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        p {
+          font-size: 12px;
+          color: #808080;
+        }
+      }
+    }
+  }
+}

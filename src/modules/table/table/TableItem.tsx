@@ -22,7 +22,7 @@ export default function TableItem({
     if (value === null || value === undefined) return "—";
 
     // Handle special "Avatar" column logic for the first column if it's "name" or similar
-    if (index === 0 && key !== "preview_link") {
+    if (index === 0 && key !== "preview_url") {
       return (
         <div className="table__cell-with-icon">
           {personIcon}
@@ -55,23 +55,25 @@ export default function TableItem({
     }
 
     // Handle Images if key matches
-    if (key === "preview_link" && typeof value === "string") {
+    if (key === "preview_url" && typeof value === "string") {
       return (
         <div
           style={{
-            width: "40px",
-            height: "40px",
+            width: "70px",
+            height: "100px",
             position: "relative",
             overflow: "hidden",
             borderRadius: "4px",
-            margin: "0 auto",
+            // margin: "0 auto",
           }}
         >
           <Image
-            src={`/${value}`}
+            src={value.startsWith("http") ? value : `/${value}`}
             alt="Favicon"
-            fill
-            sizes="40px"
+            // fill
+            width={70}
+            height={100}
+            sizes="100px"
             style={{ objectFit: "contain" }}
           />
         </div>

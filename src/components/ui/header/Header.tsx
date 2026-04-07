@@ -9,7 +9,7 @@ export default function Header({ logo }: { logo?: string }) {
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         {logo && (
           <Image
-            src={`/${logo}`}
+            src={logo.startsWith("http") ? logo : `/${logo}`}
             alt="Logo"
             width={40}
             height={40}

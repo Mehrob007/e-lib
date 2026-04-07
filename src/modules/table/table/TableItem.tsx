@@ -14,6 +14,7 @@ export default function TableItem({
   personIcon,
   onClick,
   deleteItem,
+  editItem,
 }: TableItemT) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -21,7 +22,7 @@ export default function TableItem({
     if (value === null || value === undefined) return "—";
 
     // Handle special "Avatar" column logic for the first column if it's "name" or similar
-    if (index === 0 && key !== "preview_url") {
+    if (index === 0 && key !== "preview_link") {
       return (
         <div className="table__cell-with-icon">
           {personIcon}
@@ -54,7 +55,7 @@ export default function TableItem({
     }
 
     // Handle Images if key matches
-    if (key === "preview_url" && typeof value === "string") {
+    if (key === "preview_link" && typeof value === "string") {
       return (
         <div
           style={{
@@ -91,7 +92,11 @@ export default function TableItem({
         <span key={i}>{renderValue(key, data[key], i)}</span>
       ))}
       <div className="table__actions">
-        <button className="action-btn edit" title="Edit">
+        <button
+          onClick={() => editItem && editItem(data?.id as string)}
+          className="action-btn edit"
+          title="Edit"
+        >
           <AiFillEdit />
         </button>
         <button

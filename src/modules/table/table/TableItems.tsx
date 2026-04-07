@@ -2,7 +2,7 @@ import { TableItemsT } from "@/types/table";
 import TableHeader from "./TableHeader";
 import TableItem from "./TableItem";
 import "./Table.css";
-import { GoPlus } from "react-icons/go";
+import { GoPlus, GoChevronLeft, GoChevronRight } from "react-icons/go";
 import Loading from "@/components/ui/loading/Loading";
 
 export default function TableItems({
@@ -48,6 +48,7 @@ export default function TableItems({
                 keys={items.keys}
                 data={e}
                 deleteItem={deleteItem}
+                editItem={editItem}
               />
             ))
           ) : (
@@ -57,11 +58,32 @@ export default function TableItems({
           <Loading />
         )}
       </main>
-      <div className="table__footer" onClick={openModalAdd}>
-        <button className="add-btn">
-          <GoPlus className="add-btn-icon" />
-          Добавить
-        </button>
+      <div className="table__footer">
+        <div className="table__footer-left" onClick={openModalAdd}>
+          <button className="add-btn">
+            <GoPlus className="add-btn-icon" />
+            Добавить
+          </button>
+        </div>
+        <div className="table__pagination">
+          <button
+            className="pagination-btn"
+            onClick={() => setPage && setPage(Math.max(0, (page || 0) - 1))}
+            disabled={page === 0}
+          >
+            <GoChevronLeft />
+          </button>
+          <span className="pagination-info">Страница {(page || 0) + 1}</span>
+          <button
+            className="pagination-btn"
+            onClick={() => setPage && setPage((page || 0) + 1)}
+            disabled={
+              items?.data ? items.data.length < 25 : true
+            }
+          >
+            <GoChevronRight />
+          </button>
+        </div>
       </div>
     </div>
   );

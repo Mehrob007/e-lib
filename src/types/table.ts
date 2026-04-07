@@ -52,4 +52,5 @@ export interface TableItemT {
   personIcon?: ReactElement;
   onClick?: (data: folderLine) => void;
   deleteItem?: (id: string) => void;
+  editItem?: (id: string) => void;
 }

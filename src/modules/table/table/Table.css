@@ -129,20 +129,60 @@
   position: sticky;
   bottom: 0;
   background-color: #fff;
-  padding: 16px 24px;
+  padding: 8px 24px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--table-border);
+}
 
+.table__footer-left {
+  display: flex;
+  align-items: center;
   transition: all 0.2s;
   cursor: pointer;
-}
-.table__footer:hover > .add-btn {
-  /* color: #fff !important; */
+  padding: 8px 12px;
+  border-radius: 4px;
 }
 
-.table__footer:hover {
+.table__footer-left:hover {
   background-color: #e3f2fd;
-  /* color: #fff !important; */
+}
+
+.table__pagination {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pagination-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid var(--table-border);
+  background-color: #fff;
+  color: var(--table-text-main);
+  transition: all 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  border-color: var(--table-primary);
+  color: var(--table-primary);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--table-text-secondary);
 }
 
 .add-btn {

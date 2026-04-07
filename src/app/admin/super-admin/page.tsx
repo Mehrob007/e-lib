@@ -3,7 +3,7 @@ import { HeaderTableUser } from "@/const/table";
 import { ItemT } from "@/types/table";
 import { useCallback, useEffect, useState } from "react";
 import TableItems from "@/modules/table/table/TableItems";
-import { getUsersREQ } from "@/api/user";
+import { deleteUserById, getUsersREQ } from "@/api/user";
 import ModalUser from "@/components/ui/modal/Modal";
 import { FaUserCircle } from "react-icons/fa";
 
@@ -13,6 +13,26 @@ export default function Specialty() {
   const [data, setData] = useState<ItemT[] | null>(null);
   // const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<ItemT | null>(null);
+
+  const deleteItem = async (id: string) => {
+    try {
+      await deleteUserById(id);
+      fetchData().then((d) => {
+        if (d) setData(d);
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const editItem = (id: string) => {
+    const user = data?.find((u) => u.id === id);
+    if (user) {
+      setEditingUser(user);
+      setIsModalOpen(true);
+    }
+  };
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -50,14 +70,20 @@ export default function Specialty() {
             page={page}
             openModalAdd={() => setIsModalOpen(true)}
             personIcon={<FaUserCircle className="table__cell-avatar" />}
+            deleteItem={deleteItem}
+            editItem={editItem}
           />
         }
       </div>
 
       {isModalOpen && (
         <ModalUser
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            setEditingUser(null);
+          }}
           onSuccess={fetchData}
+          editUser={editingUser || undefined}
         />
       )}
     </>

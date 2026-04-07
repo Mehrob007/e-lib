@@ -22,15 +22,20 @@ export const apiClient = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "1",
   },
 });
 
-// Добавляем Authorization перед каждым запросом
 apiClient.interceptors.request.use((config) => {
   const token = getToken();
+
+  config.headers = config.headers ?? {};
+  config.headers["ngrok-skip-browser-warning"] = "1";
+
   if (token && !config.headers.Authorization) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
   return config;
 });
 

@@ -1,5 +1,6 @@
 "use client";
-import { postUserREQ } from "@/api/user";
+import { ItemT } from "@/types/table";
+import { editUserById, postUserREQ } from "@/api/user";
 import Input from "@/components/elements/input/Input";
 import { useFormStore } from "@/hooks/useFormStore";
 import { useEffect, useState } from "react";
@@ -10,27 +11,38 @@ import "./Modal.css";
 interface Props {
   onClose: () => void;
   onSuccess: () => void;
+  editUser?: ItemT;
 }
 
-export default function ModalUser({ onClose, onSuccess }: Props) {
+export default function ModalUser({ onClose, onSuccess, editUser }: Props) {
   const { errors, data, setData, validate, setClear } = useFormStore();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setClear();
-  }, [setClear]);
+    if (editUser) {
+      setData("username", editUser.username);
+      setData("phone_number", editUser.phone_number);
+      setData("password", editUser.password || "");
+    } else {
+      setClear();
+    }
+  }, [editUser, setData, setClear]);
 
   const onSend = async () => {
     const valid = validate({
       username: { required: true },
       phone_number: { required: true },
-      pussword: { required: true },
+      password: { required: true },
     });
 
     if (!valid) return;
     setLoading(true);
     try {
-      await postUserREQ(data);
+      if (editUser) {
+        await editUserById(editUser.id, data);
+      } else {
+        await postUserREQ(data);
+      }
       onSuccess();
       onClose();
     } catch (e) {
@@ -60,7 +72,7 @@ export default function ModalUser({ onClose, onSuccess }: Props) {
         }}
       >
         <header className="modal__header">
-          <h2>Добавление</h2>
+          <h2>{editUser ? "Изменение" : "Добавление"}</h2>
           <button className="modal__close" onClick={onClose}>
             <LuX size={18} />
           </button>
@@ -72,7 +84,7 @@ export default function ModalUser({ onClose, onSuccess }: Props) {
               id="username"
               title="Имя"
               placeholder="Введите имя"
-              value={data?.name as string}
+              value={(data?.username as string) || ""}
               onChange={(v) => setData("username", v)}
               errors={errors}
             />
@@ -80,7 +92,7 @@ export default function ModalUser({ onClose, onSuccess }: Props) {
               id="phone_number"
               title="Логин"
               placeholder="Введите логин"
-              value={data?.code as string}
+              value={(data?.phone_number as string) || ""}
               onChange={(v) => setData("phone_number", v)}
               errors={errors}
             />
@@ -88,7 +100,7 @@ export default function ModalUser({ onClose, onSuccess }: Props) {
               id="password"
               title="Пароль"
               placeholder="Введите пароль"
-              value={data?.code as string}
+              value={(data?.password as string) || ""}
               onChange={(v) => setData("password", v)}
               errors={errors}
             />

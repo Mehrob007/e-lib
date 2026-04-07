@@ -291,16 +291,16 @@ button {
     > svg {
       cursor: pointer;
     }
-    > h1 {
-      color: $white;
-      font-family: $font-family-2;
-      font-weight: 500;
-      font-style: Medium;
-      font-size: 32px;
-      line-height: 160%;
-      letter-spacing: 0.34px;
-      vertical-align: middle;
-    }
+  }
+   h1 {
+    color: $white;
+    font-family: $font-family-2;
+    font-weight: 500;
+    font-style: Medium;
+    font-size: 32px;
+    line-height: 160%;
+    letter-spacing: 0.34px;
+    vertical-align: middle;
   }
   > div {
     display: flex;
@@ -586,7 +586,7 @@ button {
         color: #666;
         font-weight: 700;
         margin: 0;
-        transition: color .2s;
+        transition: color 0.2s;
         &:hover {
           color: #333;
         }

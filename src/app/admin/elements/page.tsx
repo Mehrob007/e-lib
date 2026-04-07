@@ -1,24 +1,31 @@
 "use client";
-import { getElementsREQ } from "@/api/element";
+import {
+  deleteElementById,
+  getContentById,
+  getCategoryContentREQ,
+} from "@/api/element";
 import ModalELement from "@/components/ui/modal/ModalElement/ModalElement";
 import { HeaderTableELement } from "@/const/table";
 import TableItems from "@/modules/table/table/TableItems";
 import { ItemT } from "@/types/table";
 import { useCallback, useEffect, useState } from "react";
 import Header from "./Header";
-
 export default function Page() {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ItemT[] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [category, setCategory] = useState<ItemT>();
+  const [editingItem, setEditingItem] = useState<ItemT | null>(null);
 
   const fetchData = useCallback(async () => {
     if (!category?.id) return null;
     setLoading(true);
     try {
-      const res = await getElementsREQ(category.id as string);
+      const res = await getCategoryContentREQ(category.id as string, {
+        _limit: 25,
+        _offset: page * 25,
+      });
       // Flatten details into top-level fields for table display
       const items = (res as unknown as ItemT[])?.map((item) => {
         const details =
@@ -35,7 +42,32 @@ export default function Page() {
     } finally {
       setLoading(false);
     }
-  }, [category]);
+  }, [category, page]);
+
+  const deleteItem = async (id: string) => {
+    try {
+      const res = await deleteElementById(id);
+      if (res) {
+        fetchData().then((d) => {
+          if (d) setData(d);
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const editItem = async (id: string) => {
+    try {
+      const res = await getContentById(id);
+      if (res) {
+        setEditingItem(res);
+        setIsModalOpen(true);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   useEffect(() => {
     if (category) {
@@ -50,14 +82,20 @@ export default function Page() {
   return (
     <>
       <div className="elements__content">
-        <Header setCategory={setCategory} category={category} />
+        <Header
+          setCategory={(c) => {
+            setCategory(c);
+            setPage(0);
+          }}
+          category={category}
+        />
         <TableItems
           loading={loading}
           styleHeader={{
-            gridTemplateColumns: "80px 1.5fr 1fr 100px 100px 100px",
+            gridTemplateColumns: "150px 1.5fr 1fr 100px 100px 100px",
           }}
           styleTable={{
-            gridTemplateColumns: "80px 1.5fr 1fr 100px 100px 100px",
+            gridTemplateColumns: "150px 1.5fr 1fr 100px 100px 100px",
           }}
           styles={{ height: "calc(100vh - 198px)" }}
           header={HeaderTableELement}
@@ -68,14 +106,20 @@ export default function Page() {
           setPage={setPage}
           page={page}
           openModalAdd={() => setIsModalOpen(true)}
+          deleteItem={deleteItem}
+          editItem={editItem}
         />
       </div>
 
       {isModalOpen && (
         <ModalELement
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            setEditingItem(null);
+          }}
           onSuccess={fetchData}
           defPather={category}
+          editItem={editingItem || undefined}
         />
       )}
     </>

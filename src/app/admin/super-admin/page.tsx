@@ -8,7 +8,7 @@ import ModalUser from "@/components/ui/modal/Modal";
 import { FaUserCircle } from "react-icons/fa";
 
 export default function Specialty() {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ItemT[] | null>(null);
   // const [search, setSearch] = useState("");
@@ -26,7 +26,6 @@ export default function Specialty() {
       setLoading(false);
     }
   }, []);
-
 
   useEffect(() => {
     fetchData().then((d) => {

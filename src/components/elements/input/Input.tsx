@@ -27,7 +27,6 @@ export default function Input({
       {type === "phone" ? (
         <ReactInputMask
           mask="99-999-99-99"
-          maskChar="___"
           value={value}
           onChange={handleSubmit}
           type="tel"

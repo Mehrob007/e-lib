@@ -36,7 +36,7 @@ export default function CatalogPage() {
   const [activeSubCategoryId, setActiveSubCategoryId] = useState<string>("");
   const [content, setContent] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const limit = 10;
 

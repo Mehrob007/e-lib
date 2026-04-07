@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 import { IoFolderOpen } from "react-icons/io5";
 
 export default function Page() {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [folderLine, _setFolderLine] = useState<folderLine[] | null>(() => {
     if (typeof window === "undefined") return null;

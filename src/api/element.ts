@@ -126,3 +126,33 @@ export const confirmUploadREQ = async (file_url: string) => {
     console.error(e);
   }
 };
+
+export const deleteElementById = async (id: string) => {
+  try {
+    const res = await apiClient.delete("admin/delete_content/" + id);
+    return res.data;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const editElementById = async (
+  id: string,
+  data: Record<string, unknown>,
+) => {
+  try {
+    const res = await apiClient.patch("admin/update_content/" + id, data);
+    return res.data;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const getContentById = async (id: string) => {
+  try {
+    const res = await apiClient("/library/content/" + id);
+    return res.data;
+  } catch (e) {
+    console.error(e);
+  }
+};

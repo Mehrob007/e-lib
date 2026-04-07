@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import Header from "./Header";
 
 export default function Page() {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ItemT[] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

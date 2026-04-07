@@ -66,6 +66,8 @@ export const putFileREQ = async (url: string, file: File) => {
       body: file,
       headers: {
         "Content-Type": file.type,
+        // "Content-Type": file.type,  "application/octet-stream",
+        "ngrok-skip-browser-warning": "1",
       },
     });
     if (!res.ok) throw new Error("Upload failed");

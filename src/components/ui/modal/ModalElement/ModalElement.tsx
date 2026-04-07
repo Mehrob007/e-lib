@@ -3,6 +3,7 @@ import { useFormStore } from "@/hooks/useFormStore";
 import { useEffect, useState } from "react";
 import { LuCheck, LuX } from "react-icons/lu";
 import {
+  editElementById,
   getPresignedUrlREQ,
   postSaveContentREQ,
   putFileREQ,
@@ -16,9 +17,15 @@ interface Props {
   onClose: () => void;
   onSuccess: () => void;
   defPather?: ItemT;
+  editItem?: ItemT;
 }
 
-export default function ModalELement({ onClose, onSuccess, defPather }: Props) {
+export default function ModalELement({
+  onClose,
+  onSuccess,
+  defPather,
+  editItem,
+}: Props) {
   const { data, setData, validate, setClear } = useFormStore();
   const [loading, setLoading] = useState<string | null>("");
   const [stage, setStage] = useState(0);
@@ -65,64 +72,82 @@ export default function ModalELement({ onClose, onSuccess, defPather }: Props) {
     if (!valid) return;
 
     // Extract branch_id (deepest selected branch, UUID only)
-    let branchId = "";
-    let highestIndex = 0;
-    Object.keys(data).forEach((key) => {
-      if (key.startsWith("branch")) {
-        const index = parseInt(key.replace("branch", ""), 10);
-        if (index > highestIndex && data[key]) {
-          highestIndex = index;
-          branchId = (data[key] as string).split("|")[0];
-        }
-      }
-    });
-
+    let branchId = editItem?.branch_id || "";
     if (!branchId) {
+      let highestIndex = 0;
+      Object.keys(data).forEach((key) => {
+        if (key.startsWith("branch")) {
+          const index = parseInt(key.replace("branch", ""), 10);
+          if (index > highestIndex && data[key]) {
+            highestIndex = index;
+            branchId = (data[key] as string).split("|")[0];
+          }
+        }
+      });
+    }
+
+    if (!branchId && !editItem) {
       console.error("No branch selected");
       return;
     }
 
     const file = data.file as File;
-    if (!file) {
-      console.error("No file selected");
-      return;
-    }
+    const coverFile = data.photo as File;
 
     setLoading("upload");
     try {
-      // Step 1: Get Presigned URL
-      const presignedData = await getPresignedUrlREQ(branchId, file.name);
-      if (!presignedData) throw new Error("Failed to get presigned URL");
+      let fileUrl = editItem?.file_url;
+      let previewUrl = editItem?.preview_url;
+      let type = editItem?.details?.type;
 
-      // Step 2: Upload file to MinIO
-      setLoading("uploading");
-      await putFileREQ(presignedData.upload_url, file);
+      if (file || coverFile) {
+        setLoading("uploading");
+        const presignedData = await getPresignedUrlREQ(
+          branchId,
+          file?.name || "file",
+        );
+        if (!presignedData) throw new Error("Failed to get presigned URL");
 
-      // Step 3: Upload preview (cover) if preview_upload_url is available
-      const coverFile = data.photo as File;
-      if (coverFile && presignedData.preview_upload_url) {
-        setLoading("uploading_preview");
-        await putFileREQ(presignedData.preview_upload_url, coverFile);
+        if (file) {
+          await putFileREQ(presignedData.upload_url, file);
+          fileUrl = presignedData.file_url;
+          type = presignedData.type as string;
+        }
+
+        if (coverFile && presignedData.preview_upload_url) {
+          setLoading("uploading_preview");
+          await putFileREQ(presignedData.preview_upload_url, coverFile);
+          previewUrl = presignedData.preview_url;
+        }
       }
 
       // Step 4: Save metadata to DB
       setLoading("saving");
+
+      const editDetails = (editItem?.details as Record<string, any>) || {};
+
       const payload = {
         branch_id: branchId,
-        name: data.name,
+        name: data.name as string,
         details: {
-          type: presignedData?.type,
-          author: data.author || "",
-          pages: data.pages || "",
-          created: data.created || "",
-          annotation: data.annotation || "",
-          lang_id: data.lang_id || "",
-          file_url: presignedData.file_url,
-          preview_url: presignedData.preview_url,
+          type: type || editDetails.type || "",
+          author: (data.author as string) || "",
+          pages: (data.pages as string) || "",
+          created: (data.created as string) || "",
+          annotation: (data.annotation as string) || "",
+          lang_id: (data.lang_id as string) || "",
+          file_url: fileUrl as string,
+          preview_url: previewUrl as string,
         },
       };
 
-      await postSaveContentREQ(payload);
+      console.log("payload save content", payload);
+
+      if (editItem?.id) {
+        await editElementById(editItem.id as string, payload);
+      } else {
+        await postSaveContentREQ(payload);
+      }
 
       onSuccess();
       onClose();
@@ -133,12 +158,29 @@ export default function ModalELement({ onClose, onSuccess, defPather }: Props) {
   };
 
   useEffect(() => {
-    setClear();
-  }, [setClear]);
-
-  useEffect(() => {
-    setData("type", "");
-  }, [setData]);
+    if (editItem) {
+      // Pre-fill form for editing
+      const details = (editItem.details as Record<string, any>) || {};
+      setData("name", editItem.name as string);
+      setData("author", (editItem.author || details.author || "") as string);
+      setData("pages", (editItem.pages || details.pages || "") as string);
+      setData("created", (editItem.created || details.created || "") as string);
+      setData(
+        "annotation",
+        (editItem.annotation || details.annotation || "") as string,
+      );
+      setData("lang_id", (editItem.lang_id || details.lang_id || "") as string);
+      setData(
+        "photo_preview",
+        (editItem.preview_url || details.preview_url || "") as string,
+      );
+      setData("type", (editItem.type || details.type || "") as string);
+      setStage(2); // Go directly to data stage for editing
+    } else {
+      setClear();
+      setData("type", "");
+    }
+  }, [editItem, setData, setClear]);
 
   return (
     <motion.div
@@ -160,7 +202,7 @@ export default function ModalELement({ onClose, onSuccess, defPather }: Props) {
         }}
       >
         <header className="modal__header">
-          <h2>Добавление</h2>
+          <h2>{editItem ? "Изменение" : "Добавление"}</h2>
           <button className="modal__close" onClick={onClose}>
             <LuX size={18} />
           </button>

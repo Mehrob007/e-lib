@@ -37,21 +37,23 @@ export default function HeaderHome({ logo }: { logo?: string }) {
         </span>
         <SearchInput onSearch={() => {}} />
       </nav>
-      <Select
-        labelStyle={{ minWidth: "200px", maxWidth: "200px" }}
-        inputStyle={{ width: "auto", margin: 0 }}
-        // key={"lang_select"}
-        id={"lang_select"}
-        // title={""}
-        value={""}
-        onChange={() => {}}
-        options={[
-          { label: "Тоҷикӣ", value: "tj" },
-          { label: "Русский", value: "ru" },
-          { label: "English", value: "en" },
-        ]}
-        placeholder={""}
-      />
+      <div className="header-home__select">
+        <Select
+          labelStyle={{ minWidth: "auto", maxWidth: "200px" }}
+          inputStyle={{ width: "auto", margin: 0 }}
+          // key={"lang_select"}
+          id={"lang_select"}
+          // title={""}
+          value={""}
+          onChange={() => {}}
+          options={[
+            { label: "Тоҷикӣ", value: "tj" },
+            { label: "Русский", value: "ru" },
+            { label: "English", value: "en" },
+          ]}
+          placeholder={""}
+        />
+      </div>
     </div>
   );
 }

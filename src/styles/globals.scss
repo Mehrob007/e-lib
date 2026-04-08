@@ -583,6 +583,7 @@ button {
     }
   }
 }
+
 .home-page__content {
   display: flex;
   justify-content: space-between;
@@ -733,6 +734,10 @@ button {
     color: #1e88e5;
     text-transform: uppercase;
     letter-spacing: 1px;
+
+    @media (max-width: 768px) {
+      font-size: 20px;
+    }
   }
 
   &__all {
@@ -754,6 +759,10 @@ button {
       background: #f0f7ff;
     }
 
+    @media (max-width: 768px) {
+      padding: 6px 14px;
+      font-size: 14px;
+    }
     svg {
       font-size: 20px;
     }
@@ -763,9 +772,7 @@ button {
 // Book Card & Grid
 .book-grid {
   display: flex;
-  // grid-template-columns: repeat(auto-fill, minmax(200px, 6fr));
   gap: 30px;
-
   margin-bottom: 60px;
 }
 
@@ -1144,5 +1151,351 @@ button {
     font-size: 16px;
     color: #333;
     font-weight: 500;
+  }
+}
+
+/* Premium Adaptive Design - Antigravity Style */
+
+@media (max-width: 1024px) {
+  .header-home {
+    gap: 40px;
+    padding: 0 40px;
+  }
+  .hero-banner {
+    padding: 0 40px;
+    height: 320px;
+    &__text h1 {
+      font-size: 48px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .header-home {
+    height: auto;
+    padding: 12px 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+
+    > nav {
+      order: 3;
+      width: 100%;
+      height: auto;
+      flex-direction: column;
+      gap: 12px;
+
+      > span {
+        display: none;
+      }
+    }
+
+    .header-home__select {
+      order: 2;
+      .select__arrow {
+        display: none !important;
+      }
+    }
+  }
+
+  .search-input {
+    width: 100% !important;
+    height: 48px;
+    margin-top: 8px;
+    box-shadow: 0 4px 20px rgba(41, 98, 255, 0.1);
+
+    > input {
+      padding: 0 20px;
+      font-size: 15px;
+    }
+
+    > button {
+      padding: 0 20px;
+      font-size: 15px;
+    }
+  }
+
+  .home-page__content {
+    padding: 0 16px !important;
+  }
+
+  .hero-banner {
+    height: auto;
+    padding: 40px 24px;
+    margin: 12px 0 32px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
+    box-shadow: 0 12px 40px rgba(25, 118, 210, 0.2);
+
+    &__content {
+      flex-direction: column;
+      text-align: left;
+      align-items: flex-start;
+      padding: 0 !important;
+    }
+
+    &__text {
+      h1 {
+        font-size: 32px;
+        line-height: 1.2;
+        letter-spacing: -0.5px;
+      }
+      p {
+        font-size: 16px;
+        opacity: 0.85;
+        margin-top: 8px;
+      }
+    }
+
+    &__image {
+      display: none;
+    }
+    &__nav {
+      display: none;
+    }
+    &__pagination {
+      bottom: 16px;
+      right: 24px;
+    }
+  }
+
+  .section-header {
+    margin-bottom: 24px;
+    &__title {
+      font-size: 20px;
+    }
+    &__all {
+      padding: 6px 16px;
+      font-size: 14px;
+      background: rgba(41, 98, 255, 0.05);
+      border-color: rgba(41, 98, 255, 0.1);
+    }
+  }
+
+  .book-grid {
+    gap: 16px;
+    margin: 0 auto;
+    margin-bottom: 40px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    // margin-left: -16px;
+    // margin-right: -16px;
+    // padding-left: 16px;
+    // padding-right: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+
+    // Fallback for grid-style layouts
+    display: flex !important;
+    grid-template-columns: none !important;
+  }
+
+  .book-card {
+    width: 150px !important;
+    scroll-snap-align: start;
+
+    &__image {
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    &__title {
+      font-size: 15px;
+    }
+    &__author {
+      font-size: 13px;
+    }
+    &__date {
+      font-size: 11px;
+    }
+  }
+
+  /* Catalog Page Adaptation - Tiered Horizontal Navigation (Convenient) */
+  .catalog-page {
+    .catalog-top-bar {
+      justify-content: flex-start;
+      padding: 0 16px;
+      gap: 20px;
+      overflow-x: auto;
+      height: 54px;
+      border-bottom: 1px solid #f0f0f0;
+      background: #fff;
+      scrollbar-width: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      &__item {
+        white-space: nowrap;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 12px 0;
+        text-transform: uppercase;
+        color: #888;
+        &.active {
+          color: #2962ff;
+        }
+      }
+    }
+
+    .catalog-page__content {
+      flex-direction: column !important;
+      padding: 0 !important;
+      gap: 0 !important;
+    }
+
+    .catalog-side-nav {
+      width: 100% !important;
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: wrap !important;
+      background: #fff;
+      padding: 0 !important;
+      border-bottom: 1px solid #eee;
+      overflow-x: auto;
+      scrollbar-width: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      &__wrapper {
+        display: contents !important;
+      }
+
+      &__item:not(.nested) {
+        order: 1;
+        flex-shrink: 0;
+        padding: 12px 16px;
+
+        .catalog-side-nav__link {
+          font-size: 15px;
+          font-weight: 700;
+          text-transform: uppercase;
+          gap: 8px;
+          color: #333;
+          display: flex;
+          align-items: center;
+
+          svg {
+            color: #2962ff !important;
+            width: 20px;
+            height: 20px;
+          }
+
+          .catalog-side-nav__arrow-wrapper {
+            margin-left: 4px;
+            color: #ccc;
+            &.expanded {
+              transform: rotate(180deg);
+              color: #2962ff;
+            }
+          }
+        }
+
+        &.active {
+          background: rgba(41, 98, 255, 0.05);
+          .catalog-side-nav__link {
+            color: #2962ff;
+          }
+        }
+      }
+
+      &__children {
+        order: 10;
+        width: 100% !important;
+        flex: 0 0 100%;
+        display: flex !important;
+        flex-direction: row !important;
+        overflow-x: auto;
+        background: #fcfdfe;
+        padding: 12px 16px !important;
+        gap: 12px;
+        border-top: 1px solid #f0f0f0;
+        scrollbar-width: none;
+        &::-webkit-scrollbar {
+          display: none;
+        }
+
+        .catalog-side-nav__wrapper.nested {
+          display: flex !important;
+          flex-shrink: 0;
+        }
+
+        .catalog-side-nav__item {
+          order: 0;
+          padding: 8px 16px !important;
+          background: #fff !important;
+          border: 1px solid #e0e0e0 !important;
+          border-radius: 50px !important;
+          min-width: unset !important;
+
+          .catalog-side-nav__link {
+            font-size: 14px;
+            text-transform: none;
+            font-weight: 500;
+            color: #666;
+            padding: 0;
+            svg:not(.catalog-side-nav__arrow) {
+              display: none !important;
+            }
+            .catalog-side-nav__arrow-wrapper {
+              display: none !important;
+            }
+          }
+
+          &.active {
+            border-color: #2962ff !important;
+            background: rgba(41, 98, 255, 0.05) !important;
+            .catalog-side-nav__link {
+              color: #2962ff;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+    }
+
+    .catalog-page__main {
+      padding: 16px !important;
+      width: 100% !important;
+      margin: 0 !important;
+
+      @media (max-width: 1024px) {
+        padding-left: 16px !important;
+      }
+
+      .catalog-controls {
+        justify-content: flex-end;
+        margin-bottom: 16px;
+      }
+
+      .book-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 16px;
+        min-height: auto;
+        padding: 0 !important;
+        margin: 0 !important;
+
+        .book-card {
+          width: 100% !important;
+        }
+      }
+    }
+  }
+
+  .pagination {
+    padding: 24px 0;
+    justify-content: center;
   }
 }

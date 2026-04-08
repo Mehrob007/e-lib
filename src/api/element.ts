@@ -21,7 +21,15 @@ export const getCategoryContentREQ = async (
 ) => {
   try {
     const res = await apiClient(`library/category/${id}/content`, { params });
-    return res.data;
+    return {
+      data: res.data,
+      total:
+        parseInt(res.headers["x-total-count"] || "0") ||
+        (res.data?.length === (params?._limit || 10)
+          ? 1000
+          : res.data?.length || 0),
+      // Fallback: if we can't get total, we use a large number if we have a full page, else current length
+    };
   } catch (e) {
     console.error(e);
   }

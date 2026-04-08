@@ -49,6 +49,7 @@ function CatalogContent() {
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
+  const [hasNextPage, setHasNextPage] = useState(true);
   const searchParams = useSearchParams();
   const categoryIdParam = searchParams.get("category_id");
   const limit = 10;
@@ -115,9 +116,10 @@ function CatalogContent() {
           _offset: (page - 1) * limit,
         });
 
-        if (res) {
-          const mapped = (res as unknown as any[]).map((item) => {
-            const details = (item.details as { [key: string]: string }) || {};
+        if (res && res.data) {
+          const rawData = res.data as Record<string, unknown>[];
+          const mapped: ContentItem[] = rawData.map((item) => {
+            const details = (item.details as Record<string, string>) || {};
             const contentType = (details.type || "book") as string;
             return {
               id: item.id as string,
@@ -132,7 +134,8 @@ function CatalogContent() {
             };
           });
           setContent(mapped);
-          setTotalItems(2830); // Placeholder total count based on screenshot (283 * 10)
+          setHasNextPage(mapped.length === limit);
+          if (res.total) setTotalItems(res.total);
         }
       } catch (e) {
         console.error(e);
@@ -140,7 +143,7 @@ function CatalogContent() {
         setLoading(false);
       }
     },
-    [page],
+    [page, limit],
   );
 
   useEffect(() => {
@@ -205,7 +208,7 @@ function CatalogContent() {
             <>
               <div className="book-grid">
                 {content.map((book) => (
-                  <BookCard key={book.id} {...book} />
+                  <BookCard showType={false} key={book.id} {...book} />
                 ))}
               </div>
 
@@ -222,7 +225,7 @@ function CatalogContent() {
                 </span>
                 <button
                   className="pagination__btn"
-                  disabled={page * limit >= totalItems}
+                  disabled={!hasNextPage}
                   onClick={() => setPage((p) => p + 1)}
                 >
                   <LuChevronRight size={24} />

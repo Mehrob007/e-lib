@@ -33,6 +33,7 @@ export default function ModalCategory({
     setLoading(true);
     try {
       await postCategoryREQ({
+        mime: data?.mime || 'branch',
         ...data,
         ...(parentId && { _parent_id: parentId }),
       });
@@ -80,6 +81,39 @@ export default function ModalCategory({
 
         <div className="modal__form">
           <div className="modal__grid">
+            <div className="modal__mime">
+              <span>Тип категории</span>
+              <div className="modal__mime-btns">
+                <button
+                  type="button"
+                  className={`modal__mime-btn ${(!data?.mime || data?.mime === 'branch') ? 'active' : ''}`}
+                  onClick={() => setData("mime", "branch")}
+                >
+                  Проводник
+                </button>
+                <button
+                  type="button"
+                  className={`modal__mime-btn ${data?.mime === 'book' ? 'active' : ''}`}
+                  onClick={() => setData("mime", "book")}
+                >
+                  Книга
+                </button>
+                <button
+                  type="button"
+                  className={`modal__mime-btn ${data?.mime === 'video' ? 'active' : ''}`}
+                  onClick={() => setData("mime", "video")}
+                >
+                  Видео
+                </button>
+                <button
+                  type="button"
+                  className={`modal__mime-btn ${data?.mime === 'audio' ? 'active' : ''}`}
+                  onClick={() => setData("mime", "audio")}
+                >
+                  Аудио
+                </button>
+              </div>
+            </div>
             <Input
               id="tj_name"
               title="Таджикский"

@@ -3,7 +3,6 @@
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, useRef } from "react";
 import { getContentById } from "@/api/element";
-import { Document, Page, pdfjs } from "react-pdf";
 import axios from "axios";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -11,10 +10,14 @@ import { IoArrowBack } from "react-icons/io5";
 import { HiOutlinePlus, HiOutlineMinus } from "react-icons/hi";
 import { HiOutlineArrowLeft, HiOutlineArrowRight } from "react-icons/hi2";
 import Loading from "@/components/ui/loading/Loading";
+import dynamic from "next/dynamic";
 import "./reader.scss";
 
-// Set up pdfjs worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// Dynamically import the PDF content renderer without SSR
+const ReaderContent = dynamic(() => import("./ReaderContent"), {
+  ssr: false,
+  loading: () => <Loading />,
+});
 
 export default function BookReaderPage() {
   const { id } = useParams();
@@ -91,7 +94,7 @@ export default function BookReaderPage() {
     <div className="reader-page">
       <header className="reader-header">
         <button className="back-btn" onClick={() => router.back()}>
-          <IoArrowBack /> Баргаштан
+          <IoArrowBack /> <span>Баргаштан</span>
         </button>
         <h1>{title}</h1>
         <div className="zoom-controls">
@@ -113,24 +116,18 @@ export default function BookReaderPage() {
       </header>
 
       <main className="reader-viewport" ref={viewportRef}>
-        <div className="pdf-container">
-          {pdfData ? (
-            <Document
-              file={{ data: pdfData }}
-              onLoadSuccess={onDocumentLoadSuccess}
-              loading={<Loading />}
-            >
-              <Page
-                pageNumber={pageNumber}
-                scale={scale}
-                renderAnnotationLayer={false}
-                renderTextLayer={true}
-              />
-            </Document>
-          ) : (
+        {pdfData ? (
+          <ReaderContent
+            pdfData={pdfData}
+            pageNumber={pageNumber}
+            scale={scale}
+            onDocumentLoadSuccess={onDocumentLoadSuccess}
+          />
+        ) : (
+          <div className="pdf-container">
             <div style={{ padding: "100px" }}>Файл ёфт нашуд</div>
-          )}
-        </div>
+          </div>
+        )}
       </main>
 
       <footer className="reader-footer">
@@ -140,7 +137,7 @@ export default function BookReaderPage() {
             onClick={() => changePage(-1)}
             disabled={pageNumber <= 1}
           >
-            <HiOutlineArrowLeft /> Ба қафо
+            <HiOutlineArrowLeft /> <span>Ба қафо</span>
           </button>
           <div className="page-badge">{pageNumber}</div>
           <button
@@ -148,7 +145,7 @@ export default function BookReaderPage() {
             onClick={() => changePage(1)}
             disabled={pageNumber >= numPages}
           >
-            Ба пеш <HiOutlineArrowRight />
+            <span>Ба пеш</span> <HiOutlineArrowRight />
           </button>
         </div>
         <div className="progress-section">

@@ -27,7 +27,7 @@ export default function Page() {
         _offset: page * 25,
       });
       // Flatten details into top-level fields for table display
-      const items = (res as unknown as ItemT[])?.map((item) => {
+      const items = (res?.data as unknown as ItemT[])?.map((item) => {
         const details =
           (item.details as { [key: string]: string | number }) || {};
         return {

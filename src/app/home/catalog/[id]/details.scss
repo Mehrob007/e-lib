@@ -218,4 +218,137 @@
       }
     }
   }
+
+  @media (max-width: 768px) {
+    .breadcrumbs-container {
+      padding: 16px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+
+      .breadcrumbs {
+        font-size: 13px;
+        order: -1;
+      }
+
+      .back-button {
+        padding: 6px 16px;
+        font-size: 13px;
+      }
+    }
+
+    .details-content {
+      flex-direction: column;
+      padding: 0 16px 40px;
+      gap: 32px;
+    }
+
+    .main-column {
+      flex-direction: row; // Cover left, meta right as in photo
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .cover-section {
+      width: 140px; // Small cover on left
+      gap: 12px;
+
+      .book-cover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .description-title {
+        display: block;
+        font-size: 18px;
+        text-align: left;
+        margin-top: 16px;
+        width: 100vw; // Force below the cover/meta row if needed?
+        // Actually, we want it below BOTH cover and meta.
+        order: 10;
+      }
+      .description-text {
+        order: 11;
+        width: 100vw;
+        color: #666;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+    }
+
+    .info-section {
+      padding-top: 0;
+      flex: 1;
+      gap: 16px;
+
+      .metadata-list {
+        gap: 12px;
+      }
+
+      .metadata-item {
+        font-size: 15px;
+        gap: 8px;
+        .label {
+          min-width: 80px;
+        }
+      }
+
+      .actions-block {
+        gap: 12px;
+
+        .read-button {
+          padding: 10px 24px;
+          font-size: 15px;
+          flex: 1;
+        }
+      }
+    }
+
+    .sidebar {
+      width: 100%;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 32px;
+      gap: 20px;
+
+      .sidebar-title {
+        font-size: 24px;
+        border: none;
+        padding: 0;
+        width: 100%;
+        text-align: center;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .related-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .side-book-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+        .side-cover {
+          width: 100%;
+          aspect-ratio: 3 / 4;
+          height: auto;
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .side-info {
+          padding-top: 8px;
+          h4 {
+            font-size: 14px;
+            margin-bottom: 2px;
+          }
+          p {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
 }

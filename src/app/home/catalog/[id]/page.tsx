@@ -67,9 +67,11 @@ export default function BookDetailsPage() {
 
         // Fetch related books from the same category
         if (bookData.categoryId) {
-          const relatedRes = (await getCategoryContentREQ(bookData.categoryId, {
+          const res = await getCategoryContentREQ(bookData.categoryId, {
             _limit: 4,
-          })) as unknown as Record<string, unknown>[];
+          });
+          const relatedRes =
+            (res?.data as unknown as Record<string, unknown>[]) || [];
           if (relatedRes) {
             setRelatedBooks(relatedRes.filter((b) => b.id !== id));
           }
@@ -256,7 +258,7 @@ export default function BookDetailsPage() {
                       {img ? (
                         <Image
                           src={img.startsWith("http") ? img : `/${img}`}
-                          alt={item.name as string}
+                          alt={(item.name as string) || "side-cover"}
                           fill
                           style={{ objectFit: "cover" }}
                         />

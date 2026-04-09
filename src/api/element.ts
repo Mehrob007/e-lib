@@ -164,3 +164,12 @@ export const getContentById = async (id: string) => {
     console.error(e);
   }
 };
+
+export const getContentByIdView = async (id: string) => {
+  try {
+    const res = await apiClient(`/library/content/${id}/view`);
+    return res.data;
+  } catch (e) {
+    console.error(e);
+  }
+};

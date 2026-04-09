@@ -9,9 +9,9 @@ import BookCard from "@/components/ui/cards/BookCard";
 import Loading from "@/components/ui/loading/Loading";
 import { getCategorysREQ } from "@/api/category";
 import { getCategoryContentREQ } from "@/api/element";
-import { LANG_GET_ADMIN } from "@/const/def";
 import { ItemT } from "@/types/table";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
+import { useTranslation } from "@/hooks/useI18nStore";
 // import "./catalog.scss";
 
 interface ContentItem {
@@ -53,11 +53,12 @@ function CatalogContent() {
   const searchParams = useSearchParams();
   const categoryIdParam = searchParams.get("category_id");
   const limit = 10;
+  const { lang, t } = useTranslation();
 
   const fetchRootCategories = useCallback(async () => {
     try {
       const res = (await getCategorysREQ({
-        lang: LANG_GET_ADMIN,
+        lang,
       })) as unknown as ItemT[];
       if (res?.length) {
         setCategories(res);
@@ -70,12 +71,12 @@ function CatalogContent() {
     } catch (e) {
       console.error(e);
     }
-  }, [categoryIdParam]);
+  }, [categoryIdParam, lang]);
 
   const fetchSubCategories = useCallback(async (parentId: string) => {
     try {
       const res = (await getCategorysREQ({
-        lang: LANG_GET_ADMIN,
+        lang,
         _parent_id: parentId,
       })) as unknown as ItemT[];
 
@@ -104,7 +105,7 @@ function CatalogContent() {
     } catch (e) {
       console.error(e);
     }
-  }, []);
+  }, [lang]);
 
   const fetchContent = useCallback(
     async (catId: string) => {
@@ -187,7 +188,7 @@ function CatalogContent() {
 
         <main className="catalog-page__main">
           <div className="catalog-controls">
-            <select className="sort-select">
+            <select className="sort-select" title="sort-select">
               <option>Мураттабкунӣ</option>
             </select>
           </div>

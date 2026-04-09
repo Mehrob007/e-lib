@@ -1,6 +1,6 @@
 import { getCategorysREQ } from "@/api/category";
 import Loading from "@/components/ui/loading/Loading";
-import { LANG_GET_ADMIN } from "@/const/def";
+import { useI18nStore } from "@/hooks/useI18nStore";
 import { ItemT } from "@/types/table";
 import { useCallback, useEffect, useState } from "react";
 
@@ -12,11 +12,12 @@ interface Props {
 export default function Header({ setCategory, category }: Props) {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ItemT[] | null>(null);
+  const lang = useI18nStore(s => s.lang);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getCategorysREQ({ lang: LANG_GET_ADMIN });
+      const res = await getCategorysREQ({ lang });
       return res as unknown as ItemT[];
     } catch (e) {
       console.error(e);
@@ -24,7 +25,7 @@ export default function Header({ setCategory, category }: Props) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [lang]);
 
   useEffect(() => {
     fetchData().then((d) => {

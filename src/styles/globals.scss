@@ -1198,6 +1198,9 @@ button {
       .select__arrow {
         display: none !important;
       }
+      .select__wrapper {
+        width: 100px !important;
+      }
     }
   }
 
@@ -1276,33 +1279,21 @@ button {
   }
 
   .book-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 16px;
     margin: 0 auto;
     margin-bottom: 40px;
-    overflow-x: auto;
     padding-bottom: 16px;
-    // margin-left: -16px;
-    // margin-right: -16px;
-    // padding-left: 16px;
-    // padding-right: 0;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    &::-webkit-scrollbar {
-      display: none;
+    width: 100%;
+    
+    .book-card {
+      width: 100% !important;
     }
-
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-
-    // Fallback for grid-style layouts
-    display: flex !important;
-    grid-template-columns: none !important;
   }
 
   .book-card {
-    width: 150px !important;
-    scroll-snap-align: start;
+    width: 100% !important;
 
     &__image {
       border-radius: 16px;
@@ -1497,5 +1488,12 @@ button {
   .pagination {
     padding: 24px 0;
     justify-content: center;
+  }
+}
+
+.header-home__select {
+  // order: 2;
+  .select__wrapper {
+    min-width: 120px !important;
   }
 }

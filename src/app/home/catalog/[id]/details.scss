@@ -262,13 +262,13 @@
         font-size: 18px;
         text-align: left;
         margin-top: 16px;
-        width: 100vw; // Force below the cover/meta row if needed?
+        width: calc(100vw - 32px); // Force below the cover/meta row if needed?
         // Actually, we want it below BOTH cover and meta.
         order: 10;
       }
       .description-text {
         order: 11;
-        width: 100vw;
+        width: calc(100vw - 32px);
         color: #666;
         font-size: 14px;
         line-height: 1.6;

@@ -7,6 +7,7 @@ import {
 } from "react-icons/tb";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import LogoutBtn from "@/components/elements/button/LogoutBtn";
 
 export default function LeftMenu({ open }: { open: boolean }) {
   const pathName = usePathname();
@@ -48,7 +49,7 @@ export default function LeftMenu({ open }: { open: boolean }) {
         ))}
       </nav>
       <span className="menu-icon-circle">
-        <TbLogout size={26} strokeWidth={1.5} />
+        <LogoutBtn />
       </span>
     </main>
   );

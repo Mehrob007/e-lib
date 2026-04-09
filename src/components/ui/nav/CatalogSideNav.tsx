@@ -8,7 +8,7 @@ import {
   LuChevronDown,
 } from "react-icons/lu";
 import { getCategorysREQ } from "@/api/category";
-import { LANG_GET_ADMIN } from "@/const/def";
+import { useI18nStore } from "@/hooks/useI18nStore";
 
 interface SubCategory {
   id: string;
@@ -27,6 +27,7 @@ export default function CatalogSideNav({
   activeId,
   onSelect,
 }: Props) {
+  const lang = useI18nStore(s => s.lang);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [nestedData, setNestedData] = useState<Record<string, SubCategory[]>>(
     {},
@@ -62,7 +63,7 @@ export default function CatalogSideNav({
         setLoadingIds((prev) => new Set(prev).add(id));
         try {
           const res = await getCategorysREQ({
-            lang: LANG_GET_ADMIN,
+            lang,
             _parent_id: id,
           });
 

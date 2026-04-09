@@ -42,6 +42,11 @@ export default function ModalElementStageTwo() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const isAudio = data?.mime === "audio";
+  const isVideo = data?.mime === "video";
+
+  console.log("data?.mime", data?.mime);
+
   return (
     <div className="stage-two">
       <div className="stage-two__main">
@@ -87,6 +92,13 @@ export default function ModalElementStageTwo() {
                 type="file"
                 ref={fileInputRef}
                 onChange={handleFileChange}
+                accept={
+                  isAudio
+                    ? "audio/*"
+                    : isVideo
+                      ? "video/*"
+                      : "application/pdf,.doc,.docx"
+                }
                 style={{ display: "none" }}
               />
               {data?.file ? (
@@ -97,7 +109,13 @@ export default function ModalElementStageTwo() {
               ) : (
                 <>
                   <LuPlus size={16} />
-                  <span>Загрузить книгу</span>
+                  <span>
+                    {isAudio
+                      ? "Загрузить аудио"
+                      : isVideo
+                        ? "Загрузить видео"
+                        : "Загрузить книгу"}
+                  </span>
                 </>
               )}
             </button>
@@ -130,32 +148,50 @@ export default function ModalElementStageTwo() {
               type="text"
               value={(data?.name as string) || ""}
               onChange={(e) => setData("name", e.target.value)}
-              placeholder="Граф Монте-Кристо"
+              placeholder={
+                isAudio
+                  ? "Например, Лунная соната"
+                  : isVideo
+                    ? "Например, Начало"
+                    : "Например, Граф Монте-Кристо"
+              }
             />
           </div>
 
           <div className="stage-two__input-row">
-            <label>Автор:</label>
+            <label>
+              {isAudio
+                ? "Исполнитель/Автор:"
+                : isVideo
+                  ? "Режиссер/Автор:"
+                  : "Автор:"}
+            </label>
             <input
               type="text"
               value={(data?.author as string) || ""}
               onChange={(e) => setData("author", e.target.value)}
-              placeholder="Александр Дюма"
+              placeholder={
+                isAudio
+                  ? "Бетховен"
+                  : isVideo
+                    ? "Кристофер Нолан"
+                    : "Александр Дюма"
+              }
             />
           </div>
 
           <div className="stage-two__input-row">
-            <label>Страницы:</label>
+            <label>{isAudio || isVideo ? "Длительность:" : "Страницы:"}</label>
             <input
               type="text"
               value={(data?.pages as string) || ""}
               onChange={(e) => setData("pages", e.target.value)}
-              placeholder="544"
+              placeholder={isAudio || isVideo ? "Например, 1:30:00" : "544"}
             />
           </div>
 
           <div className="stage-two__input-row">
-            <label>Год издания:</label>
+            <label>{isVideo ? "Год выхода:" : "Год издания:"}</label>
             <input
               type="text"
               value={(data?.created as string) || ""}

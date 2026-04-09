@@ -1,7 +1,7 @@
 import { getCategorysREQ } from "@/api/category";
 import Select from "@/components/elements/select/Select";
 import { categoryT } from "@/const/api";
-import { LANG_GET_ADMIN } from "@/const/def";
+import { useI18nStore } from "@/hooks/useI18nStore";
 import { useFormStore } from "@/hooks/useFormStore";
 import { SelectT } from "@/types/input";
 import { ItemT } from "@/types/table";
@@ -13,11 +13,16 @@ export default function ModalElementStageOne() {
   const { errors, data, setData } = useFormStore();
   const [loading, setLoading] = useState<boolean>(false);
   //   const [category, setCategory] = useState<ItemT[] | null>(null);
+  const lang = useI18nStore(s => s.lang);
   const [elements, setElements] = useState<SelectT[]>([]);
   const [paramsREQ, setParamsREQ] = useState<categoryT>({
-    lang: LANG_GET_ADMIN,
+    lang: lang,
     _parent_id: data?.defPatherId as string,
   });
+
+  useEffect(() => {
+    setParamsREQ(prev => ({ ...prev, lang }));
+  }, [lang]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);

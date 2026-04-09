@@ -10,9 +10,10 @@ interface Props {
 }
 
 export default function ModalELementStage({ stage, defPather }: Props) {
-  const { errors } = useFormStore();
+  const { errors, data } = useFormStore();
 
   console.log("errors", errors);
+  console.log("data", data);
 
   switch (stage) {
     case 0:

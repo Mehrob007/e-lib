@@ -95,14 +95,20 @@ export default function TableItem({
       ))}
       <div className="table__actions">
         <button
-          onClick={() => editItem && editItem(data?.id as string)}
+          onClick={(e) => {
+            e.stopPropagation();
+            editItem && editItem(data?.id as string);
+          }}
           className="action-btn edit"
           title="Edit"
         >
           <AiFillEdit />
         </button>
         <button
-          onClick={() => deleteItem && deleteItem(data?.id as string)}
+          onClick={(e) => {
+            e.stopPropagation();
+            deleteItem && deleteItem(data?.id as string);
+          }}
           className="action-btn delete"
           title="Delete"
         >

@@ -1,7 +1,8 @@
 "use client";
 import { deleteBranchREQ, getCategorysREQ } from "@/api/category";
 import ModalCategory from "@/components/ui/modal/ModalCategory";
-import { LIMIT_REQ, LANG_GET_ADMIN } from "@/const/def";
+import { LIMIT_REQ } from "@/const/def";
+import { useI18nStore } from "@/hooks/useI18nStore";
 import { HeaderTableCategory } from "@/const/table";
 import TableItems from "@/modules/table/table/TableItems";
 import { folderLine } from "@/types/category";
@@ -27,12 +28,13 @@ export default function Page() {
   };
   const [data, setData] = useState<ItemT[] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const lang = useI18nStore(s => s.lang);
 
   const fetchData = useCallback(async (parentId?: string) => {
     setLoading(true);
     try {
       const res = await getCategorysREQ({
-        lang: LANG_GET_ADMIN,
+        lang,
         _limit: LIMIT_REQ,
         _offset: page,
         _parent_id: parentId,
@@ -46,7 +48,7 @@ export default function Page() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page, lang]);
 
   const deleteItem = async (id: string) => {
     try {

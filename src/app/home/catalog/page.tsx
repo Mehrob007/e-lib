@@ -41,7 +41,7 @@ export default function CatalogPage() {
 function CatalogContent() {
   const [categories, setCategories] = useState<ItemT[]>([]);
   const [subCategories, setSubCategories] = useState<
-    { id: string; name: string; type: "audio" | "video" | "text" }[]
+    { id: string; name: string; mime: "audio" | "video" | "text" | "book" }[]
   >([]);
   const [activeCategoryId, setActiveCategoryId] = useState<string>("");
   const [activeSubCategoryId, setActiveSubCategoryId] = useState<string>("");
@@ -73,39 +73,38 @@ function CatalogContent() {
     }
   }, [categoryIdParam, lang]);
 
-  const fetchSubCategories = useCallback(async (parentId: string) => {
-    try {
-      const res = (await getCategorysREQ({
-        lang,
-        _parent_id: parentId,
-      })) as unknown as ItemT[];
+  const fetchSubCategories = useCallback(
+    async (parentId: string) => {
+      try {
+        const res = (await getCategorysREQ({
+          lang,
+          _parent_id: parentId,
+        })) as unknown as ItemT[];
 
-      const mapped = res?.map((cat) => ({
-        id: cat.id as string,
-        name: cat.name as string,
-        // mapping logic based on name or metadata, for now defaulting
-        type: (cat.name as string).toLowerCase().includes("видео")
-          ? "video"
-          : (cat.name as string).toLowerCase().includes("аудио")
-            ? "audio"
-            : "text",
-      }));
-      setSubCategories(
-        (mapped || []) as {
-          id: string;
-          name: string;
-          type: "audio" | "video" | "text";
-        }[],
-      );
-      if (mapped?.length) {
-        setActiveSubCategoryId(mapped[0].id);
-      } else {
-        setActiveSubCategoryId("");
+        const mapped = res?.map((cat) => ({
+          id: cat.id as string,
+          name: cat.name as string,
+          // mapping logic based on name or metadata, for now defaulting
+          mime: cat.mime,
+        }));
+        setSubCategories(
+          (mapped || []) as {
+            id: string;
+            name: string;
+            mime: "audio" | "video" | "text" | "book";
+          }[],
+        );
+        if (mapped?.length) {
+          setActiveSubCategoryId(mapped[0].id);
+        } else {
+          setActiveSubCategoryId("");
+        }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
-    }
-  }, [lang]);
+    },
+    [lang],
+  );
 
   const fetchContent = useCallback(
     async (catId: string) => {

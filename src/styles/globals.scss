@@ -1279,16 +1279,26 @@ button {
   }
 
   .book-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 16px;
-    margin: 0 auto;
-    margin-bottom: 40px;
-    padding-bottom: 16px;
-    width: 100%;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    gap: 16px !important;
+    margin: 0 -16px !important;
+    padding: 0 16px 24px !important;
+    width: calc(100% + 32px) !important;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
     
     .book-card {
-      width: 100% !important;
+      flex: 0 0 calc((100vw - 48px) / 2.5) !important;
+      width: auto !important;
+      scroll-snap-align: start;
+      margin-bottom: 0 !important;
     }
   }
 

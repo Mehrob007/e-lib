@@ -13,7 +13,7 @@ import { useI18nStore } from "@/hooks/useI18nStore";
 interface SubCategory {
   id: string;
   name: string;
-  type: "video" | "audio" | "text";
+  mime: "video" | "audio" | "text" | "book";
 }
 
 interface Props {
@@ -27,7 +27,7 @@ export default function CatalogSideNav({
   activeId,
   onSelect,
 }: Props) {
-  const lang = useI18nStore(s => s.lang);
+  const lang = useI18nStore((s) => s.lang);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [nestedData, setNestedData] = useState<Record<string, SubCategory[]>>(
     {},
@@ -41,6 +41,8 @@ export default function CatalogSideNav({
       case "audio":
         return <LuHeadphones size={24} />;
       case "text":
+        return <LuFileText size={24} />;
+      case "book":
         return <LuFileText size={24} />;
       default:
         return <LuFileText size={24} />;
@@ -69,14 +71,14 @@ export default function CatalogSideNav({
 
           if (res && Array.isArray(res)) {
             const mapped: SubCategory[] = res.map(
-              (cat: { id: string; name: string }) => ({
+              (cat: {
+                id: string;
+                name: string;
+                mime: "video" | "audio" | "text" | "book";
+              }) => ({
                 id: cat.id,
                 name: cat.name,
-                type: cat.name.toLowerCase().includes("видео")
-                  ? "video"
-                  : cat.name.toLowerCase().includes("аудио")
-                    ? "audio"
-                    : "text",
+                mime: cat.mime,
               }),
             );
             setNestedData((prev) => ({ ...prev, [id]: mapped }));
@@ -108,7 +110,7 @@ export default function CatalogSideNav({
           onClick={() => onSelect(sub.id)}
         >
           <div className="catalog-side-nav__link">
-            {getIcon(sub.type)}
+            {getIcon(sub.mime)}
             <span>{sub.name}</span>
             <div
               className={`catalog-side-nav__arrow-wrapper ${isExpanded ? "expanded" : ""}`}
@@ -131,6 +133,8 @@ export default function CatalogSideNav({
       </div>
     );
   };
+
+  console.log("subCategories", subCategories);
 
   return (
     <aside className="catalog-side-nav">

@@ -56,25 +56,25 @@ export default function TableItem({
 
     // Handle Images if key matches
     if (key === "preview_url" && typeof value === "string") {
+      const isSwiper = value.toLowerCase().includes("swiper");
       return (
         <div
           style={{
-            width: "70px",
-            height: "100px",
+            width: isSwiper ? "120px" : "70px",
+            height: isSwiper ? "65px" : "100px",
             position: "relative",
             overflow: "hidden",
             borderRadius: "4px",
-            // margin: "0 auto",
+            backgroundColor: "#f0f0f0",
           }}
         >
           <Image
             src={value.startsWith("http") ? value : `/${value}`}
-            alt="Favicon"
-            // fill
-            width={70}
-            height={100}
-            sizes="100px"
-            style={{ objectFit: "contain" }}
+            alt="Preview"
+            width={isSwiper ? 120 : 70}
+            height={isSwiper ? 65 : 100}
+            sizes="120px"
+            style={{ objectFit: isSwiper ? "cover" : "contain" }}
           />
         </div>
       );

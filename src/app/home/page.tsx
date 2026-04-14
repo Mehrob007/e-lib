@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { getElementsMainREQ } from "@/api/element";
 import Loading from "@/components/ui/loading/Loading";
 import { useBranding } from "@/hooks/useBranding";
+import { getSwiper } from "@/api/swiper";
 
 interface BookItem {
   id: string;
@@ -32,7 +33,8 @@ export default function Page() {
   const [groupedBooks, setGroupedBooks] = useState<Record<string, BookItem[]>>(
     {},
   );
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [banners, setBanners] = useState<any[]>([]);
   const branding = useBranding();
 
   const fetchContent = useCallback(async () => {
@@ -76,15 +78,27 @@ export default function Page() {
     }
   }, []);
 
+  const fetchSwiper = useCallback(async () => {
+    try {
+      const res = await getSwiper({ _limit: 10, _offset: 0 });
+      if (res) {
+        setBanners(res as any[]);
+      }
+    } catch (e) {
+      console.error("Error fetching swiper:", e);
+    }
+  }, []);
+
   useEffect(() => {
     fetchContent();
-  }, [fetchContent]);
+    fetchSwiper();
+  }, [fetchContent, fetchSwiper]);
 
   return (
     <div className="home-page">
       <HeaderHome logo={branding?.logo as string} />
       <div className="home-page__content" style={{ padding: "0 40px" }}>
-        <HeroBanner />
+        <HeroBanner banners={banners} />
         {loading ? (
           <div
             style={{

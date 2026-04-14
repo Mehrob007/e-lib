@@ -1,33 +1,120 @@
 "use client";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
-export default function HeroBanner() {
+interface Banner {
+  id: string;
+  name: string;
+  details: {
+    file_url: string;
+  };
+}
+
+export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    console.log("HeroBanner: banners updated", banners);
+    if (banners && banners.length > 1) {
+      const timer = setInterval(() => {
+        setCurrent((prev) => (prev + 1) % banners.length);
+      }, 5000);
+      return () => clearInterval(timer);
+    }
+  }, [banners, current]);
+
+  const nextSlide = () => {
+    setCurrent((prev) => (prev + 1) % banners.length);
+  };
+
+  const prevSlide = () => {
+    setCurrent((prev) => (prev - 1 + banners.length) % banners.length);
+  };
+
+  if (!banners || banners.length === 0) {
+    return null;
+  }
+
   return (
-    <div className="hero-banner">
-      <div className="hero-banner__content">
-        <div className="hero-banner__text">
-          <h1>Китобхона</h1>
-          <p>Хуш омадед ба Китобхонаи eDonish!</p>
-        </div>
-        <div className="hero-banner__image">
-          {/* Using a placeholder image for now, user can replace it */}
-          <div className="book-image-placeholder">
-            <div className="open-book"></div>
+    <div className="hero-banner" style={{ padding: 0, overflow: "hidden", position: "relative" }}>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={current}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className="hero-banner__content"
+          style={{ padding: 0, width: "100%", height: "100%", margin: 0, maxWidth: "none", position: "relative" }}
+        >
+          <div className="hero-banner__image" style={{ width: "100%", height: "100%", margin: 0, position: "relative" }}>
+            <Image
+              src={banners[current].details.file_url?.startsWith("http") 
+                ? banners[current].details.file_url 
+                : banners[current].details.file_url?.startsWith("/") 
+                  ? banners[current].details.file_url 
+                  : `/${banners[current].details.file_url}`
+              }
+              alt={banners[current].name}
+              fill
+              style={{ objectFit: "cover" }}
+              priority
+              onLoadingComplete={() => console.log("Image loaded:", banners[current].details.file_url)}
+              onError={() => console.error("Image load error:", banners[current].details.file_url)}
+            />
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </AnimatePresence>
 
-      <button className="hero-banner__nav hero-banner__nav--prev">
-        <IoChevronBackOutline />
-      </button>
-      <button className="hero-banner__nav hero-banner__nav--next">
-        <IoChevronForwardOutline />
-      </button>
+      {/* Navigation Arrows */}
+      {banners.length > 1 && (
+        <>
+          <button 
+            className="hero-banner__nav hero-banner__nav--prev" 
+            onClick={prevSlide}
+            style={{ left: "20px", zIndex: 100 }}
+          >
+            <IoChevronBackOutline />
+          </button>
+          <button 
+            className="hero-banner__nav hero-banner__nav--next" 
+            onClick={nextSlide}
+            style={{ right: "20px", zIndex: 100 }}
+          >
+            <IoChevronForwardOutline />
+          </button>
+        </>
+      )}
 
-      <div className="hero-banner__pagination">
-        <span className="dot active"></span>
-        <span className="dot"></span>
-        <span className="dot"></span>
+      {/* Pagination Dots */}
+      <div 
+        className="hero-banner__pagination" 
+        style={{ 
+          zIndex: 100, 
+          bottom: "20px", 
+          right: "20px",
+          background: "rgba(0, 0, 0, 0.2)",
+          padding: "6px 12px",
+          borderRadius: "20px",
+          display: "flex",
+          gap: "8px",
+          backdropFilter: "blur(4px)"
+        }}
+      >
+        {banners.map((_, i) => (
+          <span
+            key={i}
+            className={`dot ${i === current ? "active" : ""}`}
+            onClick={() => setCurrent(i)}
+            style={{ 
+              cursor: "pointer",
+              border: "1px solid rgba(255, 255, 255, 0.3)",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)"
+            }}
+          ></span>
+        ))}
       </div>
     </div>
   );

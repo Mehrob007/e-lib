@@ -3,7 +3,7 @@ import {
   TbPlayerPlay,
   TbSitemap,
   TbUser,
-  TbLogout,
+  TbCarouselHorizontal,
 } from "react-icons/tb";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,6 +11,21 @@ import LogoutBtn from "@/components/elements/button/LogoutBtn";
 
 export default function LeftMenu({ open }: { open: boolean }) {
   const pathName = usePathname();
+  const userRole = localStorage.getItem("user-role");
+
+  const superAdmin = [
+    {
+      title: "Категории",
+      icon: <TbSitemap size={26} strokeWidth={1.5} />,
+      href: "/admin/category",
+    },
+    {
+      title: "Администраторы",
+      icon: <TbUser size={26} strokeWidth={1.5} />,
+      href: "/admin/super-admin",
+    },
+  ];
+  
   const menuList = [
     {
       title: "Статистика",
@@ -23,15 +38,11 @@ export default function LeftMenu({ open }: { open: boolean }) {
       href: "/admin/elements",
     },
     {
-      title: "Категории",
-      icon: <TbSitemap size={26} strokeWidth={1.5} />,
-      href: "/admin/category",
+      title: "Слайдер",
+      icon: <TbCarouselHorizontal size={26} strokeWidth={1.5} />,
+      href: "/admin/swiper",
     },
-    {
-      title: "Администраторы",
-      icon: <TbUser size={26} strokeWidth={1.5} />,
-      href: "/admin/super-admin",
-    },
+    ...(userRole === "Superadmin" ? superAdmin : []),
   ];
 
   return (

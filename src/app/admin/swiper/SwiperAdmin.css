@@ -1,0 +1,21 @@
+.swiper-admin-container {
+    padding: 32px;
+}
+
+.swiper-placeholder-icon {
+    width: 60px;
+    height: 60px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Specific styling for swiper image in table if needed */
+.table__cell-image {
+    width: 120px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}

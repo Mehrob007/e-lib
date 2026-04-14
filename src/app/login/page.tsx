@@ -39,6 +39,7 @@ export default function Login() {
         document.cookie = `refresh_token=${refresh_token}; path=/; max-age=604800; SameSite=Lax`;
         const payload = decodeJwt(access_token);
         const role = payload.role as string;
+        localStorage.setItem("user-role", role);
         setTimeout(() => {
           if (role === "Admin" || role === "Superadmin") {
             router.push("/admin/elements");

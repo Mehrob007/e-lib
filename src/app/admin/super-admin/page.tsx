@@ -56,6 +56,9 @@ export default function Specialty() {
   return (
     <>
       <div className="user__content">
+        <header>
+          <h1>Управление администраторами</h1>
+        </header>
         {
           <TableItems
             loading={loading}

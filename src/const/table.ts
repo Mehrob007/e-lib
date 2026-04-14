@@ -46,3 +46,14 @@ export const HeaderTableELement = [
     key: "created",
   },
 ];
+
+export const HeaderTableSwiper = [
+  {
+    name: "Превью",
+    key: "preview_url",
+  },
+  {
+    name: "Название",
+    key: "name",
+  },
+];

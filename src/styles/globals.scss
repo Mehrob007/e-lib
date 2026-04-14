@@ -913,6 +913,18 @@ button {
   }
 }
 
+.user__content,
+.swiper-admin-container {
+  > header {
+    margin-bottom: 20px;
+    > h1 {
+      color: #2962ff;
+      font-size: 28px;
+      font-weight: 600;
+    }
+  }
+}
+
 .catalog-page {
   display: flex;
   flex-direction: column;
@@ -1293,7 +1305,7 @@ button {
     &::-webkit-scrollbar {
       display: none;
     }
-    
+
     .book-card {
       flex: 0 0 calc((100vw - 48px) / 2.5) !important;
       width: auto !important;

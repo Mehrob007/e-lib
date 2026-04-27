@@ -7,5 +7,5 @@ export interface dataT {
     | File
     | boolean
     | (File | string)[]
-    | { name: string; id?: number; Id?: number };
+    | { [key: string]: any };
 }

@@ -11,7 +11,7 @@ import LogoutBtn from "@/components/elements/button/LogoutBtn";
 
 export default function LeftMenu({ open }: { open: boolean }) {
   const pathName = usePathname();
-  const userRole = localStorage.getItem("user-role");
+  const userRole = typeof window !== "undefined" ? localStorage.getItem("user-role") : null;
 
   const superAdmin = [
     {

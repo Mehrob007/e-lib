@@ -22,17 +22,22 @@ export const getSwiper = async ({
   }
 };
 
-export const postSwiper = async ({ data }: { data: dataT }) => {
+export const postSwiper = async ({
+  data,
+  _limit,
+  _offset,
+}: {
+  data: dataT;
+  _limit?: number;
+  _offset?: number;
+}) => {
   try {
-    // Запрос data
-    // {
-    //   "details": {
-    //     "mime": "image/jpeg",
-    //     "preview_key": "previews/17/05/1705d89637484164a3f0bd00479494ae.jpg"
-    //   },
-    //   "name": "Главный баннер"
-    // }
-    const res = await apiClient.post("/admin/save_swiper", data, {});
+    const res = await apiClient.post("/admin/save_swiper", data, {
+      params: {
+        _limit,
+        _offset,
+      },
+    });
     return res.data;
   } catch (e) {
     console.error(e);

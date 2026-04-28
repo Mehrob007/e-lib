@@ -12,8 +12,9 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "squalidly-nonoccult-tori.ngrok-free.dev",
+        protocol: "http",
+        hostname: "10.154.193.92",
+        port: "8001",
         pathname: "/**",
       },
     ],

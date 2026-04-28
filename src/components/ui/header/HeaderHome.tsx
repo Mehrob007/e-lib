@@ -41,7 +41,7 @@ export default function HeaderHome({ logo }: { logo?: string }) {
           className={pathName === "/home" ? "active" : ""}
           onClick={() => router?.push("/home")}
         >
-          <h1>{t("library") || "КИТОБХОНА"}</h1>
+          <h1>{t("library")}</h1>
         </span>
         <SearchInput onSearch={() => {}} />
       </nav>

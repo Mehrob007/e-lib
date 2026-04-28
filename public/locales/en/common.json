@@ -20,6 +20,8 @@
   "not_found": "Not found",
   "content_not_found": "Content not found",
   "search": "Search...",
+  "search_placeholder": "Search by title or author",
+  "search_button": "Search",
   "logout": "Logout",
   "library": "LIBRARY"
 }

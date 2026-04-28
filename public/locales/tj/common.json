@@ -20,6 +20,8 @@
   "not_found": "Ёфт нашуд",
   "content_not_found": "Контент ёфт нашуд",
   "search": "Ҷустуҷӯ...",
+  "search_placeholder": "Ҷустуҷӯ аз рӯи ном ё муаллиф",
+  "search_button": "Ҷустуҷӯ",
   "logout": "Баромад",
   "library": "КИТОБХОНА"
 }

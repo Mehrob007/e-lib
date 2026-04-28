@@ -20,6 +20,8 @@
   "not_found": "Не найдено",
   "content_not_found": "Контент не найден",
   "search": "Поиск...",
+  "search_placeholder": "Поиск по названию или автору",
+  "search_button": "Поиск",
   "logout": "Выйти",
   "library": "БИБЛИОТЕКА"
 }

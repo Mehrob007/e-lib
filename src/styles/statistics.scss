@@ -1,0 +1,179 @@
+@import "./variables";
+
+.statistics-page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  min-height: 100vh;
+  // background: #f8fbff;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .header-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    .header-icon {
+      color: $primary-color;
+    }
+
+    h1 {
+      color: #1a1a1a;
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.5px;
+      font-family: $font-family-2 !important;
+    }
+  }
+
+  .total-badge {
+    background: $primary-color;
+    color: $white;
+    padding: 12px 24px;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 16px rgba($primary-color, 0.2);
+
+    .total-label {
+      font-size: 14px;
+      opacity: 0.9;
+      font-weight: 500;
+    }
+
+    .total-value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+  }
+
+  .statistics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .stat-card {
+    background: $white;
+    border-radius: 24px;
+    padding: 32px;
+    position: relative;
+    border: 1px solid #eef2f6;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: rgba($primary-color, 0.3);
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+    }
+
+    &__icon-wrapper {
+      width: 64px;
+      height: 64px;
+      background: rgba($primary-color, 0.08);
+      color: $primary-color;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &__content {
+      h3 {
+        color: #64748b;
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0 0 8px 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .stat-card__value-box {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+
+        .count {
+          font-size: 36px;
+          font-weight: 800;
+          color: #1e293b;
+          font-family: $font-family-2 !important;
+        }
+
+        .label {
+          font-size: 14px;
+          color: #94a3b8;
+          font-weight: 500;
+        }
+      }
+    }
+
+    &__footer {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .progress-bar-bg {
+        flex: 1;
+        height: 6px;
+        background: #f1f5f9;
+        border-radius: 100px;
+        overflow: hidden;
+      }
+
+      .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, $primary-color, #60a5fa);
+        border-radius: 100px;
+      }
+
+      .percentage {
+        font-size: 12px;
+        font-weight: 700;
+        color: #64748b;
+        min-width: 32px;
+      }
+    }
+
+    .card-arrow {
+      position: absolute;
+      top: 32px;
+      right: 32px;
+      color: #e2e8f0;
+      transition: color 0.3s ease;
+    }
+
+    &:hover .card-arrow {
+      color: $primary-color;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .statistics-page {
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+    }
+    
+    .total-badge {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

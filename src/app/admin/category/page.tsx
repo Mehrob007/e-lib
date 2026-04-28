@@ -28,27 +28,30 @@ export default function Page() {
   };
   const [data, setData] = useState<ItemT[] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const lang = useI18nStore(s => s.lang);
+  const lang = useI18nStore((s) => s.lang);
 
-  const fetchData = useCallback(async (parentId?: string) => {
-    setLoading(true);
-    try {
-      const res = await getCategorysREQ({
-        lang,
-        _limit: LIMIT_REQ,
-        _offset: page,
-        _parent_id: parentId,
-      });
-      console.log("res", res);
+  const fetchData = useCallback(
+    async (parentId?: string) => {
+      setLoading(true);
+      try {
+        const res = await getCategorysREQ({
+          lang,
+          _limit: LIMIT_REQ,
+          _offset: page,
+          _parent_id: parentId,
+        });
+        console.log("res", res);
 
-      return res as ItemT[];
-    } catch (e) {
-      console.error(e);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, [page, lang]);
+        return res as ItemT[];
+      } catch (e) {
+        console.error(e);
+        return null;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [page, lang],
+  );
 
   const deleteItem = async (id: string) => {
     try {
@@ -110,7 +113,7 @@ export default function Page() {
           page={page}
           openModalAdd={() => setIsModalOpen(true)}
           onClick={(data) => {
-            setFolderLine([...(folderLine ?? []), data]);
+            if (data.has_children) setFolderLine([...(folderLine ?? []), data]);
           }}
           personIcon={<IoFolderOpen size={30} className="table__cell-folder" />}
         />

@@ -55,7 +55,7 @@ export default function StatisticsPage() {
         stiffness: 100
       }
     }
-  };
+  } as const;
 
   if (loading) {
     return (

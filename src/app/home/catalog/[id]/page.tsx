@@ -300,6 +300,18 @@ export default function BookDetailsPage() {
                 </button>
               )}
 
+              {book.mediaType === "video" && (
+                <button
+                  className="read-button"
+                  style={{ color: "#2962ff", borderColor: "#2962ff" }}
+                  onClick={() => {
+                    router.push(`/home/catalog/${id}/video`);
+                  }}
+                >
+                  {t("watch")}
+                </button>
+              )}
+
               <button
                 className="download-btn"
                 title="Download"

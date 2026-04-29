@@ -64,7 +64,6 @@ export default function ModalElementStageZero({ defPather }: Props) {
         onChange={(e) => {
           setData("defPatherId", e);
 
-          console.log("options.find", options.find((o) => o.value === e));
           
           const sel = options.find((o) => o.value === e);
           if (sel?.mime) {

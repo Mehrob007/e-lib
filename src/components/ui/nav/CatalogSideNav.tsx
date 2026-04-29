@@ -134,7 +134,6 @@ export default function CatalogSideNav({
     );
   };
 
-  console.log("subCategories", subCategories);
 
   return (
     <aside className="catalog-side-nav">

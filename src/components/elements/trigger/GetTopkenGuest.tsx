@@ -5,7 +5,6 @@ export default function GetTopkenGuest() {
   const getGuestToken = async () => {
     try {
       const res = await getTokenGuestREQ();
-      // console.log("guest token", res.data);
       localStorage.setItem("access_token", res.access_token);
       localStorage.setItem("refresh_token", res.refresh_token);
     } catch (e) {

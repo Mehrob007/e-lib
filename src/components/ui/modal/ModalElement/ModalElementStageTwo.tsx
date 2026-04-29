@@ -45,7 +45,6 @@ export default function ModalElementStageTwo() {
   const isAudio = data?.mime === "audio";
   const isVideo = data?.mime === "video";
 
-  console.log("data?.mime", data?.mime);
 
   return (
     <div className="stage-two">

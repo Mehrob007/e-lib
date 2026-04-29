@@ -42,7 +42,6 @@ export default function Page() {
           _offset: page,
           _parent_id: parentId,
         });
-        console.log("res", res);
         if (res) {
           return res as ItemT[];
         } else return null;
@@ -59,7 +58,6 @@ export default function Page() {
   const deleteItem = async (id: string) => {
     try {
       const res = await deleteBranchREQ(id);
-      console.log("delete category: ", res);
     } catch (e) {
       console.error(e);
     }

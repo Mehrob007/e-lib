@@ -140,7 +140,6 @@ export default function ModalELement({
         },
       };
 
-      console.log("payload save content", payload);
 
       if (editItem?.id) {
         await editElementById(editItem.id as string, payload);

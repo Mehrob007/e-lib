@@ -5,7 +5,11 @@ import { useCallback, useEffect, useState } from "react";
 import HeaderHome from "@/components/ui/header/HeaderHome";
 // import CatalogTopBar from "@/components/ui/nav/CatalogTopBar";
 import Loading from "@/components/ui/loading/Loading";
-import { getContentById, getCategoryContentREQ, getContentByIdView } from "@/api/element";
+import {
+  getContentById,
+  getCategoryContentREQ,
+  getContentByIdView,
+} from "@/api/element";
 import { getCategorysREQ } from "@/api/category";
 import { ItemT } from "@/types/table";
 import { useBranding } from "@/hooks/useBranding";
@@ -63,24 +67,28 @@ export default function BookDetailsPage() {
     if (!id) return;
     setLoading(true);
     try {
-      // Fetch book details
       const [res, viewRes] = await Promise.all([
         getContentById(id as string),
-        getContentByIdView(id as string).catch(() => null)
+        getContentByIdView(id as string).catch(() => null),
       ]);
+
 
       if (res) {
         const details = (res.details as Record<string, unknown>) || {};
         const pathArr = (res.path as { id: string; name: string }[]) || [];
-        
-        const fileUrlRaw = (viewRes?.file_url as string) || (details.file_url as string) || "";
-        const previewUrlRaw = (viewRes?.preview_url as string) || (details.preview_url as string) || "";
 
-        const fileUrlFull = fileUrlRaw
-          ? fileUrlRaw.startsWith("http")
-            ? fileUrlRaw
-            : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${fileUrlRaw.startsWith("/") ? "" : "/"}${fileUrlRaw}`
-          : "";
+        const fileUrlRaw =
+          (viewRes?.file_url as string) || (details.file_url as string) || "";
+        const previewUrlRaw =
+          (viewRes?.preview_url as string) ||
+          (details.preview_url as string) ||
+          "";
+
+        const fileUrlFull = fileUrlRaw;
+        // ? fileUrlRaw.startsWith("http")
+        //   ? fileUrlRaw
+        //   : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${fileUrlRaw.startsWith("/") ? "" : "/"}${fileUrlRaw}`
+        // : "";
 
         const previewUrlFull = previewUrlRaw
           ? previewUrlRaw.startsWith("http")
@@ -111,7 +119,6 @@ export default function BookDetailsPage() {
         };
         setBook(bookData);
 
-        // Fetch related books from the same category
         if (bookData.categoryId) {
           const res = await getCategoryContentREQ(bookData.categoryId, {
             _limit: 4,
@@ -124,7 +131,6 @@ export default function BookDetailsPage() {
         }
       }
 
-      // Fetch root categories for TopBar
       const catRes = (await getCategorysREQ({
         lang,
       })) as unknown as ItemT[];
@@ -139,6 +145,13 @@ export default function BookDetailsPage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  useEffect(() => {
+    if (book?.fileUrlFull) {
+      localStorage.setItem("fileUrlFullPDF", book.fileUrlFull);
+    }
+  }, [book?.fileUrlFull]);
+
 
   if (loading) {
     return (
@@ -191,9 +204,17 @@ export default function BookDetailsPage() {
       <main className="details-content">
         <div className="main-column">
           <section className="cover-section">
-            <div className={`book-cover ${book.mediaType === 'video' ? 'video-mode' : ''}`}>
+            <div
+              className={`book-cover ${book.mediaType === "video" ? "video-mode" : ""}`}
+            >
               {book.image ? (
-                <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                <div
+                  style={{
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                >
                   <Image
                     src={book.image}
                     alt={book.title}
@@ -201,19 +222,24 @@ export default function BookDetailsPage() {
                     style={{ objectFit: "cover", borderRadius: "12px" }}
                   />
                   {book.mediaType === "video" && (
-                    <div style={{
-                      position: "absolute",
-                      inset: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      background: "rgba(0,0,0,0.2)",
-                      borderRadius: "12px",
-                      cursor: "pointer"
-                    }}
-                    onClick={() => router.push(`/home/catalog/${id}/video`)}
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "rgba(0,0,0,0.2)",
+                        borderRadius: "12px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => router.push(`/home/catalog/${id}/video`)}
                     >
-                      <IoPlayCircleOutline size={80} color="#fff" style={{ opacity: 0.9 }} />
+                      <IoPlayCircleOutline
+                        size={80}
+                        color="#fff"
+                        style={{ opacity: 0.9 }}
+                      />
                     </div>
                   )}
                 </div>
@@ -231,22 +257,23 @@ export default function BookDetailsPage() {
                     textAlign: "center",
                     padding: "20px",
                     borderRadius: "12px",
-                    position: "relative"
+                    position: "relative",
                   }}
                 >
                   {book.title}
                   {book.mediaType === "video" && (
-                    <div style={{
-                      position: "absolute",
-                      inset: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      background: "rgba(0,0,0,0.1)",
-                      borderRadius: "12px",
-                      cursor: "pointer"
-                    }}
-                    onClick={() => router.push(`/home/catalog/${id}/video`)}
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "rgba(0,0,0,0.1)",
+                        borderRadius: "12px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => router.push(`/home/catalog/${id}/video`)}
                     >
                       <IoPlayCircleOutline size={80} color="#fff" />
                     </div>
@@ -345,7 +372,7 @@ export default function BookDetailsPage() {
                   }
                 }}
               >
-                <HiOutlineArrowDownTray fontSize={35} /> 
+                <HiOutlineArrowDownTray fontSize={35} />
                 {/* <span style={{ fontSize: "14px", marginLeft: "8px", fontWeight: "normal"}}> {t("download")} </span> */}
               </button>
             </div>
@@ -376,7 +403,11 @@ export default function BookDetailsPage() {
                     <div className="side-cover">
                       {img ? (
                         <Image
-                          src={img.startsWith("http") ? img : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${img.startsWith("/") ? "" : "/"}${img}`}
+                          src={
+                            img.startsWith("http")
+                              ? img
+                              : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${img.startsWith("/") ? "" : "/"}${img}`
+                          }
                           alt={(item.name as string) || "side-cover"}
                           fill
                           style={{ objectFit: "cover", borderRadius: "8px" }}
@@ -400,7 +431,9 @@ export default function BookDetailsPage() {
                 );
               })
             ) : (
-              <p style={{ color: "#aaa", fontSize: "14px" }}>{t("not_found")}</p>
+              <p style={{ color: "#aaa", fontSize: "14px" }}>
+                {t("not_found")}
+              </p>
             )}
           </div>
         </aside>

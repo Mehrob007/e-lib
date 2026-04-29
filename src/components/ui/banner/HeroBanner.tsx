@@ -16,7 +16,6 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    console.log("HeroBanner: banners updated", banners);
     if (banners && banners.length > 1) {
       const timer = setInterval(() => {
         setCurrent((prev) => (prev + 1) % banners.length);
@@ -61,7 +60,7 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
               fill
               style={{ objectFit: "cover" }}
               priority
-              onLoadingComplete={() => console.log("Image loaded:", banners[current].details.file_url)}
+              onLoadingComplete={() => {}}
               onError={() => console.error("Image load error:", banners[current].details.file_url)}
             />
           </div>

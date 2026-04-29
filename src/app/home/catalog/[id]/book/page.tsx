@@ -36,8 +36,22 @@ export default function BookReaderPage() {
       const res = await getContentById(id as string);
       if (res) {
         setTitle(res.name as string);
-        const details = (res.details as Record<string, unknown>) || {};
-        const url = (details.file_url as string) || "";
+        // const details = (res.details as Record<string, unknown>) || {};
+        let url =
+          localStorage.getItem("fileUrlFullPDF") ||
+          // (details.file_url as string) ||
+          "";
+
+        if (!url) {
+          try {
+            const { getContentByIdView } = await import("@/api/element");
+            const viewRes = await getContentByIdView(id as string);
+            url = (viewRes?.file_url as string) || "";
+          } catch (err) {
+            console.error("Error fetching view details:", err);
+          }
+        }
+
         if (url) {
           const fullUrl = url.startsWith("http")
             ? url

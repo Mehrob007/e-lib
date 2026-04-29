@@ -15,10 +15,8 @@ export function middleware(request: NextRequest) {
       const payload = decodeJwt(token);
       const role = payload.role as string;
 
-      console.log("Middleware: decoded role:", role);
 
       if (role !== "Admin" && role !== "Superadmin") {
-        console.log("Access denied: User is not an Admin");
         return NextResponse.redirect(new URL("/", request.url));
       }
     } catch (error) {

@@ -79,7 +79,6 @@ export default function Page() {
     }
   }, [page, fetchData, category]);
 
-  console.log("data", data);
 
   return (
     <>

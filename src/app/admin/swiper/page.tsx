@@ -50,7 +50,6 @@ export default function SwiperPage() {
       if (d) setData(d);
     });
   }, [page, fetchData]);
-  console.log("data", data);
 
   return (
     <>

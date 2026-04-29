@@ -20,6 +20,7 @@ export const getCategorysREQ = async ({
     return res.data;
   } catch (e) {
     console.error(e);
+    return null;
   }
 };
 

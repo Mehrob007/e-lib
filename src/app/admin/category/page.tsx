@@ -41,8 +41,9 @@ export default function Page() {
           _parent_id: parentId,
         });
         console.log("res", res);
-
-        return res as ItemT[];
+        if (res) {
+          return res as ItemT[];
+        } else return null;
       } catch (e) {
         console.error(e);
         return null;
@@ -65,7 +66,7 @@ export default function Page() {
   useEffect(() => {
     const parentId = folderLine?.[folderLine?.length - 1]?.id;
     fetchData(parentId).then((d) => {
-      if (d) setData(d);
+      setData(d);
     });
   }, [page, folderLine, fetchData]);
   return (
@@ -113,7 +114,7 @@ export default function Page() {
           page={page}
           openModalAdd={() => setIsModalOpen(true)}
           onClick={(data) => {
-            if (data.has_children) setFolderLine([...(folderLine ?? []), data]);
+            setFolderLine([...(folderLine ?? []), data]);
           }}
           personIcon={<IoFolderOpen size={30} className="table__cell-folder" />}
         />

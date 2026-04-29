@@ -1,7 +1,7 @@
 /* Global Styles for e-lib */
 
-@import "./variables";
-@import "./statistics";
+@use "./variables" as *;
+@use "./statistics" as *;
 // Reset
 * {
   box-sizing: border-box;

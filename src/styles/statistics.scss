@@ -2,10 +2,11 @@
 
 .statistics-page {
   padding: 24px;
+  padding-left: 0;
   display: flex;
   flex-direction: column;
   gap: 32px;
-  min-height: 100vh;
+  // min-height: 100vh;
   // background: #f8fbff;
 
   &__header {
@@ -19,18 +20,15 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    
+
     .header-icon {
       color: $primary-color;
     }
 
     h1 {
-      color: #1a1a1a;
-      font-size: 32px;
-      font-weight: 700;
-      margin: 0;
-      letter-spacing: -0.5px;
-      font-family: $font-family-2 !important;
+      color: #2962ff;
+      font-size: 28px;
+      font-weight: 600;
     }
   }
 
@@ -77,7 +75,7 @@
     &:hover {
       border-color: rgba($primary-color, 0.3);
       transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
     }
 
     &__icon-wrapper {
@@ -161,6 +159,82 @@
       color: $primary-color;
     }
   }
+
+  .statistics-chart-container {
+    background: $white;
+    border-radius: 24px;
+    padding: 32px;
+    // padding-left: 0;
+    border: 1px solid #eef2f6;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 32px;
+    }
+  }
+
+  .chart-wrapper {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    padding-top: 20px;
+    gap: 20px;
+  }
+
+  .chart-bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    height: 100%;
+    justify-content: flex-end;
+
+    .bar-outer {
+      width: 100%;
+      max-width: 60px;
+      background: #f1f5f9;
+      border-radius: 12px 12px 4px 4px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      height: 100%;
+    }
+
+    .bar-inner {
+      width: 100%;
+      background: linear-gradient(180deg, $primary-color 0%, #60a5fa 100%);
+      border-radius: 8px 8px 0 0;
+      transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+
+      &::after {
+        content: attr(data-value);
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 14px;
+        font-weight: 700;
+        color: $primary-color;
+      }
+    }
+
+    .bar-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748b;
+      text-align: center;
+      white-space: nowrap;
+    }
+  }
 }
 
 @media (max-width: 768px) {
@@ -170,7 +244,7 @@
       align-items: flex-start;
       gap: 20px;
     }
-    
+
     .total-badge {
       width: 100%;
       justify-content: center;

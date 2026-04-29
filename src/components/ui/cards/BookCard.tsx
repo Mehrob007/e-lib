@@ -29,7 +29,7 @@ export default function BookCard({
       <div className="book-card__image">
         {image ? (
           <Image
-            src={image.startsWith("http") ? image : `/${image}`}
+            src={image.startsWith("http") ? image : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${image.startsWith("/") ? "" : "/"}${image}`}
             alt={title}
             fill
             style={{ objectFit: "cover" }}

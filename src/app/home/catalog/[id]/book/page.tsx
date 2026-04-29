@@ -41,7 +41,7 @@ export default function BookReaderPage() {
         if (url) {
           const fullUrl = url.startsWith("http")
             ? url
-            : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/$/, "")}${url.startsWith("/") ? "" : "/"}${url}`;
+            : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${url.startsWith("/") ? "" : "/"}${url}`;
 
           const pdfRes = await axios.get(fullUrl, {
             headers: { "ngrok-skip-browser-warning": "1" },

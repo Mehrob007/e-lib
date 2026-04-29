@@ -7,6 +7,8 @@ import { ItemT } from "@/types/table";
 import { useCallback, useEffect, useState } from "react";
 import "./SwiperAdmin.css";
 
+import { motion } from "framer-motion";
+
 export default function SwiperPage() {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -52,7 +54,12 @@ export default function SwiperPage() {
 
   return (
     <>
-      <div className="elements__content swiper-admin-container">
+      <motion.div 
+        className="elements__content swiper-admin-container"
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         <header>
           <h1>Управление баннерами</h1>
         </header>
@@ -74,7 +81,7 @@ export default function SwiperPage() {
           openModalAdd={() => setIsModalOpen(true)}
           personIcon={<div className="swiper-placeholder-icon" />}
         />
-      </div>
+      </motion.div>
 
       {isModalOpen && (
         <ModalSwiper

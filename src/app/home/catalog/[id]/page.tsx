@@ -10,7 +10,7 @@ import { getCategorysREQ } from "@/api/category";
 import { ItemT } from "@/types/table";
 import { useBranding } from "@/hooks/useBranding";
 import Image from "next/image";
-import { IoArrowBack } from "react-icons/io5";
+import { IoArrowBack, IoPlayCircleOutline } from "react-icons/io5";
 import { HiOutlineArrowDownTray } from "react-icons/hi2";
 import AudioPlayer from "@/components/ui/player/AudioPlayer";
 import { useTranslation } from "@/hooks/useI18nStore";
@@ -79,7 +79,13 @@ export default function BookDetailsPage() {
         const fileUrlFull = fileUrlRaw
           ? fileUrlRaw.startsWith("http")
             ? fileUrlRaw
-            : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/$/, "")}${fileUrlRaw.startsWith("/") ? "" : "/"}${fileUrlRaw}`
+            : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${fileUrlRaw.startsWith("/") ? "" : "/"}${fileUrlRaw}`
+          : "";
+
+        const previewUrlFull = previewUrlRaw
+          ? previewUrlRaw.startsWith("http")
+            ? previewUrlRaw
+            : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${previewUrlRaw.startsWith("/") ? "" : "/"}${previewUrlRaw}`
           : "";
 
         let fileUrlProxied = fileUrlFull;
@@ -96,7 +102,7 @@ export default function BookDetailsPage() {
           year: (details.created as string) || "—",
           description:
             (details.annotation as string) || "Тавсиф ҳоло илова нашудааст.",
-          image: previewUrlRaw,
+          image: previewUrlFull,
           fileUrl: fileUrlRaw,
           fileUrlFull: fileUrlProxied,
           path: pathArr,
@@ -186,36 +192,31 @@ export default function BookDetailsPage() {
         <div className="main-column">
           <section className="cover-section">
             <div className={`book-cover ${book.mediaType === 'video' ? 'video-mode' : ''}`}>
-              {book.mediaType === "video" ? (
-                <video
-                  src={book.fileUrlFull}
-                  controls
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                    background: "#000",
-                    borderRadius: "12px",
-                  }}
-                  poster={
-                    book.image
-                      ? book.image.startsWith("http")
-                        ? book.image
-                        : `/${book.image}`
-                      : undefined
-                  }
-                />
-              ) : book.image ? (
-                <Image
-                  src={
-                    book.image.startsWith("http")
-                      ? book.image
-                      : `/${book.image}`
-                  }
-                  alt={book.title}
-                  fill
-                  style={{ objectFit: "cover", borderRadius: "12px" }}
-                />
+              {book.image ? (
+                <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                  <Image
+                    src={book.image}
+                    alt={book.title}
+                    fill
+                    style={{ objectFit: "cover", borderRadius: "12px" }}
+                  />
+                  {book.mediaType === "video" && (
+                    <div style={{
+                      position: "absolute",
+                      inset: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: "rgba(0,0,0,0.2)",
+                      borderRadius: "12px",
+                      cursor: "pointer"
+                    }}
+                    onClick={() => router.push(`/home/catalog/${id}/video`)}
+                    >
+                      <IoPlayCircleOutline size={80} color="#fff" style={{ opacity: 0.9 }} />
+                    </div>
+                  )}
+                </div>
               ) : (
                 <div
                   style={{
@@ -230,9 +231,26 @@ export default function BookDetailsPage() {
                     textAlign: "center",
                     padding: "20px",
                     borderRadius: "12px",
+                    position: "relative"
                   }}
                 >
                   {book.title}
+                  {book.mediaType === "video" && (
+                    <div style={{
+                      position: "absolute",
+                      inset: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: "rgba(0,0,0,0.1)",
+                      borderRadius: "12px",
+                      cursor: "pointer"
+                    }}
+                    onClick={() => router.push(`/home/catalog/${id}/video`)}
+                    >
+                      <IoPlayCircleOutline size={80} color="#fff" />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -327,8 +345,8 @@ export default function BookDetailsPage() {
                   }
                 }}
               >
-                <HiOutlineArrowDownTray /> 
-                <span style={{ fontSize: "14px", marginLeft: "8px", fontWeight: "normal"}}> {t("download")} </span>
+                <HiOutlineArrowDownTray fontSize={35} /> 
+                {/* <span style={{ fontSize: "14px", marginLeft: "8px", fontWeight: "normal"}}> {t("download")} </span> */}
               </button>
             </div>
           </section>
@@ -358,7 +376,7 @@ export default function BookDetailsPage() {
                     <div className="side-cover">
                       {img ? (
                         <Image
-                          src={img.startsWith("http") ? img : `/${img}`}
+                          src={img.startsWith("http") ? img : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${img.startsWith("/") ? "" : "/"}${img}`}
                           alt={(item.name as string) || "side-cover"}
                           fill
                           style={{ objectFit: "cover", borderRadius: "8px" }}

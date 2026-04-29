@@ -10,6 +10,8 @@ import { ItemT } from "@/types/table";
 import { useCallback, useEffect, useState } from "react";
 import { IoFolderOpen } from "react-icons/io5";
 
+import { motion } from "framer-motion";
+
 export default function Page() {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -71,7 +73,12 @@ export default function Page() {
   }, [page, folderLine, fetchData]);
   return (
     <>
-      <div className="category__content">
+      <motion.div 
+        className="category__content"
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         <header>
           <IoFolderOpen
             className="table__cell-folder"
@@ -118,7 +125,7 @@ export default function Page() {
           }}
           personIcon={<IoFolderOpen size={30} className="table__cell-folder" />}
         />
-      </div>
+      </motion.div>
 
       {isModalOpen && (
         <ModalCategory

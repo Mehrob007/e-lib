@@ -7,6 +7,8 @@ import { deleteUserById, getUsersREQ } from "@/api/user";
 import ModalUser from "@/components/ui/modal/Modal";
 import { FaUserCircle } from "react-icons/fa";
 
+import { motion } from "framer-motion";
+
 export default function Specialty() {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -55,7 +57,12 @@ export default function Specialty() {
 
   return (
     <>
-      <div className="user__content">
+      <motion.div 
+        className="user__content"
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         <header>
           <h1>Управление администраторами</h1>
         </header>
@@ -77,7 +84,7 @@ export default function Specialty() {
             editItem={editItem}
           />
         }
-      </div>
+      </motion.div>
 
       {isModalOpen && (
         <ModalUser

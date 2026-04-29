@@ -75,7 +75,7 @@ export default function StatisticsPage() {
           animate={{ opacity: 1, x: 0 }}
           className="header-title-wrapper"
         >
-          <TbChartBar size={32} className="header-icon" />
+          {/* <TbChartBar size={32} className="header-icon" /> */}
           <h1>Статистика контента</h1>
         </motion.div>
         
@@ -88,6 +88,35 @@ export default function StatisticsPage() {
           <span className="total-value">{totalCount}</span>
         </motion.div>
       </div>
+
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="statistics-chart-container"
+      >
+        <h2>Визуальный обзор</h2>
+        <div className="chart-wrapper">
+          {stats.map((item) => {
+            const maxVal = Math.max(...stats.map(s => s.content_count));
+            const heightPercentage = maxVal > 0 ? (item.content_count / maxVal) * 100 : 0;
+            
+            return (
+              <div key={item.media_id} className="chart-bar-group">
+                <div className="bar-outer">
+                  <motion.div 
+                    className="bar-inner"
+                    data-value={item.content_count}
+                    initial={{ height: 0 }}
+                    animate={{ height: `${heightPercentage}%` }}
+                    transition={{ duration: 1.5, ease: "easeOut" }}
+                  />
+                </div>
+                <span className="bar-label">{item.media_name}</span>
+              </div>
+            );
+          })}
+        </div>
+      </motion.div>
 
       <motion.div 
         className="statistics-grid"

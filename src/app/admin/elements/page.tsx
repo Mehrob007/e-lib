@@ -10,6 +10,8 @@ import TableItems from "@/modules/table/table/TableItems";
 import { ItemT } from "@/types/table";
 import { useCallback, useEffect, useState } from "react";
 import Header from "./Header";
+import { motion } from "framer-motion";
+
 export default function Page() {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -81,7 +83,12 @@ export default function Page() {
 
   return (
     <>
-      <div className="elements__content">
+      <motion.div 
+        className="elements__content"
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         <Header
           setCategory={(c) => {
             setCategory(c);
@@ -109,7 +116,7 @@ export default function Page() {
           deleteItem={deleteItem}
           editItem={editItem}
         />
-      </div>
+      </motion.div>
 
       {isModalOpen && (
         <ModalELement

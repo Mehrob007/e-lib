@@ -13,6 +13,7 @@ export default function VideoPlayerPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const [videoUrl, setVideoUrl] = useState<string>("");
+  const [posterUrl, setPosterUrl] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -29,21 +30,28 @@ export default function VideoPlayerPage() {
         setTitle(res.name as string);
         const details = (res.details as Record<string, unknown>) || {};
         const createdDate = (details.created as string) || "";
-        // Extract year if full date is too long, or keep as is
         setDate(createdDate.split(" ")[0]); 
         
         const fileUrlRaw = (viewRes?.file_url as string) || (details.file_url as string) || "";
+        const previewUrlRaw = (viewRes?.preview_url as string) || (details.preview_url as string) || "";
         
         if (fileUrlRaw) {
           const fullUrl = fileUrlRaw.startsWith("http")
             ? fileUrlRaw
-            : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/$/, "")}${fileUrlRaw.startsWith("/") ? "" : "/"}${fileUrlRaw}`;
+            : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${fileUrlRaw.startsWith("/") ? "" : "/"}${fileUrlRaw}`;
 
           let finalUrl = fullUrl;
           if (fullUrl.includes("ngrok-free.dev")) {
             finalUrl = `/api/mediaProxy?url=${encodeURIComponent(fullUrl)}`;
           }
           setVideoUrl(finalUrl);
+        }
+
+        if (previewUrlRaw) {
+          const fullPreviewUrl = previewUrlRaw.startsWith("http")
+            ? previewUrlRaw
+            : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${previewUrlRaw.startsWith("/") ? "" : "/"}${previewUrlRaw}`;
+          setPosterUrl(fullPreviewUrl);
         }
       }
     } catch (e) {
@@ -88,6 +96,7 @@ export default function VideoPlayerPage() {
               autoPlay 
               className="main-video"
               controlsList="nodownload"
+              poster={posterUrl}
             >
               Ваш браузер не поддерживает видео.
             </video>

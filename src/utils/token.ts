@@ -5,7 +5,7 @@ export const getNewToken = async (refreshToken: string | null) => {
 
   if (!refreshToken) return;
   const res = await axios.post(
-    BASE_URL + "admin/refresh/token",
+    BASE_URL + "/admin/refresh/token",
     {},
     {
       headers: {

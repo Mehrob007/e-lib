@@ -1,4 +1,5 @@
 "use client";
+import { useTranslation } from "@/hooks/useI18nStore";
 import {
   IoDocumentTextOutline,
   IoPlayCircleOutline,
@@ -9,10 +10,10 @@ export type ContentType = "text" | "video" | "audio";
 
 interface Props {
   type: ContentType;
-  label: string;
 }
 
-export default function TypeBadge({ type, label }: Props) {
+export default function TypeBadge({ type }: Props) {
+  const { t } = useTranslation();
   const getIcon = () => {
     switch (type) {
       case "text":
@@ -29,7 +30,7 @@ export default function TypeBadge({ type, label }: Props) {
   return (
     <div className={`type-badge type-badge--${type}`}>
       {getIcon()}
-      <span>{label}</span>
+      <span>{t(type)}</span>
     </div>
   );
 }

@@ -21,14 +21,7 @@ interface ContentItem {
   date: string;
   image: string;
   type: "text" | "video" | "audio";
-  typeLabel: string;
 }
-
-const TYPE_LABELS: Record<string, string> = {
-  book: "Матн",
-  video: "Видео",
-  audio: "Аудио",
-};
 
 export default function CatalogPage() {
   return (
@@ -114,6 +107,7 @@ function CatalogContent() {
         const res = await getCategoryContentREQ(catId, {
           _limit: limit,
           _offset: (page - 1) * limit,
+          lang,
         });
 
         if (res && res.data) {
@@ -130,7 +124,6 @@ function CatalogContent() {
               type: (contentType === "book"
                 ? "text"
                 : contentType) as ContentItem["type"],
-              typeLabel: TYPE_LABELS[contentType] || "Матн",
             };
           });
           setContent(mapped);
@@ -139,11 +132,12 @@ function CatalogContent() {
         }
       } catch (e) {
         console.error(e);
+        setContent([]);
       } finally {
         setLoading(false);
       }
     },
-    [page, limit],
+    [page, limit, lang],
   );
 
   useEffect(() => {
@@ -188,7 +182,7 @@ function CatalogContent() {
         <main className="catalog-page__main">
           <div className="catalog-controls">
             <select className="sort-select" title="sort-select">
-              <option>Мураттабкунӣ</option>
+              <option>{t("sorting")}</option>
             </select>
           </div>
 

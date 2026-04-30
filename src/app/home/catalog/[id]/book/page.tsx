@@ -11,6 +11,7 @@ import { HiOutlinePlus, HiOutlineMinus } from "react-icons/hi";
 import { HiOutlineArrowLeft, HiOutlineArrowRight } from "react-icons/hi2";
 import Loading from "@/components/ui/loading/Loading";
 import dynamic from "next/dynamic";
+import { useTranslation, useI18nStore } from "@/hooks/useI18nStore";
 import "./reader.scss";
 
 // Dynamically import the PDF content renderer without SSR
@@ -22,6 +23,7 @@ const ReaderContent = dynamic(() => import("./ReaderContent"), {
 export default function BookReaderPage() {
   const { id } = useParams();
   const router = useRouter();
+  const { t, lang } = useTranslation();
   const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null);
   const [title, setTitle] = useState<string>("");
   const [numPages, setNumPages] = useState<number>(0);
@@ -33,19 +35,15 @@ export default function BookReaderPage() {
   const fetchBook = useCallback(async () => {
     if (!id) return;
     try {
-      const res = await getContentById(id as string);
+      const res = await getContentById(id as string, { lang });
       if (res) {
         setTitle(res.name as string);
-        // const details = (res.details as Record<string, unknown>) || {};
-        let url =
-          localStorage.getItem("fileUrlFullPDF") ||
-          // (details.file_url as string) ||
-          "";
+        let url = localStorage.getItem("fileUrlFullPDF") || "";
 
         if (!url) {
           try {
             const { getContentByIdView } = await import("@/api/element");
-            const viewRes = await getContentByIdView(id as string);
+            const viewRes = await getContentByIdView(id as string, { lang });
             url = (viewRes?.file_url as string) || "";
           } catch (err) {
             console.error("Error fetching view details:", err);
@@ -69,7 +67,7 @@ export default function BookReaderPage() {
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, lang]);
 
   useEffect(() => {
     fetchBook();
@@ -108,7 +106,7 @@ export default function BookReaderPage() {
     <div className="reader-page">
       <header className="reader-header">
         <button className="back-btn" onClick={() => router.back()}>
-          <IoArrowBack /> <span>Баргаштан</span>
+          <IoArrowBack /> <span>{t("back")}</span>
         </button>
         <h1>{title}</h1>
         <div className="zoom-controls">
@@ -139,7 +137,7 @@ export default function BookReaderPage() {
           />
         ) : (
           <div className="pdf-container">
-            <div style={{ padding: "100px" }}>Файл ёфт нашуд</div>
+            <div style={{ padding: "100px" }}>{t("file_not_found")}</div>
           </div>
         )}
       </main>
@@ -151,7 +149,7 @@ export default function BookReaderPage() {
             onClick={() => changePage(-1)}
             disabled={pageNumber <= 1}
           >
-            <HiOutlineArrowLeft /> <span>Ба қафо</span>
+            <HiOutlineArrowLeft /> <span>{t("prev")}</span>
           </button>
           <div className="page-badge">{pageNumber}</div>
           <button
@@ -159,7 +157,7 @@ export default function BookReaderPage() {
             onClick={() => changePage(1)}
             disabled={pageNumber >= numPages}
           >
-            <span>Ба пеш</span> <HiOutlineArrowRight />
+            <span>{t("next")}</span> <HiOutlineArrowRight />
           </button>
         </div>
         <div className="progress-section">

@@ -10,7 +10,6 @@ interface Props {
   date: string;
   image: string;
   type: ContentType;
-  typeLabel: string;
   showType?: boolean;
 }
 
@@ -21,7 +20,6 @@ export default function BookCard({
   date,
   image,
   type,
-  typeLabel,
   showType = true,
 }: Props) {
   return (
@@ -58,7 +56,7 @@ export default function BookCard({
         <h3 className="book-card__title">{title}</h3>
         <p className="book-card__author">{author}</p>
         {showType ? <p className="book-card__date">{date}</p> : ""}
-        {showType ? <TypeBadge type={type} label={typeLabel} /> : ""}
+        {showType ? <TypeBadge type={type} /> : ""}
       </div>
     </Link>
   );

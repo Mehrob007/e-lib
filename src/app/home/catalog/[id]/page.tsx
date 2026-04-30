@@ -68,10 +68,9 @@ export default function BookDetailsPage() {
     setLoading(true);
     try {
       const [res, viewRes] = await Promise.all([
-        getContentById(id as string),
-        getContentByIdView(id as string).catch(() => null),
+        getContentById(id as string, { lang }),
+        getContentByIdView(id as string, { lang }).catch(() => null),
       ]);
-
 
       if (res) {
         const details = (res.details as Record<string, unknown>) || {};
@@ -84,32 +83,35 @@ export default function BookDetailsPage() {
           (details.preview_url as string) ||
           "";
 
-        const fileUrlFull = fileUrlRaw;
-        // ? fileUrlRaw.startsWith("http")
-        //   ? fileUrlRaw
-        //   : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${fileUrlRaw.startsWith("/") ? "" : "/"}${fileUrlRaw}`
-        // : "";
-
         const previewUrlFull = previewUrlRaw
           ? previewUrlRaw.startsWith("http")
             ? previewUrlRaw
             : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${previewUrlRaw.startsWith("/") ? "" : "/"}${previewUrlRaw}`
           : "";
 
-        let fileUrlProxied = fileUrlFull;
-        if (fileUrlFull.includes("ngrok-free.dev")) {
-          fileUrlProxied = `/api/mediaProxy?url=${encodeURIComponent(fileUrlFull)}`;
+        let fileUrlProxied = fileUrlRaw;
+        if (fileUrlRaw.includes("ngrok-free.dev")) {
+          fileUrlProxied = `/api/mediaProxy?url=${encodeURIComponent(fileUrlRaw)}`;
         }
+
+        const langId = (details.lang_id as string | number)?.toString();
+        const langLabel =
+          langId === "1"
+            ? t("lang_tj")
+            : langId === "2"
+              ? t("lang_ru")
+              : langId === "3"
+                ? t("lang_en")
+                : t("lang_tj");
 
         const bookData: BookDetails = {
           id: res.id as string,
           title: (res.name as string) || "—",
           author: (details.author as string) || "—",
-          language: (details.lang_id as string) === "1" ? "Тоҷикӣ" : "Тоҷикӣ",
+          language: langLabel,
           pages: (details.pages as string | number) || "—",
           year: (details.created as string) || "—",
-          description:
-            (details.annotation as string) || "Тавсиф ҳоло илова нашудааст.",
+          description: (details.annotation as string) || t("no_description"),
           image: previewUrlFull,
           fileUrl: fileUrlRaw,
           fileUrlFull: fileUrlProxied,
@@ -122,6 +124,7 @@ export default function BookDetailsPage() {
         if (bookData.categoryId) {
           const res = await getCategoryContentREQ(bookData.categoryId, {
             _limit: 4,
+            lang,
           });
           const relatedRes =
             (res?.data as unknown as Record<string, unknown>[]) || [];
@@ -140,7 +143,7 @@ export default function BookDetailsPage() {
     } finally {
       setLoading(false);
     }
-  }, [id, lang]);
+  }, [id, lang, t]);
 
   useEffect(() => {
     fetchData();

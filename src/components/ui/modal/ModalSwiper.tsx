@@ -79,6 +79,7 @@ export default function ModalSwiper({
         data: {
           name: data.name as string,
           details: {
+            link: data?.link as string,
             mime: mime as string,
             preview_key: object_key,
           },
@@ -100,6 +101,9 @@ export default function ModalSwiper({
   useEffect(() => {
     setClear();
   }, [setClear]);
+
+  console.log("data", data);
+  
 
   return (
     <motion.div
@@ -165,6 +169,14 @@ export default function ModalSwiper({
               placeholder="Введите название"
               value={data?.name as string}
               onChange={(v) => setData("name", v)}
+              errors={errors}
+            />
+            <Input
+              id="link"
+              title="Ссылка"
+              placeholder="Введите ссылку"
+              value={data?.link as string}
+              onChange={(v) => setData("link", v)}
               errors={errors}
             />
           </div>

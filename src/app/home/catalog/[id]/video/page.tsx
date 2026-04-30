@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { getContentById, getContentByIdView } from "@/api/element";
 import { IoArrowBack } from "react-icons/io5";
 import Loading from "@/components/ui/loading/Loading";
@@ -11,30 +11,36 @@ import "./video.scss";
 export default function VideoPlayerPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [posterUrl, setPosterUrl] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const fetchVideo = useCallback(async () => {
     if (!id) return;
     try {
       const [res, viewRes] = await Promise.all([
-        getContentById(id as string),
-        getContentByIdView(id as string).catch(() => null)
+        getContentById(id as string, { lang }),
+        getContentByIdView(id as string, { lang }).catch(() => null),
       ]);
-      
+
       if (res) {
         setTitle(res.name as string);
         const details = (res.details as Record<string, unknown>) || {};
         const createdDate = (details.created as string) || "";
-        setDate(createdDate.split(" ")[0]); 
-        
-        const fileUrlRaw = (viewRes?.file_url as string) || (details.file_url as string) || "";
-        const previewUrlRaw = (viewRes?.preview_url as string) || (details.preview_url as string) || "";
-        
+        setDate(createdDate.split(" ")[0]);
+
+        const fileUrlRaw =
+          (viewRes?.file_url as string) || (details.file_url as string) || "";
+        const previewUrlRaw =
+          (viewRes?.preview_url as string) ||
+          (details.preview_url as string) ||
+          "";
+
         if (fileUrlRaw) {
           const fullUrl = fileUrlRaw.startsWith("http")
             ? fileUrlRaw
@@ -59,17 +65,33 @@ export default function VideoPlayerPage() {
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, lang]);
 
   useEffect(() => {
     fetchVideo();
   }, [fetchVideo]);
 
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate]);
+
   if (loading) {
     return (
       <div className="video-player-page">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: "#fff" }}>
-          <Loading styles={{ width: "60px", height: "60px", borderWidth: "8px" }} />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100vh",
+            background: "#fff",
+          }}
+        >
+          <Loading
+            styles={{ width: "60px", height: "60px", borderWidth: "8px" }}
+          />
         </div>
       </div>
     );
@@ -84,25 +106,51 @@ export default function VideoPlayerPage() {
           </button>
         </div>
         <h1 className="video-title">{title}</h1>
-        <div className="spacer"></div>
+        <div className="video-speed-control">
+          <span>{t("speed")}:</span>
+          <select
+            value={playbackRate}
+            onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
+          >
+            <option value="0.5">0.5x</option>
+            <option value="0.75">0.75x</option>
+            <option value="1">1.0x</option>
+            <option value="1.25">1.25x</option>
+            <option value="1.5">1.5x</option>
+            <option value="2">2.0x</option>
+          </select>
+        </div>
       </header>
 
       <main className="video-main-container">
         <div className="video-frame">
           {videoUrl ? (
-            <video 
-              src={videoUrl} 
-              controls 
-              autoPlay 
+            <video
+              ref={videoRef}
+              src={videoUrl}
+              controls
+              autoPlay
               className="main-video"
               controlsList="nodownload"
               poster={posterUrl}
+              onPlay={() => {
+                if (videoRef.current) {
+                  videoRef.current.playbackRate = playbackRate;
+                }
+              }}
             >
-              Ваш браузер не поддерживает видео.
+              {t("video_not_supported")}
             </video>
           ) : (
-            <div style={{ padding: "100px", color: "#888", textAlign: "center", width: "100%" }}>
-              Видео контентӣ ёфт нашуд
+            <div
+              style={{
+                padding: "100px",
+                color: "#888",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
+              {t("video_not_found")}
             </div>
           )}
         </div>

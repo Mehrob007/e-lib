@@ -3,12 +3,15 @@ import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 
 interface Banner {
   id: string;
   name: string;
   details: {
     file_url: string;
+    link?: string;
   };
 }
 
@@ -37,7 +40,10 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
   }
 
   return (
-    <div className="hero-banner" style={{ padding: 0, overflow: "hidden", position: "relative" }}>
+    <div
+      className="hero-banner"
+      style={{ padding: 0, overflow: "hidden", position: "relative" }}
+    >
       <AnimatePresence mode="wait">
         <motion.div
           key={current}
@@ -46,23 +52,46 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
           className="hero-banner__content"
-          style={{ padding: 0, width: "100%", height: "100%", margin: 0, maxWidth: "none", position: "relative" }}
+          style={{
+            padding: 0,
+            width: "100%",
+            height: "100%",
+            margin: 0,
+            maxWidth: "none",
+            position: "relative",
+          }}
         >
-          <div className="hero-banner__image" style={{ width: "100%", height: "100%", margin: 0, position: "relative" }}>
-            <Image
-              src={banners[current].details.file_url?.startsWith("http") 
-                ? banners[current].details.file_url 
-                : banners[current].details.file_url?.startsWith("/") 
-                  ? banners[current].details.file_url 
-                  : `/${banners[current].details.file_url}`
-              }
-              alt={banners[current].name}
-              fill
-              style={{ objectFit: "cover" }}
-              priority
-              onLoadingComplete={() => {}}
-              onError={() => console.error("Image load error:", banners[current].details.file_url)}
-            />
+          <div
+            className="hero-banner__image"
+            style={{
+              width: "100%",
+              height: "100%",
+              margin: 0,
+              position: "relative",
+            }}
+          >
+            <Link href={banners[current].details?.link || ""}>
+              <Image
+                src={
+                  banners[current].details.file_url?.startsWith("http")
+                    ? banners[current].details.file_url
+                    : banners[current].details.file_url?.startsWith("/")
+                      ? banners[current].details.file_url
+                      : `/${banners[current].details.file_url}`
+                }
+                alt={banners[current].name}
+                fill
+                style={{ objectFit: "cover" }}
+                priority
+                onLoadingComplete={() => {}}
+                onError={() =>
+                  console.error(
+                    "Image load error:",
+                    banners[current].details.file_url,
+                  )
+                }
+              />
+            </Link>
           </div>
         </motion.div>
       </AnimatePresence>
@@ -70,15 +99,15 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
       {/* Navigation Arrows */}
       {banners.length > 1 && (
         <>
-          <button 
-            className="hero-banner__nav hero-banner__nav--prev" 
+          <button
+            className="hero-banner__nav hero-banner__nav--prev"
             onClick={prevSlide}
             style={{ left: "20px", zIndex: 100 }}
           >
             <IoChevronBackOutline />
           </button>
-          <button 
-            className="hero-banner__nav hero-banner__nav--next" 
+          <button
+            className="hero-banner__nav hero-banner__nav--next"
             onClick={nextSlide}
             style={{ right: "20px", zIndex: 100 }}
           >
@@ -88,18 +117,18 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
       )}
 
       {/* Pagination Dots */}
-      <div 
-        className="hero-banner__pagination" 
-        style={{ 
-          zIndex: 100, 
-          bottom: "20px", 
+      <div
+        className="hero-banner__pagination"
+        style={{
+          zIndex: 100,
+          bottom: "20px",
           right: "20px",
           background: "rgba(0, 0, 0, 0.2)",
           padding: "6px 12px",
           borderRadius: "20px",
           display: "flex",
           gap: "8px",
-          backdropFilter: "blur(4px)"
+          backdropFilter: "blur(4px)",
         }}
       >
         {banners.map((_, i) => (
@@ -107,10 +136,10 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
             key={i}
             className={`dot ${i === current ? "active" : ""}`}
             onClick={() => setCurrent(i)}
-            style={{ 
+            style={{
               cursor: "pointer",
               border: "1px solid rgba(255, 255, 255, 0.3)",
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)"
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
             }}
           ></span>
         ))}

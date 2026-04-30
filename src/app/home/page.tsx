@@ -10,6 +10,8 @@ import Loading from "@/components/ui/loading/Loading";
 import { useBranding } from "@/hooks/useBranding";
 import { getSwiper } from "@/api/swiper";
 
+import { useTranslation } from "@/hooks/useI18nStore";
+
 interface BookItem {
   id: string;
   title: string;
@@ -17,19 +19,13 @@ interface BookItem {
   date: string;
   image: string;
   type: "text" | "video" | "audio";
-  typeLabel: string;
   category_name: string;
   category_id: string;
 }
 
-const TYPE_LABELS: Record<string, string> = {
-  book: "Матн",
-  video: "Видео",
-  audio: "Аудио",
-};
-
 export default function Page() {
   const router = useRouter();
+  const { t, lang } = useTranslation();
   const [groupedBooks, setGroupedBooks] = useState<Record<string, BookItem[]>>(
     {},
   );
@@ -40,7 +36,7 @@ export default function Page() {
   const fetchContent = useCallback(async () => {
     setLoading(true);
     try {
-      const content = (await getElementsMainREQ()) as unknown as Record<
+      const content = (await getElementsMainREQ({ lang })) as unknown as Record<
         string,
         unknown
       >[];
@@ -55,12 +51,11 @@ export default function Page() {
             author: (item.author as string) || "—",
             date: (item.created as string) || "—",
             image: (item.preview_url as string) || "",
-            category_name: (item.category_name as string) || "Другое",
+            category_name: (item.category_name as string) || t("other"),
             category_id: (item.category_id as string) || "",
             type: (contentType === "book"
               ? "text"
               : contentType) as BookItem["type"],
-            typeLabel: TYPE_LABELS[contentType] || "Матн",
           };
 
           if (!groups[book.category_name]) {
@@ -76,18 +71,18 @@ export default function Page() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [lang, t]);
 
   const fetchSwiper = useCallback(async () => {
     try {
-      const res = await getSwiper({ _limit: 10, _offset: 0 });
+      const res = await getSwiper({ _limit: 10, _offset: 0, lang });
       if (res) {
         setBanners(res as any[]);
       }
     } catch (e) {
       console.error("Error fetching swiper:", e);
     }
-  }, []);
+  }, [lang]);
 
   useEffect(() => {
     fetchContent();
@@ -136,7 +131,6 @@ export default function Page() {
                     date={book.date}
                     image={book.image}
                     type={book.type}
-                    typeLabel={book.typeLabel}
                   />
                 ))}
               </div>
@@ -144,7 +138,7 @@ export default function Page() {
           ))
         ) : (
           <p style={{ textAlign: "center", color: "#888", padding: "40px" }}>
-            Контент пока не добавлен
+            {t("no_content")}
           </p>
         )}
       </div>

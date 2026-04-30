@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LuCirclePlay,
   LuHeadphones,
@@ -33,6 +33,14 @@ export default function CatalogSideNav({
     {},
   );
   const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -49,10 +57,28 @@ export default function CatalogSideNav({
     }
   };
 
-  const toggleExpand = async (e: React.MouseEvent, id: string) => {
+  const toggleExpand = async (
+    e: React.MouseEvent,
+    id: string,
+    parentId: string | null = null,
+  ) => {
     e.stopPropagation();
 
     const newExpandedIds = new Set(expandedIds);
+
+    if (isMobile) {
+      if (parentId === null) {
+        subCategories.forEach((cat) => {
+          if (cat.id !== id) newExpandedIds.delete(cat.id);
+        });
+      } else {
+        const siblings = nestedData[parentId] || [];
+        siblings.forEach((cat) => {
+          if (cat.id !== id) newExpandedIds.delete(cat.id);
+        });
+      }
+    }
+
     if (newExpandedIds.has(id)) {
       newExpandedIds.delete(id);
       setExpandedIds(newExpandedIds);
@@ -96,7 +122,11 @@ export default function CatalogSideNav({
     }
   };
 
-  const renderItem = (sub: SubCategory, isNested = false) => {
+  const renderItem = (
+    sub: SubCategory,
+    isNested = false,
+    parentId: string | null = null,
+  ) => {
     const isExpanded = expandedIds.has(sub.id);
     const isLoading = loadingIds.has(sub.id);
 
@@ -114,7 +144,7 @@ export default function CatalogSideNav({
             <span>{sub.name}</span>
             <div
               className={`catalog-side-nav__arrow-wrapper ${isExpanded ? "expanded" : ""}`}
-              onClick={(e) => toggleExpand(e, sub.id)}
+              onClick={(e) => toggleExpand(e, sub.id, parentId)}
             >
               {isLoading ? (
                 <div className="catalog-side-nav__loader" />
@@ -127,17 +157,16 @@ export default function CatalogSideNav({
 
         {isExpanded && nestedData[sub.id] && (
           <div className="catalog-side-nav__children">
-            {nestedData[sub.id].map((child) => renderItem(child, true))}
+            {nestedData[sub.id].map((child) => renderItem(child, true, sub.id))}
           </div>
         )}
       </div>
     );
   };
 
-
   return (
     <aside className="catalog-side-nav">
-      {subCategories.map((sub) => renderItem(sub))}
+      {subCategories.map((sub) => renderItem(sub, false, null))}
     </aside>
   );
 }

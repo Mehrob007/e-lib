@@ -1385,6 +1385,10 @@ button {
 
       &__wrapper {
         display: contents !important;
+        padding-left: 0 !important ;
+        .nested {
+          padding-left: 0px !important;
+        }
       }
 
       &__item:not(.nested) {
@@ -1430,7 +1434,9 @@ button {
         width: 100% !important;
         flex: 0 0 100%;
         display: flex !important;
-        flex-direction: row !important;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column !important;
         overflow-x: auto;
         background: #fcfdfe;
         padding: 12px 16px !important;
@@ -1443,7 +1449,11 @@ button {
 
         .catalog-side-nav__wrapper.nested {
           display: flex !important;
+          flex-direction: column !important;
+          width: 100%;
           flex-shrink: 0;
+          padding-left: 0;
+          gap: 8px;
         }
 
         .catalog-side-nav__item {
@@ -1453,6 +1463,7 @@ button {
           border: 1px solid #e0e0e0 !important;
           border-radius: 50px !important;
           min-width: unset !important;
+          width: 100% !important;
 
           .catalog-side-nav__link {
             font-size: 14px;
@@ -1460,11 +1471,17 @@ button {
             font-weight: 500;
             color: #666;
             padding: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
             svg:not(.catalog-side-nav__arrow) {
               display: none !important;
             }
             .catalog-side-nav__arrow-wrapper {
-              display: none !important;
+              display: flex !important;
+              margin-left: auto;
+              color: #999;
             }
           }
 

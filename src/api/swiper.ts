@@ -4,15 +4,18 @@ import apiClient from "@/utils/apiClient";
 export const getSwiper = async ({
   _limit,
   _offset,
+  lang,
 }: {
   _limit: number;
   _offset: number;
+  lang?: string;
 }) => {
   try {
     const res = await apiClient("/library/get_swiper", {
       params: {
         _limit: _limit,
         _offset: _offset,
+        lang,
       },
     });
     // Ответ res

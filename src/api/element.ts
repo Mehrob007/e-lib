@@ -17,6 +17,7 @@ export const getCategoryContentREQ = async (
     sort_order?: "asc" | "desc";
     _limit?: number;
     _offset?: number;
+    lang?: string;
   },
 ) => {
   try {
@@ -32,6 +33,10 @@ export const getCategoryContentREQ = async (
     };
   } catch (e) {
     console.error(e);
+   return {
+      data: [],
+      total: "",
+    };
   }
 };
 
@@ -58,9 +63,9 @@ export const getPresignedUrlREQ = async (
   }
 };
 
-export const getElementsMainREQ = async () => {
+export const getElementsMainREQ = async (params?: { lang?: string }) => {
   try {
-    const res = await apiClient("library/main");
+    const res = await apiClient("library/main", { params });
     return res.data;
   } catch (e) {
     console.error(e);
@@ -156,18 +161,24 @@ export const editElementById = async (
   }
 };
 
-export const getContentById = async (id: string) => {
+export const getContentById = async (
+  id: string,
+  params?: { lang?: string },
+) => {
   try {
-    const res = await apiClient("/library/content/" + id);
+    const res = await apiClient("/library/content/" + id, { params });
     return res.data;
   } catch (e) {
     console.error(e);
   }
 };
 
-export const getContentByIdView = async (id: string) => {
+export const getContentByIdView = async (
+  id: string,
+  params?: { lang?: string },
+) => {
   try {
-    const res = await apiClient(`/library/content/${id}/view`);
+    const res = await apiClient(`/library/content/${id}/view`, { params });
     return res.data;
   } catch (e) {
     console.error(e);

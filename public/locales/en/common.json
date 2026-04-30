@@ -24,5 +24,21 @@
   "search_placeholder": "Search by title or author",
   "search_button": "Search",
   "logout": "Logout",
-  "library": "LIBRARY"
+  "library": "LIBRARY",
+  "all": "All",
+  "text": "Text",
+  "video": "Video",
+  "audio": "Audio",
+  "no_content": "No content added yet",
+  "other": "Other",
+  "lang_tj": "Tajik",
+  "lang_ru": "Russian",
+  "lang_en": "English",
+  "video_not_supported": "Your browser does not support the video tag.",
+  "video_not_found": "Video content not found",
+  "sorting": "Sorting",
+  "file_not_found": "File not found",
+  "prev": "Previous",
+  "next": "Next",
+  "speed": "Speed"
 }

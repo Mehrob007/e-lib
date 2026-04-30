@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { useCallback } from 'react';
 
 interface I18nState {
   lang: string;
@@ -48,7 +49,7 @@ export const useTranslation = () => {
   const translations = useI18nStore((state) => state.translations);
   const lang = useI18nStore((state) => state.lang);
   
-  const t = (key: string, variables?: Record<string, string | number>) => {
+  const t = useCallback((key: string, variables?: Record<string, string | number>) => {
     let text = translations[key] || key;
     if (variables) {
       Object.keys(variables).forEach(varKey => {
@@ -56,7 +57,7 @@ export const useTranslation = () => {
       });
     }
     return text;
-  };
+  }, [translations]);
 
   return { t, lang };
 };

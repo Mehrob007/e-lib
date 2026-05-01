@@ -33,7 +33,7 @@ export default function SwiperPage() {
           return {
             ...item,
             ...details,
-            preview_url: details.file_url,
+            preview_url: details.preview_url,
           } as ItemT;
         });
         setData(items);
@@ -46,13 +46,11 @@ export default function SwiperPage() {
   }, [page]);
 
   const deleteItem = async (id: string) => {
-    if (confirm("Вы уверены, что хотите удалить этот баннер?")) {
-      try {
-        await deleteElementById(id);
-        fetchData();
-      } catch (e) {
-        console.error(e);
-      }
+    try {
+      await deleteElementById(id);
+      fetchData();
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -73,6 +71,8 @@ export default function SwiperPage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  console.log("data", data);
 
   return (
     <>

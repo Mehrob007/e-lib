@@ -1,5 +1,6 @@
 "use client";
 import { deleteBranchREQ, getCategorysREQ } from "@/api/category";
+import { getContentById } from "@/api/element";
 import ModalCategory from "@/components/ui/modal/ModalCategory";
 import { LIMIT_REQ } from "@/const/def";
 import { useI18nStore } from "@/hooks/useI18nStore";
@@ -30,6 +31,7 @@ export default function Page() {
   };
   const [data, setData] = useState<ItemT[] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<ItemT | null>(null);
   const lang = useI18nStore((s) => s.lang);
 
   const fetchData = useCallback(
@@ -43,11 +45,10 @@ export default function Page() {
           _parent_id: parentId,
         });
         if (res) {
-          return res as ItemT[];
-        } else return null;
+          setData(res as ItemT[]);
+        }
       } catch (e) {
         console.error(e);
-        return null;
       } finally {
         setLoading(false);
       }
@@ -58,6 +59,22 @@ export default function Page() {
   const deleteItem = async (id: string) => {
     try {
       const res = await deleteBranchREQ(id);
+      if (res) {
+        const parentId = folderLine?.[folderLine?.length - 1]?.id;
+        fetchData(parentId);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const editItem = async (id: string) => {
+    try {
+      const res = await getContentById(id);
+      if (res) {
+        setEditingItem(res);
+        setIsModalOpen(true);
+      }
     } catch (e) {
       console.error(e);
     }
@@ -65,13 +82,12 @@ export default function Page() {
 
   useEffect(() => {
     const parentId = folderLine?.[folderLine?.length - 1]?.id;
-    fetchData(parentId).then((d) => {
-      setData(d);
-    });
+    fetchData(parentId);
   }, [page, folderLine, fetchData]);
+
   return (
     <>
-      <motion.div 
+      <motion.div
         className="category__content"
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -87,9 +103,8 @@ export default function Page() {
           <h1>/ </h1>
           <div>
             {folderLine?.map((e, i) => (
-              <>
+              <span key={i}>
                 <span
-                  key={i}
                   onClick={() => {
                     setFolderLine(folderLine.slice(0, i + 1));
                   }}
@@ -97,12 +112,13 @@ export default function Page() {
                   {e.name}
                 </span>{" "}
                 {">"}
-              </>
+              </span>
             ))}
           </div>
         </header>
         <TableItems
           deleteItem={deleteItem}
+          editItem={editItem}
           loading={loading}
           styleHeader={{ gridTemplateColumns: "1fr 100px" }}
           styleTable={{
@@ -128,9 +144,16 @@ export default function Page() {
       {isModalOpen && (
         <ModalCategory
           setDataTable={setData}
-          onClose={() => setIsModalOpen(false)}
-          onSuccess={fetchData}
+          onClose={() => {
+            setIsModalOpen(false);
+            setEditingItem(null);
+          }}
+          onSuccess={() => {
+            const parentId = folderLine?.[folderLine?.length - 1]?.id;
+            fetchData(parentId);
+          }}
           parentId={folderLine?.[folderLine?.length - 1]?.id}
+          editItem={editingItem || undefined}
         />
       )}
     </>

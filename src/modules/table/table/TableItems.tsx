@@ -4,6 +4,8 @@ import TableItem from "./TableItem";
 import "./Table.css";
 import { GoPlus, GoChevronLeft, GoChevronRight } from "react-icons/go";
 import Loading from "@/components/ui/loading/Loading";
+import { useState } from "react";
+import ModalDelete from "@/components/ui/modal/ModalDelete";
 
 export default function TableItems({
   header,
@@ -23,6 +25,19 @@ export default function TableItems({
   onClick,
   loading = false,
 }: TableItemsT) {
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const handleDeleteClick = (id: string) => {
+    setDeleteId(id);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteId && deleteItem) {
+      deleteItem(deleteId);
+    }
+    setDeleteId(null);
+  };
+
   const colsCount = (header?.length || 0) + 1;
   const gridStyle = { "--cols": colsCount } as React.CSSProperties;
 
@@ -47,7 +62,7 @@ export default function TableItems({
                 key={i}
                 keys={items.keys}
                 data={e}
-                deleteItem={deleteItem}
+                deleteItem={handleDeleteClick}
                 editItem={editItem}
               />
             ))
@@ -77,14 +92,18 @@ export default function TableItems({
           <button
             className="pagination-btn"
             onClick={() => setPage && setPage((page || 0) + 1)}
-            disabled={
-              items?.data ? items.data.length < 25 : true
-            }
+            disabled={items?.data ? items.data.length < 25 : true}
           >
             <GoChevronRight />
           </button>
         </div>
       </div>
+
+      <ModalDelete
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }

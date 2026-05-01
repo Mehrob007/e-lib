@@ -4,15 +4,17 @@ import { useFormStore } from "@/hooks/useFormStore";
 import { useEffect, useState } from "react";
 import { LuX } from "react-icons/lu";
 import { postCategoryREQ } from "@/api/category";
+import { editElementById } from "@/api/element";
 import { motion } from "framer-motion";
 import "./Modal.css";
 import { ItemT } from "@/types/table";
 
 interface Props {
   onClose: () => void;
-  onSuccess: (parentId?: string) => Promise<ItemT[] | null>;
+  onSuccess: (parentId?: string) => void;
   parentId?: string;
   setDataTable: (v: ItemT[]) => void;
+  editItem?: ItemT;
 }
 
 export default function ModalCategory({
@@ -20,6 +22,7 @@ export default function ModalCategory({
   onSuccess,
   parentId,
   setDataTable,
+  editItem,
 }: Props) {
   const { errors, data, setData, validate, setClear } = useFormStore();
   const [loading, setLoading] = useState(false);
@@ -32,15 +35,21 @@ export default function ModalCategory({
     if (!valid) return;
     setLoading(true);
     try {
-      await postCategoryREQ({
+      const payload = {
         mime: data?.mime || "branch",
-        ...data,
+        tj_name: data?.tj_name,
+        ru_name: data?.ru_name,
+        en_name: data?.en_name,
         ...(parentId && { _parent_id: parentId }),
-      });
-      // onSuccess(parentId);
-      onSuccess(parentId).then((d) => {
-        if (d) setDataTable(d);
-      });
+      };
+
+      if (editItem?.id) {
+        await editElementById(editItem.id as string, payload);
+      } else {
+        await postCategoryREQ(payload);
+      }
+
+      onSuccess(parentId);
       onClose();
     } catch (e) {
       console.error(e);
@@ -50,8 +59,15 @@ export default function ModalCategory({
   };
 
   useEffect(() => {
-    setClear();
-  }, [setClear]);
+    if (editItem) {
+      setData("mime", editItem.mime || "branch");
+      setData("tj_name", editItem.name);
+      setData("ru_name", editItem.ru_name);
+      setData("en_name", editItem.en_name);
+    } else {
+      setClear();
+    }
+  }, [setClear, editItem, setData]);
 
   return (
     <motion.div
@@ -73,7 +89,7 @@ export default function ModalCategory({
         }}
       >
         <header className="modal__header">
-          <h2>Добавление</h2>
+          <h2>{editItem ? "Изменение" : "Добавление"}</h2>
           <button className="modal__close" onClick={onClose}>
             <LuX size={18} />
           </button>
@@ -118,7 +134,7 @@ export default function ModalCategory({
               id="tj_name"
               title="Таджикский"
               placeholder="Введите таджикский"
-              value={data?.name as string}
+              value={data?.tj_name as string}
               onChange={(v) => setData("tj_name", v)}
               errors={errors}
             />
@@ -126,7 +142,7 @@ export default function ModalCategory({
               id="ru_name"
               title="Русский"
               placeholder="Введите русский"
-              value={data?.code as string}
+              value={data?.ru_name as string}
               onChange={(v) => setData("ru_name", v)}
               errors={errors}
             />
@@ -134,7 +150,7 @@ export default function ModalCategory({
               id="en_name"
               title="Английский"
               placeholder="Введите английский"
-              value={data?.code as string}
+              value={data?.en_name as string}
               onChange={(v) => setData("en_name", v)}
               errors={errors}
             />

@@ -12,7 +12,7 @@ import { ItemT } from "@/types/table";
 import { useCallback, useEffect, useState } from "react";
 import Header from "./Header";
 import { motion } from "framer-motion";
-import { TbSearch } from "react-icons/tb";
+import { TbSearch, TbPlus } from "react-icons/tb";
 
 export default function Page() {
   const [page, setPage] = useState(0);
@@ -135,7 +135,10 @@ export default function Page() {
             />
           </div>
 
-          
+          <button className="add-btn-main" onClick={() => setIsModalOpen(true)}>
+            <TbPlus size={20} />
+            Добавить контент
+          </button>
         </div>
         <TableItems
           loading={loading}
@@ -155,7 +158,7 @@ export default function Page() {
           }}
           setPage={setPage}
           page={page}
-          openModalAdd={() => setIsModalOpen(true)}
+          // openModalAdd={() => setIsModalOpen(true)}
           deleteItem={deleteItem}
           editItem={editItem}
         />

@@ -1576,6 +1576,10 @@ button {
 
 .elements__search {
   margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
   
   .search-input-wrapper {
     display: flex;
@@ -1585,6 +1589,7 @@ button {
     padding: 10px 20px;
     border-radius: 12px;
     border: 1px solid #eef2f6;
+    flex: 1;
     max-width: 400px;
     transition: all 0.3s ease;
 
@@ -1609,6 +1614,36 @@ button {
       &::placeholder {
         color: #94a3b8;
       }
+    }
+  }
+
+  .add-btn-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #2962ff;
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(41, 98, 255, 0.2);
+
+    &:hover {
+      background: #1e4bd8;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(41, 98, 255, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    svg {
+      stroke-width: 2.5px;
     }
   }
 }

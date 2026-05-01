@@ -117,7 +117,7 @@ function CatalogContent() {
             const contentType = (details.type || "book") as string;
             return {
               id: item.id as string,
-              title: (item.name as string) || "—",
+              title: (item.title as string) || "—",
               author: details.author || "—",
               date: (item.created as string)?.split("T")?.[0] || "—",
               image: details.preview_url || "",
@@ -156,6 +156,8 @@ function CatalogContent() {
       fetchContent(targetId);
     }
   }, [activeCategoryId, activeSubCategoryId, fetchContent]);
+
+  console.log("book", content);
 
   return (
     <div className="home-page catalog-page">

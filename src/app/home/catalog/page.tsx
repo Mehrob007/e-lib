@@ -8,7 +8,7 @@ import CatalogSideNav from "@/components/ui/nav/CatalogSideNav";
 import BookCard from "@/components/ui/cards/BookCard";
 import Loading from "@/components/ui/loading/Loading";
 import { getCategorysREQ } from "@/api/category";
-import { getCategoryContentREQ } from "@/api/element";
+import { getCategoryContentREQ, searchElementsREQ } from "@/api/element";
 import { ItemT } from "@/types/table";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { useTranslation } from "@/hooks/useI18nStore";
@@ -108,7 +108,7 @@ function CatalogContent() {
     },
     [lang, getLocalized],
   );
-
+  const fetchContent = useCallback(
     async (catId: string) => {
       if (!catId && !searchQuery) return;
       setLoading(true);
@@ -241,8 +241,9 @@ function CatalogContent() {
               )}
             </select>
           </div>
+        </div>
 
-          {loading ? (
+        {loading ? (
             <div
               style={{
                 display: "flex",

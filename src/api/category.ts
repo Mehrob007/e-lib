@@ -44,3 +44,17 @@ export const deleteBranchREQ = async (branch_id: string) => {
     console.error(e);
   }
 };
+
+export const editBranchPathREQ = async (
+  branch_id: string,
+  new_path: string,
+) => {
+  try {
+    const res = await apiClient.patch(
+      `admin/update_branch_path/${branch_id}?new_path=${new_path}`,
+    );
+    return res.data;
+  } catch (e) {
+    console.error(e);
+  }
+};

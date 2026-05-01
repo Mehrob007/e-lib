@@ -1,0 +1,129 @@
+.transfer-modal {
+  padding: 24px !important;
+  gap: 16px !important;
+}
+
+.transfer-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.transfer-header-info h2 {
+  margin: 0 !important;
+  text-align: left !important;
+  font-family: inherit !important;
+  font-size: 20px !important;
+}
+
+.transfer-sub {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+  align-self: flex-start;
+}
+
+.transfer-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid #eee;
+}
+
+.transfer-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #888;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.transfer-breadcrumb span {
+  cursor: pointer;
+}
+
+.transfer-breadcrumb span:hover {
+  color: #2962ff;
+}
+
+.transfer-breadcrumb .active {
+  color: #333;
+  font-weight: 600;
+  cursor: default;
+}
+
+.transfer-list-container {
+  height: 300px;
+  overflow-y: auto;
+}
+
+.transfer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.transfer-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #444;
+}
+
+.transfer-item:hover {
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: #2962ff;
+}
+
+.transfer-item .item-arrow {
+  margin-left: auto;
+  opacity: 0.3;
+}
+
+.transfer-item:hover .item-arrow {
+  opacity: 1;
+}
+
+.transfer-loading,
+.transfer-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #999;
+  font-size: 14px;
+}
+
+.modal__footer {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 16px !important;
+}
+
+.target-info {
+  font-size: 14px;
+  color: #444;
+  padding: 10px;
+  background: #e3f2fd;
+  border-radius: 8px;
+  border: 1px solid #bbdefb;
+}
+
+.transfer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}

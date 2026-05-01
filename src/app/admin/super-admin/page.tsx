@@ -64,7 +64,7 @@ export default function Specialty() {
         transition={{ duration: 0.4 }}
       >
         <header>
-          <h1>Управление администраторами</h1>
+          <h1 >Управление администраторами</h1>
         </header>
         {
           <TableItems

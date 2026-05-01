@@ -2,6 +2,7 @@
 import { deleteBranchREQ, getCategorysREQ } from "@/api/category";
 import { getContentById } from "@/api/element";
 import ModalCategory from "@/components/ui/modal/ModalCategory";
+import ModalTransferBranch from "@/components/ui/modal/ModalTransferBranch";
 import { LIMIT_REQ } from "@/const/def";
 import { useI18nStore } from "@/hooks/useI18nStore";
 import { HeaderTableCategory } from "@/const/table";
@@ -12,6 +13,7 @@ import { useCallback, useEffect, useState } from "react";
 import { IoFolderOpen } from "react-icons/io5";
 
 import { motion } from "framer-motion";
+import { RiGitBranchFill } from "react-icons/ri";
 
 export default function Page() {
   const [page, setPage] = useState(0);
@@ -31,6 +33,7 @@ export default function Page() {
   };
   const [data, setData] = useState<ItemT[] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ItemT | null>(null);
   const lang = useI18nStore((s) => s.lang);
 
@@ -70,10 +73,17 @@ export default function Page() {
 
   const editItem = async (id: string) => {
     try {
-      const res = await getContentById(id);
+      const parentId = folderLine?.[folderLine?.length - 1]?.id;
+      const res = await getCategorysREQ({
+        _parent_id: parentId,
+      });
+
       if (res) {
-        setEditingItem(res);
-        setIsModalOpen(true);
+        const item = (res as ItemT[]).find((c) => c.id === id);
+        if (item) {
+          setEditingItem(item);
+          setIsModalOpen(true);
+        }
       }
     } catch (e) {
       console.error(e);
@@ -92,29 +102,42 @@ export default function Page() {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-      >
+        >
+        <h1 className="title">Управление категориями</h1>
         <header>
+          <div className="breadcrumb-path">
           <IoFolderOpen
             className="table__cell-folder"
             onClick={() => {
               setFolderLine(null);
             }}
           />
-          <h1>/ </h1>
-          <div>
-            {folderLine?.map((e, i) => (
-              <span key={i}>
-                <span
-                  onClick={() => {
-                    setFolderLine(folderLine.slice(0, i + 1));
-                  }}
-                >
-                  {e.name}
-                </span>{" "}
-                {">"}
-              </span>
-            ))}
+            <h1>/ </h1>
+            <div>
+              {folderLine?.map((e, i) => (
+                <span key={i}>
+                  <span
+                    onClick={() => {
+                      setFolderLine(folderLine.slice(0, i + 1));
+                    }}
+                  >
+                    {e.name}
+                  </span>{" "}
+                  {">"}
+                </span>
+              ))}
+            </div>
           </div>
+
+          {folderLine && folderLine.length > 0 && (
+            <div
+              className="transfer-branch"
+              onClick={() => setIsTransferModalOpen(true)}
+              title="Переместить эту ветку"
+            >
+              <RiGitBranchFill />
+            </div>
+          )}
         </header>
         <TableItems
           deleteItem={deleteItem}
@@ -140,7 +163,6 @@ export default function Page() {
           personIcon={<IoFolderOpen size={30} className="table__cell-folder" />}
         />
       </motion.div>
-
       {isModalOpen && (
         <ModalCategory
           setDataTable={setData}
@@ -154,6 +176,17 @@ export default function Page() {
           }}
           parentId={folderLine?.[folderLine?.length - 1]?.id}
           editItem={editingItem || undefined}
+        />
+      )}
+      {isTransferModalOpen && folderLine && folderLine.length > 0 && (
+        <ModalTransferBranch
+          onClose={() => setIsTransferModalOpen(false)}
+          onSuccess={() => {
+            // After transfer, go back to root as the current branch moved
+            setFolderLine(null);
+          }}
+          branchId={folderLine[folderLine.length - 1].id}
+          branchName={folderLine[folderLine.length - 1].name}
         />
       )}
     </>

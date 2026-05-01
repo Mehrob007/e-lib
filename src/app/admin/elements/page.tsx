@@ -80,6 +80,9 @@ export default function Page() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
+        <header style={{ marginBottom: "20px" }}>
+          <h1 className="title">Управление контентом</h1>
+        </header>
         <Header
           setCategory={(c) => {
             setCategory(c);

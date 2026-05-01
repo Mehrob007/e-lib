@@ -400,7 +400,11 @@ button {
     transform: scale(1) translate(0%, 0%) rotate(0deg);
   }
 }
-
+.title {
+  color: #2962ff !important;
+  font-size: 28px !important;
+  font-weight: 600;
+}
 .category__content {
   > header {
     background-color: #e3f2fd;
@@ -408,11 +412,13 @@ button {
     // height: 67px;
     color: #a4a4a4;
     display: flex;
-    align-items: center;
+    align-items: end;
     gap: 7px;
     padding: 10px 20px;
     padding-bottom: 0px;
+    height: 70px;
     overflow: auto;
+    position: relative;
     > svg {
       // padding-bottom: 10px;
       margin-top: -10px;
@@ -1176,6 +1182,24 @@ button {
     color: #333;
     font-weight: 500;
   }
+}
+
+.transfer-branch {
+  position: absolute;
+  right: 20px;
+  top: 15px;
+  color: #333;
+  background-color: white;
+  padding: 10px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.breadcrumb-path {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 /* Premium Adaptive Design - Antigravity Style */

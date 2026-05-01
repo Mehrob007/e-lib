@@ -54,6 +54,44 @@
     }
   }
 
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .category-select-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: $white;
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1px solid #eef2f6;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: $primary-color;
+      box-shadow: 0 8px 12px -1px rgba(0, 0, 0, 0.08);
+    }
+
+    .filter-icon {
+      color: #94a3b8;
+    }
+
+    .category-select {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #1e293b;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      padding-right: 10px;
+    }
+  }
+
   .statistics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

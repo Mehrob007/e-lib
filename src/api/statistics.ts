@@ -6,9 +6,11 @@ export interface MediaStatistic {
   content_count: number;
 }
 
-export const getMediaStatisticsREQ = async (): Promise<MediaStatistic[]> => {
+export const getMediaStatisticsREQ = async (categoryId?: string): Promise<MediaStatistic[]> => {
   try {
-    const res = await apiClient.get("/admin/get_media_amount");
+    const res = await apiClient.get("/admin/get_media_amount", {
+      params: { category_id: categoryId }
+    });
     return res.data;
   } catch (e) {
     console.error("Error fetching media statistics:", e);

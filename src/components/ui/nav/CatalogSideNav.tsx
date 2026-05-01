@@ -141,7 +141,7 @@ export default function CatalogSideNav({
         >
           <div className="catalog-side-nav__link">
             {getIcon(sub.mime)}
-            <span>{sub.name}</span>
+            <span title={sub.name}>{sub.name}</span>
             <div
               className={`catalog-side-nav__arrow-wrapper ${isExpanded ? "expanded" : ""}`}
               onClick={(e) => toggleExpand(e, sub.id, parentId)}
@@ -154,7 +154,6 @@ export default function CatalogSideNav({
             </div>
           </div>
         </div>
-
         {isExpanded && nestedData[sub.id] && (
           <div className="catalog-side-nav__children">
             {nestedData[sub.id].map((child) => renderItem(child, true, sub.id))}

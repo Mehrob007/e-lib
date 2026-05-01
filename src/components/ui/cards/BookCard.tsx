@@ -22,6 +22,9 @@ export default function BookCard({
   type,
   showType = true,
 }: Props) {
+
+  console.log("type", type);
+  
   return (
     <Link href={`/home/catalog/${id}`} className="book-card">
       <div className="book-card__image">
@@ -55,7 +58,7 @@ export default function BookCard({
       <div className="book-card__content">
         <h3 className="book-card__title">{title}</h3>
         <p className="book-card__author">{author}</p>
-        {showType ? <p className="book-card__date">{date}</p> : ""}
+        {showType && type === "video" ? <p className="book-card__date">{date}</p> : ""}
         {showType ? <TypeBadge type={type} /> : ""}
       </div>
     </Link>

@@ -46,5 +46,7 @@
   "no_results_found": "No results found",
   "by_title": "By title",
   "by_author": "By author name",
-  "by_date": "By date added"
+  "by_date": "By date added",
+  "search_results": "Search Results",
+  "no_elements_available": "No elements available"
 }

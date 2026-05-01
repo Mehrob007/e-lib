@@ -116,7 +116,7 @@ export default function BookDetailsPage() {
           fileUrl: fileUrlRaw,
           fileUrlFull: fileUrlProxied,
           path: pathArr,
-          categoryId: pathArr.length > 0 ? pathArr[0].id : "",
+          categoryId: pathArr.length > 0 ? pathArr[pathArr.length - 1].id : "",
           mediaType: getMediaType(fileUrlRaw),
         };
         setBook(bookData);
@@ -204,7 +204,7 @@ export default function BookDetailsPage() {
         <div className="breadcrumbs">
           {book.path.map((p, index) => (
             <span key={p.id}>
-              {p.name}
+              {getLocalized(p.name)}
               {index < book.path.length - 1 ? " / " : ""}
             </span>
           ))}
@@ -233,16 +233,7 @@ export default function BookDetailsPage() {
                   />
                   {book.mediaType === "video" && (
                     <div
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        background: "rgba(0,0,0,0.2)",
-                        borderRadius: "12px",
-                        cursor: "pointer",
-                      }}
+                      className="video-play-overlay"
                       onClick={() => router.push(`/home/catalog/${id}/video`)}
                     >
                       <IoPlayCircleOutline
@@ -254,35 +245,11 @@ export default function BookDetailsPage() {
                   )}
                 </div>
               ) : (
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    background:
-                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#fff",
-                    textAlign: "center",
-                    padding: "20px",
-                    borderRadius: "12px",
-                    position: "relative",
-                  }}
-                >
+                <div className="book-cover-placeholder">
                   {book.title}
                   {book.mediaType === "video" && (
                     <div
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        background: "rgba(0,0,0,0.1)",
-                        borderRadius: "12px",
-                        cursor: "pointer",
-                      }}
+                      className="video-play-overlay"
                       onClick={() => router.push(`/home/catalog/${id}/video`)}
                     >
                       <IoPlayCircleOutline size={80} color="#fff" />
@@ -291,8 +258,12 @@ export default function BookDetailsPage() {
                 </div>
               )}
             </div>
-            <h3 className="description-title">{t("description")}</h3>
-            <p className="description-text">{book.description}</p>
+            {book.mediaType !== "video" && (
+              <>
+                <h3 className="description-title">{t("description")}</h3>
+                <p className="description-text">{book.description}</p>
+              </>
+            )}
           </section>
 
           <section className="info-section">
@@ -301,32 +272,28 @@ export default function BookDetailsPage() {
                 <span className="label">{t("name")}</span>
                 <span className="value">{book.title}</span>
               </div>
-              {/* <div className="metadata-item">
-                <span className="label">
-                  {book.mediaType === "audio"
-                    ? t("author_audio")
-                    : book.mediaType === "video"
-                      ? t("author_video")
-                      : t("author")}
-                </span>
-                <span className="value">{book.author}</span>
-              </div> */}
-              <div className="metadata-item">
-                <span className="label">{t("language")}</span>
-                <span className="value">{book.language}</span>
-              </div>
-              {/* <div className="metadata-item">
-                <span className="label">
-                  {book.mediaType === "audio" || book.mediaType === "video"
-                    ? t("duration")
-                    : t("pages")}
-                </span>
-                <span className="value">{book.pages}</span>
-              </div> */}
+              {book.mediaType !== "video" && (
+                <>
+                  <div className="metadata-item">
+                    <span className="label">{t("author")}</span>
+                    <span className="value">{book.author}</span>
+                  </div>
+                  <div className="metadata-item">
+                    <span className="label">{t("language")}</span>
+                    <span className="value">{book.language}</span>
+                  </div>
+                  {book.mediaType === "book" && (
+                    <div className="metadata-item">
+                      <span className="label">{t("pages")}</span>
+                      <span className="value">{book.pages}</span>
+                    </div>
+                  )}
+                </>
+              )}
               <div className="metadata-item">
                 <span className="label">
                   {book.mediaType === "video"
-                    ? t("year_release")
+                    ? t("by_date")
                     : t("year_publish")}
                 </span>
                 <span className="value">{book.year}</span>
@@ -379,20 +346,28 @@ export default function BookDetailsPage() {
               <button
                 className="download-btn"
                 title="Download"
-                onClick={() => {
+                onClick={async () => {
                   if (book.fileUrlFull) {
-                    const link = document.createElement("a");
-                    link.href = book.fileUrlFull;
-                    link.download = `${book.title}.${book.fileUrl.split(".").pop() || "file"}`;
-                    link.target = "_blank";
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                    try {
+                      const res = await fetch(book.fileUrlFull, {
+                        headers: { "ngrok-skip-browser-warning": "1" }
+                      });
+                      const blob = await res.blob();
+                      const url = window.URL.createObjectURL(blob);
+                      const link = document.createElement("a");
+                      link.href = url;
+                      link.download = `${book.title}.${book.fileUrl.split(".").pop() || "file"}`;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                      window.URL.revokeObjectURL(url);
+                    } catch (e) {
+                      window.open(book.fileUrlFull, "_blank");
+                    }
                   }
                 }}
               >
                 <HiOutlineArrowDownTray fontSize={35} />
-                {/* <span style={{ fontSize: "14px", marginLeft: "8px", fontWeight: "normal"}}> {t("download")} </span> */}
               </button>
             </div>
           </section>

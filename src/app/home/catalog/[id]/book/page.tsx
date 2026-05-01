@@ -77,9 +77,31 @@ export default function BookReaderPage() {
     setNumPages(numPages);
   }
 
-  const changePage = (offset: number) => {
-    setPageNumber((prev) => Math.min(Math.max(1, prev + offset), numPages));
-  };
+  const changePage = useCallback((offset: number) => {
+    setPageNumber((prev) => Math.min(Math.max(1, prev + offset), numPages || 1));
+  }, [numPages]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") changePage(1);
+      if (e.key === "ArrowLeft") changePage(-1);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [changePage]);
+
+  useEffect(() => {
+    if (id && pageNumber > 1) {
+      localStorage.setItem(`reader_page_${id}`, pageNumber.toString());
+    }
+  }, [id, pageNumber]);
+
+  useEffect(() => {
+    if (id) {
+      const saved = localStorage.getItem(`reader_page_${id}`);
+      if (saved) setPageNumber(parseInt(saved));
+    }
+  }, [id]);
 
   const onSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPageNumber(parseInt(e.target.value));

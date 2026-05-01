@@ -20,9 +20,7 @@ export default function Specialty() {
   const deleteItem = async (id: string) => {
     try {
       await deleteUserById(id);
-      fetchData().then((d) => {
-        if (d) setData(d);
-      });
+      fetchData();
     } catch (e) {
       console.error(e);
     }
@@ -40,19 +38,18 @@ export default function Specialty() {
     setLoading(true);
     try {
       const res = await getUsersREQ();
-      return res as unknown as ItemT[];
+      if (res) {
+        setData(res as unknown as ItemT[]);
+      }
     } catch (e) {
       console.error(e);
-      return null;
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchData().then((d) => {
-      if (d) setData(d);
-    });
+    fetchData();
   }, [page, fetchData]);
 
   return (

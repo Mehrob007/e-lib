@@ -31,15 +31,17 @@ export default function ModalUser({ onClose, onSuccess, editUser }: Props) {
   const onSend = async () => {
     const valid = validate({
       username: { required: true },
-      phone_number: { required: true },
-      password: { required: true },
+      phone_number: { required: true, maxLength: 9 },
+      password: { required: !editUser, maxLength: 6 },
     });
 
     if (!valid) return;
     setLoading(true);
     try {
       if (editUser) {
-        await editUserById(editUser.id as string, data);
+        const payload = { ...data };
+        if (!payload.password) delete payload.password;
+        await editUserById(editUser.id as string, payload);
       } else {
         await postUserREQ(data);
       }

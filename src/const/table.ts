@@ -26,12 +26,16 @@ export const HeaderTableCategory = [
 
 export const HeaderTableELement = [
   {
-    name: "Фавикон",
+    name: "Обложка",
     key: "preview_url",
   },
   {
     name: "Название",
     key: "title",
+  },
+  {
+    name: "Тип",
+    key: "type",
   },
   {
     name: "Автор",

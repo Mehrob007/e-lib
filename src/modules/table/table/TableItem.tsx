@@ -54,6 +54,27 @@ export default function TableItem({
       );
     }
 
+    if (
+      key.toLowerCase().includes("type")
+      // key.toLowerCase().includes("пароль")
+    ) {
+      return (
+        <div className="table__cell-with-icon">
+          <span>
+            {String(
+              value === "book"
+                ? "Книги"
+                : value === "audio"
+                  ? "Аудео"
+                  : value === "video"
+                    ? "Видео"
+                    : "",
+            )}
+          </span>
+        </div>
+      );
+    }
+
     // Handle Images if key matches
     if (key === "preview_url" && typeof value === "string") {
       const isSwiper = value.toLowerCase().includes("swiper");

@@ -8,6 +8,7 @@ export interface InputT {
   id: string;
   errors?: { [key: string]: string };
   style?: React.CSSProperties;
+  autoComplete?: string;
 }
 
 export interface SelectT {

@@ -13,6 +13,7 @@ import { decodeJwt } from "jose";
 export default function Login() {
   const { data, errors, validate, setData } = useFormStore();
   const [loading, setLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -23,6 +24,7 @@ export default function Login() {
     };
 
     setLoading(true);
+    setAuthError(null);
     try {
       const valid = validate(dataValid);
       if (!valid) return;
@@ -47,9 +49,12 @@ export default function Login() {
             router.push("/");
           }
         }, 100);
+      } else {
+        setAuthError("Неверный логин или пароль");
       }
     } catch (e) {
       console.error("Login error:", e);
+      setAuthError("Произошла ошибка при входе");
     } finally {
       setLoading(false);
     }
@@ -70,8 +75,8 @@ export default function Login() {
               value={String(data.login ?? "")}
               onChange={(e) => setData("login", e)}
               errors={errors}
-              // placeholder="Ведите логин"
               title="Логин:"
+              autoComplete="off"
             />
             <Input
               id="password"
@@ -80,8 +85,10 @@ export default function Login() {
               onChange={(e) => setData("password", e)}
               errors={errors}
               title="Пароль:"
-              placeholder="Ведите пароль"
+              autoComplete="new-password"
             />
+
+            {authError && <p className="login__error-msg">{authError}</p>}
 
             <Button title="Войти" onClick={() => onSend()} />
           </div>

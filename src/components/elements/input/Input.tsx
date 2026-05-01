@@ -12,6 +12,7 @@ export default function Input({
   id,
   errors,
   style,
+  autoComplete,
 }: InputT) {
   const [focus, setFocus] = useState(false);
 
@@ -39,6 +40,7 @@ export default function Input({
           style={style}
           required
           readOnly={!onChange}
+          autoComplete={autoComplete}
         />
       ) : (
         <input
@@ -50,6 +52,7 @@ export default function Input({
           id={id}
           style={style}
           readOnly={!onChange}
+          autoComplete={autoComplete}
         />
       )}
       <p className="input__error" style={{ opacity: errors?.[id] ? 1 : 0 }}>

@@ -294,7 +294,7 @@ export default function BookDetailsPage() {
                 <span className="label">{t("name")}</span>
                 <span className="value">{book.title}</span>
               </div>
-              <div className="metadata-item">
+              {/* <div className="metadata-item">
                 <span className="label">
                   {book.mediaType === "audio"
                     ? t("author_audio")
@@ -303,19 +303,19 @@ export default function BookDetailsPage() {
                       : t("author")}
                 </span>
                 <span className="value">{book.author}</span>
-              </div>
+              </div> */}
               <div className="metadata-item">
                 <span className="label">{t("language")}</span>
                 <span className="value">{book.language}</span>
               </div>
-              <div className="metadata-item">
+              {/* <div className="metadata-item">
                 <span className="label">
                   {book.mediaType === "audio" || book.mediaType === "video"
                     ? t("duration")
                     : t("pages")}
                 </span>
                 <span className="value">{book.pages}</span>
-              </div>
+              </div> */}
               <div className="metadata-item">
                 <span className="label">
                   {book.mediaType === "video"

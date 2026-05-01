@@ -1340,7 +1340,7 @@ button {
     gap: 16px !important;
     margin: 0 -16px !important;
     padding: 0 16px 24px !important;
-    width: calc(100% + 32px) !important;
+    width: calc(100%) !important;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
 

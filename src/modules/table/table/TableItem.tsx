@@ -65,7 +65,7 @@ export default function TableItem({
               value === "book"
                 ? "Книги"
                 : value === "audio"
-                  ? "Аудео"
+                  ? "Аудио"
                   : value === "video"
                     ? "Видео"
                     : "",

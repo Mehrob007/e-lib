@@ -79,10 +79,9 @@ export default function Page() {
     }
   }, [page, fetchData, category]);
 
-
   return (
     <>
-      <motion.div 
+      <motion.div
         className="elements__content"
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -98,10 +97,12 @@ export default function Page() {
         <TableItems
           loading={loading}
           styleHeader={{
-            gridTemplateColumns: "200px 1.5fr 200px 1fr  100px 100px 100px",
+            gridTemplateColumns:
+              "200px 1.5fr 200px 200px 1fr  100px 100px 100px",
           }}
           styleTable={{
-            gridTemplateColumns: "200px 1.5fr 200px 1fr  100px 100px 100px",
+            gridTemplateColumns:
+              "200px 1.5fr 200px 200px 1fr  100px 100px 100px",
           }}
           styles={{ height: "calc(100vh - 198px)" }}
           header={HeaderTableELement}

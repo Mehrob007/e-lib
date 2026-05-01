@@ -38,6 +38,10 @@ export const HeaderTableELement = [
     key: "type",
   },
   {
+    name: "Ветка",
+    key: "parent_name",
+  },
+  {
     name: "Автор",
     key: "author",
   },

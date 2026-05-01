@@ -37,16 +37,30 @@ export default function ModalCategory({
     try {
       const payload = {
         mime: data?.mime || "branch",
-        tj_name: data?.tj_name,
-        ru_name: data?.ru_name,
-        en_name: data?.en_name,
+        translations: [
+          {
+            language_code: "tj",
+            name: data?.tj_name,
+            details: {},
+          },
+          {
+            language_code: "ru",
+            name: data?.ru_name,
+            details: {},
+          },
+          {
+            language_code: "en",
+            name: data?.en_name,
+            details: {},
+          },
+        ],
         ...(parentId && { _parent_id: parentId }),
       };
 
       if (editItem?.id) {
         await editElementById(editItem.id as string, payload);
       } else {
-        await postCategoryREQ(payload);
+        await postCategoryREQ(payload as any);
       }
 
       onSuccess(parentId);

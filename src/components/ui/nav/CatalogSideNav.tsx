@@ -14,6 +14,7 @@ interface SubCategory {
   id: string;
   name: string;
   mime: "video" | "audio" | "text" | "book";
+  hasChildren?: boolean;
 }
 
 interface Props {
@@ -101,10 +102,12 @@ export default function CatalogSideNav({
                 id: string;
                 name: string;
                 mime: "video" | "audio" | "text" | "book";
+                has_children?: boolean;
               }) => ({
                 id: cat.id,
                 name: cat.name,
                 mime: cat.mime,
+                hasChildren: cat.has_children,
               }),
             );
             setNestedData((prev) => ({ ...prev, [id]: mapped }));
@@ -142,16 +145,18 @@ export default function CatalogSideNav({
           <div className="catalog-side-nav__link">
             {getIcon(sub.mime)}
             <span title={sub.name}>{sub.name}</span>
-            <div
-              className={`catalog-side-nav__arrow-wrapper ${isExpanded ? "expanded" : ""}`}
-              onClick={(e) => toggleExpand(e, sub.id, parentId)}
-            >
-              {isLoading ? (
-                <div className="catalog-side-nav__loader" />
-              ) : (
-                <LuChevronDown size={20} className="catalog-side-nav__arrow" />
-              )}
-            </div>
+            {sub.hasChildren !== false && (
+              <div
+                className={`catalog-side-nav__arrow-wrapper ${isExpanded ? "expanded" : ""}`}
+                onClick={(e) => toggleExpand(e, sub.id, parentId)}
+              >
+                {isLoading ? (
+                  <div className="catalog-side-nav__loader" />
+                ) : (
+                  <LuChevronDown size={20} className="catalog-side-nav__arrow" />
+                )}
+              </div>
+            )}
           </div>
         </div>
         {isExpanded && nestedData[sub.id] && (

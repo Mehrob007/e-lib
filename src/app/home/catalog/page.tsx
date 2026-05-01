@@ -34,7 +34,12 @@ export default function CatalogPage() {
 function CatalogContent() {
   const [categories, setCategories] = useState<ItemT[]>([]);
   const [subCategories, setSubCategories] = useState<
-    { id: string; name: string; mime: "audio" | "video" | "text" | "book" }[]
+    {
+      id: string;
+      name: string;
+      mime: "audio" | "video" | "text" | "book";
+      hasChildren?: boolean;
+    }[]
   >([]);
   const [activeCategoryId, setActiveCategoryId] = useState<string>("");
   const [activeSubCategoryId, setActiveSubCategoryId] = useState<string>("");
@@ -81,12 +86,14 @@ function CatalogContent() {
           name: getLocalized(cat.name),
           // mapping logic based on name or metadata, for now defaulting
           mime: cat.mime,
+          hasChildren: cat.has_children as boolean,
         }));
         setSubCategories(
           (mapped || []) as {
             id: string;
             name: string;
             mime: "audio" | "video" | "text" | "book";
+            hasChildren?: boolean;
           }[],
         );
         if (mapped?.length) {

@@ -18,6 +18,7 @@ import { IoArrowBack, IoPlayCircleOutline } from "react-icons/io5";
 import { HiOutlineArrowDownTray } from "react-icons/hi2";
 import AudioPlayer from "@/components/ui/player/AudioPlayer";
 import { useTranslation } from "@/hooks/useI18nStore";
+import { useAudioStore } from "@/store/useAudioStore";
 import "./details.scss";
 
 type MediaType = "audio" | "video" | "book";
@@ -60,7 +61,7 @@ export default function BookDetailsPage() {
   );
   const [categories, setCategories] = useState<ItemT[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAudioPlayer, setShowAudioPlayer] = useState(false);
+  const setGlobalAudio = useAudioStore((s) => s.setAudio);
   const { t, lang, getLocalized } = useTranslation();
 
   const fetchData = useCallback(async () => {
@@ -349,7 +350,16 @@ export default function BookDetailsPage() {
                 <button
                   className="read-button"
                   style={{ color: "#2962ff", borderColor: "#2962ff" }}
-                  onClick={() => setShowAudioPlayer(true)}
+                  onClick={() => {
+                    if (book) {
+                      setGlobalAudio({
+                        src: book.fileUrlFull,
+                        title: book.title,
+                        author: book.author,
+                        image: book.image,
+                      });
+                    }
+                  }}
                 >
                   {t("listen")}
                 </button>
@@ -449,15 +459,6 @@ export default function BookDetailsPage() {
         </aside>
       </main>
 
-      {showAudioPlayer && book.mediaType === "audio" && (
-        <AudioPlayer
-          src={book.fileUrlFull}
-          title={book.title}
-          author={book.author}
-          image={book.image}
-          onClose={() => setShowAudioPlayer(false)}
-        />
-      )}
     </div>
   );
 }

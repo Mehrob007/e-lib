@@ -5,11 +5,14 @@ import Header from "./header/Header";
 import { usePathname } from "next/navigation";
 import GetTopkenGuest from "../elements/trigger/GetTopkenGuest";
 import { useBranding } from "@/hooks/useBranding";
+import { useAudioStore } from "@/store/useAudioStore";
+import AudioPlayer from "./player/AudioPlayer";
 
 export default function Component({ children }: { children: React.ReactNode }) {
   const [openMenu] = useState(false);
   const pathName = usePathname();
   const branding = useBranding();
+  const { currentAudio, stop } = useAudioStore();
 
   const isAdmin = pathName?.includes("admin");
   return (
@@ -20,6 +23,16 @@ export default function Component({ children }: { children: React.ReactNode }) {
         {isAdmin && <LeftMenu open={openMenu} />}
         {children}
       </div>
+
+      {currentAudio && (
+        <AudioPlayer
+          src={currentAudio.src}
+          title={currentAudio.title}
+          author={currentAudio.author}
+          image={currentAudio.image}
+          onClose={stop}
+        />
+      )}
     </main>
   );
 }

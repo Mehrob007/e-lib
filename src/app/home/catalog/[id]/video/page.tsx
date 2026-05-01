@@ -6,6 +6,7 @@ import { getContentById, getContentByIdView } from "@/api/element";
 import { IoArrowBack } from "react-icons/io5";
 import Loading from "@/components/ui/loading/Loading";
 import { useTranslation } from "@/hooks/useI18nStore";
+import { useAudioStore } from "@/store/useAudioStore";
 import "./video.scss";
 
 export default function VideoPlayerPage() {
@@ -19,6 +20,7 @@ export default function VideoPlayerPage() {
   const [loading, setLoading] = useState(true);
   const [playbackRate, setPlaybackRate] = useState(1);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const stopAudio = useAudioStore((s) => s.stop);
 
   const fetchVideo = useCallback(async () => {
     if (!id) return;
@@ -69,7 +71,8 @@ export default function VideoPlayerPage() {
 
   useEffect(() => {
     fetchVideo();
-  }, [fetchVideo]);
+    stopAudio();
+  }, [fetchVideo, stopAudio]);
 
   useEffect(() => {
     if (videoRef.current) {

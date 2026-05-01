@@ -43,7 +43,7 @@ export default function HeaderHome({ logo }: { logo?: string }) {
         >
           <h1>{t("library")}</h1>
         </span>
-        <SearchInput onSearch={() => {}} />
+        <SearchInput onSearch={(v) => router.push(`/home/catalog?search=${v}`)} />
       </nav>
       <div className="header-home__select">
         <Select

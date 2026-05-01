@@ -858,6 +858,28 @@ button {
     color: #bbb;
     margin-bottom: 8px;
   }
+  &--video {
+    .book-card__image {
+      aspect-ratio: 1/1;
+    }
+  }
+
+  .video-hover-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  &:hover .video-hover-overlay {
+    opacity: 1;
+  }
 }
 
 // Type Badge

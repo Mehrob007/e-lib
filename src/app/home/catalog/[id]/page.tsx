@@ -16,7 +16,6 @@ import { useBranding } from "@/hooks/useBranding";
 import Image from "next/image";
 import { IoArrowBack, IoPlayCircleOutline } from "react-icons/io5";
 import { HiOutlineArrowDownTray } from "react-icons/hi2";
-import AudioPlayer from "@/components/ui/player/AudioPlayer";
 import { useTranslation } from "@/hooks/useI18nStore";
 import { useAudioStore } from "@/store/useAudioStore";
 import "./details.scss";

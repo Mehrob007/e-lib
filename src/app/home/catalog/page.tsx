@@ -52,6 +52,7 @@ function CatalogContent() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const searchParams = useSearchParams();
   const categoryIdParam = searchParams.get("category_id");
+  const searchQuery = searchParams.get("search");
   const limit = 10;
   const { lang, t, getLocalized } = useTranslation();
 
@@ -108,18 +109,23 @@ function CatalogContent() {
     [lang, getLocalized],
   );
 
-  const fetchContent = useCallback(
     async (catId: string) => {
-      if (!catId) return;
+      if (!catId && !searchQuery) return;
       setLoading(true);
       try {
-        const res = await getCategoryContentREQ(catId, {
-          _limit: limit,
-          _offset: (page - 1) * limit,
-          lang,
-          sort_field: sortField,
-          sort_order: sortOrder,
-        });
+        let res;
+        if (searchQuery) {
+          const searchRes = await searchElementsREQ(searchQuery);
+          res = { data: searchRes, total: searchRes?.length || 0 };
+        } else {
+          res = await getCategoryContentREQ(catId, {
+            _limit: limit,
+            _offset: (page - 1) * limit,
+            lang,
+            sort_field: sortField,
+            sort_order: sortOrder,
+          });
+        }
 
         if (res && res.data) {
           const rawData = res.data as Record<string, unknown>[];
@@ -148,7 +154,7 @@ function CatalogContent() {
         setLoading(false);
       }
     },
-    [page, limit, lang, sortField, sortOrder],
+    [page, limit, lang, sortField, sortOrder, searchQuery],
   );
 
   useEffect(() => {
@@ -157,16 +163,21 @@ function CatalogContent() {
 
   useEffect(() => {
     if (activeCategoryId) {
+      setSubCategories([]);
+      setActiveSubCategoryId("");
       fetchSubCategories(activeCategoryId);
     }
   }, [activeCategoryId, fetchSubCategories]);
 
   useEffect(() => {
     const targetId = activeSubCategoryId || activeCategoryId;
-    if (targetId) {
+    if (searchQuery || targetId) {
+      setContent([]);
       fetchContent(targetId);
+    } else {
+      setContent([]);
     }
-  }, [activeCategoryId, activeSubCategoryId, fetchContent]);
+  }, [activeCategoryId, activeSubCategoryId, fetchContent, searchQuery]);
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
@@ -177,8 +188,18 @@ function CatalogContent() {
     setPage(1);
   };
 
-  const currentMime =
-    subCategories.find((s) => s.id === activeSubCategoryId)?.mime || "book";
+  const activeCategory = categories.find((c) => c.id === activeCategoryId);
+  const activeSubCategory = subCategories.find((s) => s.id === activeSubCategoryId);
+  
+  const displayTitle = searchQuery
+    ? `${t("search_results")}: ${searchQuery}`
+    : activeSubCategory 
+      ? activeSubCategory.name 
+      : activeCategory 
+        ? getLocalized(activeCategory.name) 
+        : "";
+
+  const currentMime = activeSubCategory?.mime || "book";
 
   return (
     <div className="home-page catalog-page">
@@ -203,7 +224,9 @@ function CatalogContent() {
         />
 
         <main className="catalog-page__main">
-          <div className="catalog-controls">
+          <div className="catalog-header-area">
+            <h1 className="catalog-title">{displayTitle}</h1>
+            <div className="catalog-controls">
             <select
               className="sort-select"
               title="sort-select"
@@ -233,11 +256,17 @@ function CatalogContent() {
             </div>
           ) : (
             <>
-              <div className="book-grid">
-                {content.map((book) => (
-                  <BookCard showType={false} key={book.id} {...book} />
-                ))}
-              </div>
+              {content.length > 0 ? (
+                <div className="book-grid">
+                  {content.map((book) => (
+                    <BookCard showType={false} key={book.id} {...book} />
+                  ))}
+                </div>
+              ) : (
+                <div className="no-content-message">
+                  {t("no_elements_available")}
+                </div>
+              )}
 
               <div className="pagination">
                 <button

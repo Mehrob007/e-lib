@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { IoPlayCircleOutline } from "react-icons/io5";
 import TypeBadge, { ContentType } from "@/components/elements/badge/TypeBadge";
 
 interface Props {
@@ -26,8 +27,13 @@ export default function BookCard({
   console.log("type", type);
   
   return (
-    <Link href={`/home/catalog/${id}`} className="book-card">
+    <Link href={`/home/catalog/${id}`} className={`book-card ${type === "video" ? "book-card--video" : ""}`}>
       <div className="book-card__image">
+        {type === "video" && (
+          <div className="video-hover-overlay">
+            <IoPlayCircleOutline size={48} color="#fff" />
+          </div>
+        )}
         {image ? (
           <Image
             src={image.startsWith("http") ? image : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${image.startsWith("/") ? "" : "/"}${image}`}
@@ -57,7 +63,7 @@ export default function BookCard({
       </div>
       <div className="book-card__content">
         <h3 className="book-card__title">{title}</h3>
-        <p className="book-card__author">{author}</p>
+        {type !== "video" && <p className="book-card__author">{author}</p>}
         {showType && type === "video" ? <p className="book-card__date">{date}</p> : ""}
         {showType ? <TypeBadge type={type} /> : ""}
       </div>

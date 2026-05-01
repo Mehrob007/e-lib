@@ -42,9 +42,8 @@ export default function ModalElementStageTwo() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const isAudio = data?.mime === "audio";
-  const isVideo = data?.mime === "video";
-
+  const isAudio = data?.mime === "audio" || data?.type === "audio";
+  const isVideo = data?.mime === "video" || data?.type === "video";
 
   return (
     <div className="stage-two">
@@ -157,37 +156,29 @@ export default function ModalElementStageTwo() {
             />
           </div>
 
-          <div className="stage-two__input-row">
-            <label>
-              {isAudio
-                ? "Исполнитель/Автор:"
-                : isVideo
-                  ? "Режиссер/Автор:"
-                  : "Автор:"}
-            </label>
-            <input
-              type="text"
-              value={(data?.author as string) || ""}
-              onChange={(e) => setData("author", e.target.value)}
-              placeholder={
-                isAudio
-                  ? "Бетховен"
-                  : isVideo
-                    ? "Кристофер Нолан"
-                    : "Александр Дюма"
-              }
-            />
-          </div>
+          {!isVideo && (
+            <div className="stage-two__input-row">
+              <label>{isAudio ? "Исполнитель/Автор:" : "Автор:"}</label>
+              <input
+                type="text"
+                value={(data?.author as string) || ""}
+                onChange={(e) => setData("author", e.target.value)}
+                placeholder={isAudio ? "Бетховен" : "Александр Дюма"}
+              />
+            </div>
+          )}
 
-          <div className="stage-two__input-row">
-            <label>{isAudio || isVideo ? "Длительность:" : "Страницы:"}</label>
-            <input
-              type="text"
-              value={(data?.pages as string) || ""}
-              onChange={(e) => setData("pages", e.target.value)}
-              placeholder={isAudio || isVideo ? "Например, 1:30:00" : "544"}
-            />
-          </div>
+          {!isVideo && (
+            <div className="stage-two__input-row">
+              <label>{isAudio ? "Длительность:" : "Страницы:"}</label>
+              <input
+                type="text"
+                value={(data?.pages as string) || ""}
+                onChange={(e) => setData("pages", e.target.value)}
+                placeholder={isAudio ? "Например, 1:30:00" : "544"}
+              />
+            </div>
+          )}
 
           <div className="stage-two__input-row">
             <label>{isVideo ? "Год выхода:" : "Год издания:"}</label>
@@ -201,14 +192,16 @@ export default function ModalElementStageTwo() {
         </div>
       </div>
 
-      <div className="stage-two__annotation">
-        <label>Аннотация</label>
-        <textarea
-          value={(data?.annotation as string) || ""}
-          onChange={(e) => setData("annotation", e.target.value)}
-          placeholder="Введите аннотацию к материалу..."
-        />
-      </div>
+      {!isVideo && (
+        <div className="stage-two__annotation">
+          <label>Аннотация</label>
+          <textarea
+            value={(data?.annotation as string) || ""}
+            onChange={(e) => setData("annotation", e.target.value)}
+            placeholder="Введите аннотацию к материалу..."
+          />
+        </div>
+      )}
     </div>
   );
 }

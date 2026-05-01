@@ -12,7 +12,8 @@ import { ItemT } from "@/types/table";
 import { useCallback, useEffect, useState } from "react";
 import Header from "./Header";
 import { motion } from "framer-motion";
-import { TbSearch, TbPlus } from "react-icons/tb";
+import { TbSearch, TbPlus, TbFilter } from "react-icons/tb";
+import { SORT_TYPES } from "@/const/def";
 
 export default function Page() {
   const [page, setPage] = useState(0);
@@ -22,6 +23,7 @@ export default function Page() {
   const [category, setCategory] = useState<ItemT>();
   const [editingItem, setEditingItem] = useState<ItemT | null>(null);
   const [search, setSearch] = useState("");
+  const [sortType, setSortType] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     if (!category?.id) return null;
@@ -134,7 +136,25 @@ export default function Page() {
               onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
-
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="category-select-wrapper"
+          >
+            <TbFilter className="filter-icon" />
+            <select
+              value={sortType as string}
+              onChange={(e) => setSortType(e.target.value)}
+              className="category-select"
+            >
+              <option value="">Все типы</option>
+              {SORT_TYPES.map((cat) => (
+                <option key={cat.value as string} value={cat.value as string}>
+                  {cat.label as string}
+                </option>
+              ))}
+            </select>
+          </motion.div>
           <button className="add-btn-main" onClick={() => setIsModalOpen(true)}>
             <TbPlus size={20} />
             Добавить контент
@@ -143,14 +163,12 @@ export default function Page() {
         <TableItems
           loading={loading}
           styleHeader={{
-            gridTemplateColumns:
-              "200px 1.5fr 200px 200px 1fr  100px 200px 100px",
+            gridTemplateColumns: "100px 2fr 120px 150px 1.5fr 80px 120px 100px",
           }}
           styleTable={{
-            gridTemplateColumns:
-              "200px 1.5fr 200px 200px 1fr  100px 200px 100px",
+            gridTemplateColumns: "100px 2fr 120px 150px 1.5fr 80px 120px 100px",
           }}
-          styles={{ height: "calc(100vh - 198px)" }}
+          styles={{ maxHeight: "calc(100vh - 360px)" }}
           header={HeaderTableELement}
           items={{
             data: data,

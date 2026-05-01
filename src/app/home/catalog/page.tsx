@@ -157,8 +157,6 @@ function CatalogContent() {
     }
   }, [activeCategoryId, activeSubCategoryId, fetchContent]);
 
-  console.log("book", content);
-
   return (
     <div className="home-page catalog-page">
       <HeaderHome />

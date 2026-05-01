@@ -10,7 +10,7 @@ interface Banner {
   id: string;
   name: string;
   details: {
-    file_url: string;
+    preview_url: string;
     link?: string;
   };
 }
@@ -38,7 +38,6 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
   if (!banners || banners.length === 0) {
     return null;
   }
-
   return (
     <div
       className="hero-banner"
@@ -73,11 +72,11 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
             <Link href={banners[current].details?.link || ""}>
               <Image
                 src={
-                  banners[current].details.file_url?.startsWith("http")
-                    ? banners[current].details.file_url
-                    : banners[current].details.file_url?.startsWith("/")
-                      ? banners[current].details.file_url
-                      : `/${banners[current].details.file_url}`
+                  banners[current].details.preview_url?.startsWith("http")
+                    ? banners[current].details.preview_url
+                    : banners[current].details.preview_url?.startsWith("/")
+                      ? banners[current].details.preview_url
+                      : `/${banners[current].details.preview_url}`
                 }
                 alt={banners[current].name}
                 fill
@@ -87,7 +86,7 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
                 onError={() =>
                   console.error(
                     "Image load error:",
-                    banners[current].details.file_url,
+                    banners[current].details.preview_url,
                   )
                 }
               />

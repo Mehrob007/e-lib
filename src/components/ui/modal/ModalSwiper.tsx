@@ -4,6 +4,7 @@ import { useFormStore } from "@/hooks/useFormStore";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { LuX, LuPlus, LuTrash2 } from "react-icons/lu";
 import { postSwiper, getSwiperPresigned } from "@/api/swiper";
+import { editElementById } from "@/api/element";
 import { motion } from "framer-motion";
 import axios from "axios";
 import "./Modal.css";
@@ -12,14 +13,16 @@ import { ItemT } from "@/types/table";
 
 interface Props {
   onClose: () => void;
-  onSuccess: () => Promise<ItemT[] | null>;
+  onSuccess: () => void;
   setDataTable: (v: ItemT[]) => void;
+  editItem?: ItemT;
 }
 
 export default function ModalSwiper({
   onClose,
   onSuccess,
   setDataTable,
+  editItem,
 }: Props) {
   const { errors, data, setData, validate, setClear } = useFormStore();
   const [loading, setLoading] = useState(false);
@@ -50,45 +53,56 @@ export default function ModalSwiper({
     });
 
     if (!valid) return;
-    if (!data?.photo) {
-      alert("Выберите изображение для баннера");
-      return;
-    }
 
     setLoading(true);
     try {
-      // 1. Get presigned URL
-      const presignedRes = await getSwiperPresigned({
-        filename: (data.photo as File).name,
-      });
-      if (!presignedRes) throw new Error("Failed to get presigned URL");
+      let mime = editItem?.mime;
+      let preview_key = editItem?.preview_key;
 
-      const { upload_url, object_key, mime } = presignedRes;
+      if (data.photo instanceof File) {
+        // 1. Get presigned URL
+        const presignedRes = await getSwiperPresigned({
+          filename: (data.photo as File).name,
+        });
+        if (!presignedRes) throw new Error("Failed to get presigned URL");
 
-      // 2. Upload file to S3
-      await axios.put(upload_url, data.photo, {
-        headers: {
-          "Content-Type": (data.photo as File).type,
-        },
-      });
+        const { upload_url, object_key, mime: newMime } = presignedRes;
+        mime = newMime;
+        preview_key = object_key;
+
+        // 2. Upload file to S3
+        await axios.put(upload_url, data.photo, {
+          headers: {
+            "Content-Type": (data.photo as File).type,
+          },
+        });
+      } else if (!editItem && !data.photo) {
+        alert("Выберите изображение для баннера");
+        setLoading(false);
+        return;
+      }
 
       // 3. Save swiper
-      await postSwiper({
-        _limit: 10,
-        _offset: 0,
-        data: {
-          name: data.name as string,
-          details: {
-            link: data?.link as string,
-            mime: mime as string,
-            preview_key: object_key,
-          },
+      const payload = {
+        name: data.name as string,
+        details: {
+          link: data?.link as string,
+          mime: mime as string,
+          preview_key: preview_key as string,
         },
-      });
+      };
 
-      onSuccess().then((d) => {
-        if (d) setDataTable(d);
-      });
+      if (editItem?.id) {
+        await editElementById(editItem.id as string, payload);
+      } else {
+        await postSwiper({
+          _limit: 10,
+          _offset: 0,
+          data: payload,
+        });
+      }
+
+      onSuccess();
       onClose();
     } catch (e) {
       console.error(e);
@@ -99,8 +113,14 @@ export default function ModalSwiper({
   };
 
   useEffect(() => {
-    setClear();
-  }, [setClear]);
+    if (editItem) {
+      setData("name", editItem.name);
+      setData("link", editItem.link);
+      setData("photo_preview", editItem.preview_url);
+    } else {
+      setClear();
+    }
+  }, [setClear, editItem, setData]);
 
   console.log("data", data);
   
@@ -125,7 +145,7 @@ export default function ModalSwiper({
         }}
       >
         <header className="modal__header">
-          <h2>Добавление баннера</h2>
+          <h2>{editItem ? "Изменение баннера" : "Добавление баннера"}</h2>
           <button className="modal__close" onClick={onClose}>
             <LuX size={18} />
           </button>

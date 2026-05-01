@@ -37,10 +37,9 @@ export default function Page() {
           ...details,
         } as ItemT;
       });
-      return items || null;
+      setData(items || null);
     } catch (e) {
       console.error(e);
-      return null;
     } finally {
       setLoading(false);
     }
@@ -50,9 +49,7 @@ export default function Page() {
     try {
       const res = await deleteElementById(id);
       if (res) {
-        fetchData().then((d) => {
-          if (d) setData(d);
-        });
+        fetchData();
       }
     } catch (e) {
       console.error(e);
@@ -72,12 +69,8 @@ export default function Page() {
   };
 
   useEffect(() => {
-    if (category) {
-      fetchData().then((d) => {
-        if (d) setData(d);
-      });
-    }
-  }, [page, fetchData, category]);
+    fetchData();
+  }, [fetchData]);
 
   return (
     <>

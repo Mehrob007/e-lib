@@ -1,5 +1,6 @@
 "use client";
 import { getSwiper } from "@/api/swiper";
+import { deleteElementById, getContentById } from "@/api/element";
 import ModalSwiper from "@/components/ui/modal/ModalSwiper";
 import { HeaderTableSwiper } from "@/const/table";
 import TableItems from "@/modules/table/table/TableItems";
@@ -14,6 +15,7 @@ export default function SwiperPage() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ItemT[] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<ItemT | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -34,26 +36,47 @@ export default function SwiperPage() {
             preview_url: details.file_url,
           } as ItemT;
         });
-        return items;
+        setData(items);
       }
-      return null;
     } catch (e) {
       console.error(e);
-      return null;
     } finally {
       setLoading(false);
     }
   }, [page]);
 
+  const deleteItem = async (id: string) => {
+    if (confirm("Вы уверены, что хотите удалить этот баннер?")) {
+      try {
+        await deleteElementById(id);
+        fetchData();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
+  const editItem = async (id: string) => {
+    try {
+      const res = await getContentById(id);
+      if (res) {
+        // Prepare data for editing - ensure details are mapped if needed
+        // getContentById should return the raw item, and ModalSwiper handles it
+        setEditingItem(res);
+        setIsModalOpen(true);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
-    fetchData().then((d) => {
-      if (d) setData(d);
-    });
-  }, [page, fetchData]);
+    fetchData();
+  }, [fetchData]);
 
   return (
     <>
-      <motion.div 
+      <motion.div
         className="elements__content swiper-admin-container"
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -78,6 +101,8 @@ export default function SwiperPage() {
           setPage={setPage}
           page={page}
           openModalAdd={() => setIsModalOpen(true)}
+          deleteItem={deleteItem}
+          editItem={editItem}
           personIcon={<div className="swiper-placeholder-icon" />}
         />
       </motion.div>
@@ -85,8 +110,12 @@ export default function SwiperPage() {
       {isModalOpen && (
         <ModalSwiper
           setDataTable={setData}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            setEditingItem(null);
+          }}
           onSuccess={fetchData}
+          editItem={editingItem || undefined}
         />
       )}
     </>

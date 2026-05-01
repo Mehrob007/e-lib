@@ -3,6 +3,7 @@ import {
   deleteElementById,
   getContentById,
   getCategoryContentREQ,
+  searchElementsREQ,
 } from "@/api/element";
 import ModalELement from "@/components/ui/modal/ModalElement/ModalElement";
 import { HeaderTableELement } from "@/const/table";
@@ -11,6 +12,7 @@ import { ItemT } from "@/types/table";
 import { useCallback, useEffect, useState } from "react";
 import Header from "./Header";
 import { motion } from "framer-motion";
+import { TbSearch } from "react-icons/tb";
 
 export default function Page() {
   const [page, setPage] = useState(0);
@@ -19,9 +21,12 @@ export default function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [category, setCategory] = useState<ItemT>();
   const [editingItem, setEditingItem] = useState<ItemT | null>(null);
+  const [search, setSearch] = useState("");
 
   const fetchData = useCallback(async () => {
     if (!category?.id) return null;
+    if (search) return; // Don't fetch category data if searching
+
     setLoading(true);
     try {
       const res = await getCategoryContentREQ(category.id as string, {
@@ -43,13 +48,41 @@ export default function Page() {
     } finally {
       setLoading(false);
     }
-  }, [category, page]);
+  }, [category, page, search]);
+
+  const handleSearch = async (val: string) => {
+    setSearch(val);
+    if (!val) {
+      fetchData();
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await searchElementsREQ(val);
+      const items = (res as ItemT[])?.map((item) => {
+        const details = (item.details as Record<string, string | number>) || {};
+        return {
+          ...item,
+          ...details,
+        } as ItemT;
+      });
+      setData(items || null);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const deleteItem = async (id: string) => {
     try {
       const res = await deleteElementById(id);
       if (res) {
-        fetchData();
+        if (search) {
+          handleSearch(search);
+        } else {
+          fetchData();
+        }
       }
     } catch (e) {
       console.error(e);
@@ -87,9 +120,23 @@ export default function Page() {
           setCategory={(c) => {
             setCategory(c);
             setPage(0);
+            setSearch(""); // Reset search when category changes
           }}
           category={category}
         />
+        <div className="elements__search">
+          <div className="search-input-wrapper">
+            <TbSearch className="search-icon" />
+            <input
+              type="text"
+              placeholder="Поиск по названию, автору..."
+              value={search}
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+          </div>
+
+          
+        </div>
         <TableItems
           loading={loading}
           styleHeader={{
@@ -120,7 +167,7 @@ export default function Page() {
             setIsModalOpen(false);
             setEditingItem(null);
           }}
-          onSuccess={fetchData}
+          onSuccess={search ? () => handleSearch(search) : fetchData}
           defPather={category}
           editItem={editingItem || undefined}
         />

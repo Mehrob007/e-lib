@@ -74,12 +74,14 @@ export default function TableItems({
         )}
       </main>
       <div className="table__footer">
-        <div className="table__footer-left" onClick={openModalAdd}>
-          <button className="add-btn">
-            <GoPlus className="add-btn-icon" />
-            Добавить
-          </button>
-        </div>
+        {openModalAdd && (
+          <div className="table__footer-left" onClick={openModalAdd}>
+            <button className="add-btn">
+              <GoPlus className="add-btn-icon" />
+              Добавить
+            </button>
+          </div>
+        )}
         <div className="table__pagination">
           <button
             className="pagination-btn"

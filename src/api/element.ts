@@ -184,3 +184,11 @@ export const getContentByIdView = async (
     console.error(e);
   }
 };
+export const searchElementsREQ = async (query: string) => {
+  try {
+    const res = await apiClient.get("/library/search", { params: { query } });
+    return res.data;
+  } catch (e) {
+    console.error(e);
+  }
+};

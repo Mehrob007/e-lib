@@ -11,6 +11,6 @@ export const SORT_TYPES = [
   },
   {
     value: "audio",
-    label: "Аудео",
+    label: "Аудио",
   },
 ];

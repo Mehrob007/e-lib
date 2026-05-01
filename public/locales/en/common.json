@@ -42,5 +42,8 @@
   "next": "Next",
   "speed": "Speed",
   "searching": "Searching",
-  "no_results_found": "No results found"
+  "no_results_found": "No results found",
+  "by_title": "By title",
+  "by_author": "By author name",
+  "by_date": "By date added"
 }

@@ -42,5 +42,8 @@
   "next": "Ба пеш",
   "speed": "Суръат",
   "searching": "Ҷустуҷӯ",
-  "no_results_found": "Натиҷае ёфт нашуд"
+  "no_results_found": "Натиҷае ёфт нашуд",
+  "by_title": "Бо ном",
+  "by_author": "Бо номи муаллиф",
+  "by_date": "Бо санаи илова"
 }

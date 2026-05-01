@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function SearchInput({ onSearch }: Props) {
-  const { t } = useTranslation();
+  const { t, getLocalized } = useTranslation();
   const [v, setV] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -98,14 +98,14 @@ export default function SearchInput({ onSearch }: Props) {
                     >
                       <div className="result-thumb">
                         {details.preview_url ? (
-                          <img src={details.preview_url} alt={item.name} />
+                          <img src={details.preview_url} alt={getLocalized(item.name || item.title)} />
                         ) : (
                           <div className="thumb-placeholder" />
                         )}
                       </div>
                       <div className="result-info">
-                        <span className="result-name">{item.name || item.title}</span>
-                        <span className="result-author">{details.author || "—"}</span>
+                        <span className="result-name">{getLocalized(item.name || item.title)}</span>
+                        <span className="result-author">{getLocalized(details.author) || "—"}</span>
                       </div>
                     </div>
                   );

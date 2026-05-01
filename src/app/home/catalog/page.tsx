@@ -43,10 +43,12 @@ function CatalogContent() {
   const [page, setPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(true);
+  const [sortField, setSortField] = useState<string>("name");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const searchParams = useSearchParams();
   const categoryIdParam = searchParams.get("category_id");
   const limit = 10;
-  const { lang, t } = useTranslation();
+  const { lang, t, getLocalized } = useTranslation();
 
   const fetchRootCategories = useCallback(async () => {
     try {
@@ -76,7 +78,7 @@ function CatalogContent() {
 
         const mapped = res?.map((cat) => ({
           id: cat.id as string,
-          name: cat.name as string,
+          name: getLocalized(cat.name),
           // mapping logic based on name or metadata, for now defaulting
           mime: cat.mime,
         }));
@@ -96,7 +98,7 @@ function CatalogContent() {
         console.error(e);
       }
     },
-    [lang],
+    [lang, getLocalized],
   );
 
   const fetchContent = useCallback(
@@ -108,6 +110,8 @@ function CatalogContent() {
           _limit: limit,
           _offset: (page - 1) * limit,
           lang,
+          sort_field: sortField,
+          sort_order: sortOrder,
         });
 
         if (res && res.data) {
@@ -117,8 +121,8 @@ function CatalogContent() {
             const contentType = (details.type || "book") as string;
             return {
               id: item.id as string,
-              title: (item.title as string) || "—",
-              author: details.author || "—",
+              title: getLocalized(item.title || item.name) || "—",
+              author: getLocalized(details.author) || "—",
               date: (item.created as string)?.split("T")?.[0] || "—",
               image: details.preview_url || "",
               type: (contentType === "book"
@@ -137,7 +141,7 @@ function CatalogContent() {
         setLoading(false);
       }
     },
-    [page, limit, lang],
+    [page, limit, lang, sortField, sortOrder],
   );
 
   useEffect(() => {
@@ -156,6 +160,18 @@ function CatalogContent() {
       fetchContent(targetId);
     }
   }, [activeCategoryId, activeSubCategoryId, fetchContent]);
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    if (!val) return;
+    const [field, order] = val.split(":");
+    setSortField(field);
+    setSortOrder(order as "asc" | "desc");
+    setPage(1);
+  };
+
+  const currentMime =
+    subCategories.find((s) => s.id === activeSubCategoryId)?.mime || "book";
 
   return (
     <div className="home-page catalog-page">
@@ -181,8 +197,18 @@ function CatalogContent() {
 
         <main className="catalog-page__main">
           <div className="catalog-controls">
-            <select className="sort-select" title="sort-select">
-              <option>{t("sorting")}</option>
+            <select
+              className="sort-select"
+              title="sort-select"
+              value={`${sortField}:${sortOrder}`}
+              onChange={handleSortChange}
+            >
+              <option value="name:asc">{t("by_title")}</option>
+              {currentMime === "video" ? (
+                <option value="created:asc">{t("by_date")}</option>
+              ) : (
+                <option value="author:asc">{t("by_author")}</option>
+              )}
             </select>
           </div>
 

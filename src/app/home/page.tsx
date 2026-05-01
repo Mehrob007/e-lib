@@ -25,7 +25,7 @@ interface BookItem {
 
 export default function Page() {
   const router = useRouter();
-  const { t, lang } = useTranslation();
+  const { t, lang, getLocalized } = useTranslation();
   const [groupedBooks, setGroupedBooks] = useState<Record<string, BookItem[]>>(
     {},
   );
@@ -47,11 +47,11 @@ export default function Page() {
           const contentType = (item.type || "book") as string;
           const book: BookItem = {
             id: (item.content_id as string) || (item.id as string) || "",
-            title: (item.title as string) || (item.name as string) || "—",
-            author: (item.author as string) || "—",
+            title: getLocalized(item.title || item.name) || "—",
+            author: getLocalized(item.author) || "—",
             date: (item.created as string) || "—",
             image: (item.preview_url as string) || "",
-            category_name: (item.category_name as string) || t("other"),
+            category_name: getLocalized(item.category_name) || t("other"),
             category_id: (item.category_id as string) || "",
             type: (contentType === "book"
               ? "text"

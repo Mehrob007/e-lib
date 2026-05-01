@@ -54,7 +54,11 @@ export default function ModalTransferBranch({
   }, [path, fetchCategories]);
 
   const handleNavigate = (category: ItemT) => {
-    setPath([...path, { id: category.id as string, name: category.name as string }]);
+    setPath([...path, { 
+      id: category.id as string, 
+      name: category.name as string,
+      has_children: (category.has_children as boolean) ?? true 
+    }]);
   };
 
   const handleBack = (index: number) => {
@@ -134,12 +138,12 @@ export default function ModalTransferBranch({
               <div className="transfer-list">
                 {categories.map((cat) => (
                   <div
-                    key={cat.id}
+                    key={cat.id as string}
                     className="transfer-item"
                     onClick={() => handleNavigate(cat)}
                   >
                     <LuFolder size={18} />
-                    <span>{cat.name}</span>
+                    <span>{cat.name as string}</span>
                     <LuChevronRight size={16} className="item-arrow" />
                   </div>
                 ))}

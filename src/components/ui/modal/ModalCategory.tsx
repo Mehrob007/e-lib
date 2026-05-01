@@ -74,7 +74,7 @@ export default function ModalCategory({
 
   useEffect(() => {
     if (editItem) {
-      setData("mime", editItem.mime || "branch");
+      setData("mime", (editItem.mime as string) || "branch");
       // Use the name object from the new API structure
       const names = editItem.name as any;
       if (typeof names === "object" && names !== null) {
@@ -82,7 +82,7 @@ export default function ModalCategory({
         setData("ru_name", names.ru || "");
         setData("en_name", names.en || "");
       } else {
-        setData("tj_name", editItem.name);
+        setData("tj_name", editItem.name as string);
       }
     } else {
       setClear();

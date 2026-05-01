@@ -40,7 +40,7 @@ export interface TableItemsT {
   filterREQ?: FilterREQ;
   setFilterREQ?: (value: FilterREQ) => void;
   onFilter?: boolean;
-  openModalAdd: () => void;
+  openModalAdd?: () => void;
   personIcon?: ReactElement;
   onClick?: (data: folderLine) => void;
 }

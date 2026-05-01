@@ -114,9 +114,9 @@ export default function ModalSwiper({
 
   useEffect(() => {
     if (editItem) {
-      setData("name", editItem.name);
-      setData("link", editItem.link);
-      setData("photo_preview", editItem.preview_url);
+      setData("name", editItem.name as string);
+      setData("link", editItem.link as string);
+      setData("photo_preview", editItem.preview_url as string);
     } else {
       setClear();
     }

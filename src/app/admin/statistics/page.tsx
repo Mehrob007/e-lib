@@ -103,7 +103,7 @@ export default function StatisticsPage() {
             >
               <option value="">Все категории</option>
               {categories.map((cat) => (
-                <option key={cat.id} value={cat.id as string}>
+                <option key={cat.id as string} value={cat.id as string}>
                   {cat.name as string}
                 </option>
               ))}

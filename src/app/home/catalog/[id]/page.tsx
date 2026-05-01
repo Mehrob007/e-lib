@@ -61,7 +61,7 @@ export default function BookDetailsPage() {
   const [categories, setCategories] = useState<ItemT[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAudioPlayer, setShowAudioPlayer] = useState(false);
-  const { t, lang } = useTranslation();
+  const { t, lang, getLocalized } = useTranslation();
 
   const fetchData = useCallback(async () => {
     if (!id) return;
@@ -129,7 +129,14 @@ export default function BookDetailsPage() {
           const relatedRes =
             (res?.data as unknown as Record<string, unknown>[]) || [];
           if (relatedRes) {
-            setRelatedBooks(relatedRes.filter((b) => b.id !== id));
+            setRelatedBooks(
+              relatedRes
+                .filter((b) => b.id !== id)
+                .map((item) => ({
+                  ...item,
+                  localizedName: getLocalized(item.title || item.name) || "—",
+                })),
+            );
           }
         }
       }
@@ -427,8 +434,8 @@ export default function BookDetailsPage() {
                       )}
                     </div>
                     <div className="side-info">
-                      <h4>{item.name as string}</h4>
-                      <p>{(details.author as string) || "—"}</p>
+                      <h4>{item.localizedName as string}</h4>
+                      <p>{getLocalized(details.author) || "—"}</p>
                     </div>
                   </div>
                 );

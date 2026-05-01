@@ -51,7 +51,7 @@ export const HeaderTableELement = [
   },
   {
     name: "Дата",
-    key: "created",
+    key: "added",
   },
 ];
 

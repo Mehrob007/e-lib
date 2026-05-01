@@ -75,6 +75,37 @@ export default function TableItem({
       );
     }
 
+    if (
+      key.toLowerCase().includes("type")
+      // key.toLowerCase().includes("пароль")
+    ) {
+      return (
+        <div className="table__cell-with-icon">
+          <span>
+            {String(
+              value === "book"
+                ? "Книги"
+                : value === "audio"
+                  ? "Аудио"
+                  : value === "video"
+                    ? "Видео"
+                    : "",
+            )}
+          </span>
+        </div>
+      );
+    }
+    if (
+      key.toLowerCase().includes("added")
+      // key.toLowerCase().includes("пароль")
+    ) {
+      return (
+        <div className="table__cell-with-icon">
+          <span>{String(value)?.split("T")[0]}</span>
+        </div>
+      );
+    }
+
     // Handle Images if key matches
     if (key === "preview_url" && typeof value === "string") {
       const isSwiper = value.toLowerCase().includes("swiper");

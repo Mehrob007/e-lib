@@ -144,11 +144,11 @@ export default function Page() {
           loading={loading}
           styleHeader={{
             gridTemplateColumns:
-              "200px 1.5fr 200px 200px 1fr  100px 100px 100px",
+              "200px 1.5fr 200px 200px 1fr  100px 200px 100px",
           }}
           styleTable={{
             gridTemplateColumns:
-              "200px 1.5fr 200px 200px 1fr  100px 100px 100px",
+              "200px 1.5fr 200px 200px 1fr  100px 200px 100px",
           }}
           styles={{ height: "calc(100vh - 198px)" }}
           header={HeaderTableELement}

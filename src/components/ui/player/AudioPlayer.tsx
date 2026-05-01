@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { FaPlay, FaPause } from "react-icons/fa6";
-import { MdReplay, MdForward } from "react-icons/md";
+import { MdReplay10, MdForward10 } from "react-icons/md";
 import { IoVolumeHigh, IoVolumeMute } from "react-icons/io5";
 import { RiCloseLine } from "react-icons/ri";
 import "./AudioPlayer.scss";
@@ -153,14 +153,14 @@ export default function AudioPlayer({ src, title, author, image, onClose }: Audi
 
       <div className="player-inner">
         <div className="player-left">
-          <button className="control-btn" onClick={() => skipTime(-15)}>
-            <MdReplay />
+          <button className="control-btn" onClick={() => skipTime(-10)}>
+            <MdReplay10 />
           </button>
           <button className="control-btn play-btn" onClick={togglePlayPause}>
             {isPlaying ? <FaPause /> : <FaPlay style={{ marginLeft: "4px" }}/>}
           </button>
-          <button className="control-btn" onClick={() => skipTime(15)}>
-            <MdForward />
+          <button className="control-btn" onClick={() => skipTime(10)}>
+            <MdForward10 />
           </button>
         </div>
 

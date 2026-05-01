@@ -29,7 +29,11 @@ export default function BookReaderPage() {
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.2);
+  const [fontSize, setFontSize] = useState<number>(18);
+  const [maxWidth, setMaxWidth] = useState<number>(1000);
   const [loading, setLoading] = useState(true);
+  const [isTextMode, setIsTextMode] = useState(false);
+  const [textContent, setTextContent] = useState<string>("");
   const viewportRef = useRef<HTMLDivElement>(null);
 
   const fetchBook = useCallback(async () => {
@@ -50,24 +54,35 @@ export default function BookReaderPage() {
           }
         }
 
-        if (url) {
-          const fullUrl = url.startsWith("http")
-            ? url
-            : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${url.startsWith("/") ? "" : "/"}${url}`;
+          if (url) {
+            const fullUrl = url.startsWith("http")
+              ? url
+              : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${url.startsWith("/") ? "" : "/"}${url}`;
 
-          const pdfRes = await axios.get(fullUrl, {
-            headers: { "ngrok-skip-browser-warning": "1" },
-            responseType: "arraybuffer",
-          });
-          setPdfData(pdfRes.data);
+            const isText = fullUrl.toLowerCase().endsWith(".txt");
+            if (isText) {
+              const txtRes = await axios.get(fullUrl, {
+                headers: { "ngrok-skip-browser-warning": "1" },
+                responseType: "text",
+              });
+              setTextContent(txtRes.data);
+              setIsTextMode(true);
+            } else {
+              const pdfRes = await axios.get(fullUrl, {
+                headers: { "ngrok-skip-browser-warning": "1" },
+                responseType: "arraybuffer",
+              });
+              setPdfData(pdfRes.data);
+              setIsTextMode(false);
+            }
+          }
         }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
       }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  }, [id, lang]);
+    }, [id, lang]);
 
   useEffect(() => {
     fetchBook();
@@ -131,37 +146,75 @@ export default function BookReaderPage() {
           <IoArrowBack /> <span>{t("back")}</span>
         </button>
         <h1>{title}</h1>
-        <div className="zoom-controls">
-          <button
-            onClick={() => setScale((s) => Math.max(0.5, s - 0.2))}
-            title="Zoom Out"
-            disabled={scale <= 0.5}
-          >
-            <HiOutlineMinus />
-          </button>
-          <button
-            onClick={() => setScale((s) => Math.min(3, s + 0.2))}
-            title="Zoom In"
-            disabled={scale >= 3}
-          >
-            <HiOutlinePlus />
-          </button>
+        <div className="reader-controls">
+          <div className="control-group">
+            <button
+              onClick={() => setScale((s) => Math.max(0.5, s - 0.1))}
+              title="Zoom Out"
+              disabled={scale <= 0.5}
+            >
+              <HiOutlineMinus />
+            </button>
+            <span className="control-label">{Math.round(scale * 100)}%</span>
+            <button
+              onClick={() => setScale((s) => Math.min(3, s + 0.1))}
+              title="Zoom In"
+              disabled={scale >= 3}
+            >
+              <HiOutlinePlus />
+            </button>
+          </div>
+
+          <div className="control-group">
+            <button onClick={() => setFontSize((f) => Math.max(12, f - 2))} title="Font Smaller">
+              A-
+            </button>
+            <span className="control-label">{fontSize}px</span>
+            <button onClick={() => setFontSize((f) => Math.min(32, f + 2))} title="Font Larger">
+              A+
+            </button>
+          </div>
+
+          <div className="control-group">
+            <button onClick={() => setMaxWidth((w) => Math.max(600, w - 100))} title="Narrower">
+              ↔-
+            </button>
+            <span className="control-label">{maxWidth}px</span>
+            <button onClick={() => setMaxWidth((w) => Math.min(1400, w + 100))} title="Wider">
+              ↔+
+            </button>
+          </div>
         </div>
       </header>
 
       <main className="reader-viewport" ref={viewportRef}>
-        {pdfData ? (
-          <ReaderContent
-            pdfData={pdfData}
-            pageNumber={pageNumber}
-            scale={scale}
-            onDocumentLoadSuccess={onDocumentLoadSuccess}
-          />
-        ) : (
-          <div className="pdf-container">
-            <div style={{ padding: "100px" }}>{t("file_not_found")}</div>
-          </div>
-        )}
+        <div 
+          className="reader-content-wrapper" 
+          style={{ 
+            maxWidth: `${maxWidth}px`,
+            fontSize: isTextMode ? `${fontSize}px` : undefined,
+            margin: "0 auto"
+          }}
+        >
+          {isTextMode ? (
+            <div className="text-container">
+              <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                {textContent}
+              </pre>
+            </div>
+          ) : pdfData ? (
+            <ReaderContent
+              pdfData={pdfData}
+              pageNumber={pageNumber}
+              scale={scale}
+              onDocumentLoadSuccess={onDocumentLoadSuccess}
+            />
+          ) : (
+            <div className="pdf-container">
+              <div style={{ padding: "100px" }}>{t("file_not_found")}</div>
+            </div>
+          )}
+        </div>
       </main>
 
       <footer className="reader-footer">

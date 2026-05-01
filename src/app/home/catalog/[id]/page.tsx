@@ -116,7 +116,7 @@ export default function BookDetailsPage() {
           fileUrl: fileUrlRaw,
           fileUrlFull: fileUrlProxied,
           path: pathArr,
-          categoryId: pathArr.length > 0 ? pathArr[pathArr.length - 1].id : "",
+          categoryId: pathArr.length > 0 ? pathArr[0].id : "",
           mediaType: getMediaType(fileUrlRaw),
         };
         setBook(bookData);
@@ -258,12 +258,6 @@ export default function BookDetailsPage() {
                 </div>
               )}
             </div>
-            {book.mediaType !== "video" && (
-              <>
-                <h3 className="description-title">{t("description")}</h3>
-                <p className="description-text">{book.description}</p>
-              </>
-            )}
           </section>
 
           <section className="info-section">
@@ -371,10 +365,20 @@ export default function BookDetailsPage() {
               </button>
             </div>
           </section>
+
+          {book.mediaType !== "video" && (
+            <section className="description-section">
+              <h3 className="description-title">{t("description")}</h3>
+              <p className="description-text">{book.description}</p>
+            </section>
+          )}
         </div>
 
         <aside className="sidebar">
-          <div className="sidebar-title">
+          <div 
+            className="sidebar-title clickable" 
+            onClick={() => router.push(`/home/catalog?category_id=${book.categoryId}`)}
+          >
             {book.mediaType === "audio"
               ? t("other_audios")
               : book.mediaType === "video"

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 interface AudioData {
+  id: string;
   src: string;
   title: string;
   author: string;

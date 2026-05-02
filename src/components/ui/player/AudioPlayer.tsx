@@ -7,6 +7,7 @@ import { RiCloseLine } from "react-icons/ri";
 import "./AudioPlayer.scss";
 
 interface AudioPlayerProps {
+  id: string;
   src: string;
   title: string;
   author: string;
@@ -27,7 +28,7 @@ const formatTime = (time: number) => {
   return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 };
 
-export default function AudioPlayer({ src, title, author, image, onClose }: AudioPlayerProps) {
+export default function AudioPlayer({ id, src, title, author, image, onClose }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   
   const [isPlaying, setIsPlaying] = useState(true);
@@ -39,22 +40,23 @@ export default function AudioPlayer({ src, title, author, image, onClose }: Audi
 
   useEffect(() => {
     if (audioRef.current) {
-      const saved = localStorage.getItem(`audio_pos_${src}`);
+      const saved = localStorage.getItem(`audio_pos_${id}`);
       if (saved) {
-        audioRef.current.currentTime = parseFloat(saved);
-        setCurrentTime(parseFloat(saved));
+        const pos = parseFloat(saved);
+        audioRef.current.currentTime = pos;
+        setCurrentTime(pos);
       }
       audioRef.current.play().catch(() => {
         setIsPlaying(false);
       });
     }
-  }, [src]);
+  }, [id, src]);
 
   useEffect(() => {
-    if (src && currentTime > 5) {
-      localStorage.setItem(`audio_pos_${src}`, currentTime.toString());
+    if (id && currentTime > 5) {
+      localStorage.setItem(`audio_pos_${id}`, currentTime.toString());
     }
-  }, [src, currentTime]);
+  }, [id, currentTime]);
 
   const togglePlayPause = () => {
     if (audioRef.current) {

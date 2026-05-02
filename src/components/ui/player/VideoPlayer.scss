@@ -1,0 +1,149 @@
+.custom-video-player {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .video-element {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    cursor: pointer;
+  }
+
+  .video-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    padding: 10px 20px 15px;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: all 0.3s ease;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &.show-controls .video-controls,
+  &:hover .video-controls {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .progress-bar-container {
+    position: relative;
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: height 0.2s;
+
+    &:hover {
+      height: 6px;
+    }
+
+    .progress-slider {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 2;
+      margin: 0;
+    }
+
+    .progress-filled {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: #2962ff;
+      border-radius: 2px;
+      z-index: 1;
+    }
+  }
+
+  .controls-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .controls-left, .controls-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .control-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s;
+
+    &:hover {
+      transform: scale(1.1);
+      color: #2962ff;
+    }
+  }
+
+  .volume-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    &:hover .volume-slider {
+      width: 60px;
+      opacity: 1;
+    }
+  }
+
+  .volume-slider {
+    width: 0;
+    opacity: 0;
+    transition: all 0.2s;
+    cursor: pointer;
+    accent-color: #2962ff;
+  }
+
+  .time-display {
+    color: #fff;
+    font-size: 14px;
+    font-family: monospace;
+  }
+
+  .speed-control {
+    select {
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      padding: 2px 5px;
+      font-size: 12px;
+      cursor: pointer;
+
+      &:hover {
+        border-color: #2962ff;
+      }
+
+      option {
+        background: #333;
+      }
+    }
+  }
+}

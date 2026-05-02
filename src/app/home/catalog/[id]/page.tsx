@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import HeaderHome from "@/components/ui/header/HeaderHome";
 // import CatalogTopBar from "@/components/ui/nav/CatalogTopBar";
 import Loading from "@/components/ui/loading/Loading";
@@ -18,6 +18,7 @@ import { IoArrowBack, IoPlayCircleOutline } from "react-icons/io5";
 import { HiOutlineArrowDownTray } from "react-icons/hi2";
 import { useTranslation } from "@/hooks/useI18nStore";
 import { useAudioStore } from "@/store/useAudioStore";
+import VideoPlayer from "@/components/ui/player/VideoPlayer";
 import "./details.scss";
 
 type MediaType = "audio" | "video" | "book";
@@ -61,7 +62,14 @@ export default function BookDetailsPage() {
   const [categories, setCategories] = useState<ItemT[]>([]);
   const [loading, setLoading] = useState(true);
   const setGlobalAudio = useAudioStore((s) => s.setAudio);
+  const stopAudio = useAudioStore((s) => s.stop);
   const { t, lang, getLocalized } = useTranslation();
+
+  useEffect(() => {
+    if (book?.mediaType === "video") {
+      stopAudio();
+    }
+  }, [book, stopAudio]);
 
   const fetchData = useCallback(async () => {
     if (!id) return;
@@ -212,12 +220,19 @@ export default function BookDetailsPage() {
       </div>
 
       <main className="details-content">
-        <div className="main-column">
-          <section className="cover-section">
+        <div className={`main-column ${book.mediaType === "video" ? "video-layout" : ""}`}>
+          <section className={`cover-section ${book.mediaType === "video" ? "video-layout" : ""}`}>
             <div
               className={`book-cover ${book.mediaType === "video" ? "video-mode" : ""}`}
             >
-              {book.image ? (
+              {book.mediaType === "video" ? (
+                <VideoPlayer
+                  src={book.fileUrlFull}
+                  title={book.title}
+                  poster={book.image}
+                  autoPlay
+                />
+              ) : book.image ? (
                 <div
                   style={{
                     position: "relative",
@@ -231,30 +246,10 @@ export default function BookDetailsPage() {
                     fill
                     style={{ objectFit: "cover", borderRadius: "12px" }}
                   />
-                  {book.mediaType === "video" && (
-                    <div
-                      className="video-play-overlay"
-                      onClick={() => router.push(`/home/catalog/${id}/video`)}
-                    >
-                      <IoPlayCircleOutline
-                        size={80}
-                        color="#fff"
-                        style={{ opacity: 0.9 }}
-                      />
-                    </div>
-                  )}
                 </div>
               ) : (
                 <div className="book-cover-placeholder">
                   {book.title}
-                  {book.mediaType === "video" && (
-                    <div
-                      className="video-play-overlay"
-                      onClick={() => router.push(`/home/catalog/${id}/video`)}
-                    >
-                      <IoPlayCircleOutline size={80} color="#fff" />
-                    </div>
-                  )}
                 </div>
               )}
             </div>
@@ -313,6 +308,7 @@ export default function BookDetailsPage() {
                   onClick={() => {
                     if (book) {
                       setGlobalAudio({
+                        id: book.id,
                         src: book.fileUrlFull,
                         title: book.title,
                         author: book.author,
@@ -322,18 +318,6 @@ export default function BookDetailsPage() {
                   }}
                 >
                   {t("listen")}
-                </button>
-              )}
-
-              {book.mediaType === "video" && (
-                <button
-                  className="read-button"
-                  style={{ color: "#2962ff", borderColor: "#2962ff" }}
-                  onClick={() => {
-                    router.push(`/home/catalog/${id}/video`);
-                  }}
-                >
-                  {t("watch")}
                 </button>
               )}
 

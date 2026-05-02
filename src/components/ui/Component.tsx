@@ -26,6 +26,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
 
       {currentAudio && (
         <AudioPlayer
+          id={currentAudio.id}
           src={currentAudio.src}
           title={currentAudio.title}
           author={currentAudio.author}

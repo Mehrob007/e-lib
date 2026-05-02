@@ -14,6 +14,9 @@ const geistMono = {
 export const metadata: Metadata = {
   title: "eDonishLib",
   description: "eDonishLib - Electronic Library Management System",
+  icons: {
+    icon: "/icons/favicon.jpg",
+  },
 };
 
 export default function RootLayout({

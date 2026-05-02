@@ -75,7 +75,10 @@ function CatalogContent() {
 
   useEffect(() => {
     if (activeSubCategoryId) {
-      localStorage.setItem("catalog_active_sub_category_id", activeSubCategoryId);
+      localStorage.setItem(
+        "catalog_active_sub_category_id",
+        activeSubCategoryId,
+      );
     } else {
       localStorage.removeItem("catalog_active_sub_category_id");
     }
@@ -122,12 +125,14 @@ function CatalogContent() {
             hasChildren?: boolean;
           }[],
         );
-        
+
         // Only set default if no subcategory is currently active or if the active one isn't in the new list
         if (mapped?.length) {
-          const isCurrentValid = mapped.some(m => m.id === activeSubCategoryId);
+          const isCurrentValid = mapped.some(
+            (m) => m.id === activeSubCategoryId,
+          );
           if (!activeSubCategoryId || !isCurrentValid) {
-            // If we have a saved ID but it's not in this branch, we don't reset to [0] 
+            // If we have a saved ID but it's not in this branch, we don't reset to [0]
             // unless we specifically want to auto-select the first one of the NEW branch.
             // But if it's just a lang change, isCurrentValid will be true.
             if (!activeSubCategoryId) {
@@ -264,22 +269,25 @@ function CatalogContent() {
           <div className="catalog-header-area">
             <h1 className="catalog-title">{displayTitle}</h1>
             <div className="catalog-controls">
-              <select
-                className="sort-select"
-                title="sort-select"
-                value={`${sortField}:${sortOrder}`}
-                onChange={handleSortChange}
-              >
-                <option value="title:asc">{t("by_title")}</option>
-                {currentMime === "video" ? (
-                  <>
-                    <option value="created:asc">{t("by_date")}</option>
-                    <option value="added:desc">{t("by_added")}</option>
-                  </>
-                ) : (
-                  <option value="author:asc">{t("by_author")}</option>
-                )}
-              </select>
+              <label htmlFor="sort-select" className="sort-select">
+                <select
+                  className=""
+                  title="sort-select"
+                  id="sort-select"
+                  value={`${sortField}:${sortOrder}`}
+                  onChange={handleSortChange}
+                >
+                  <option value="title:asc">{t("by_title")}</option>
+                  {currentMime === "video" ? (
+                    <>
+                      <option value="created:asc">{t("by_date")}</option>
+                      <option value="added:desc">{t("by_added")}</option>
+                    </>
+                  ) : (
+                    <option value="author:asc">{t("by_author")}</option>
+                  )}
+                </select>
+              </label>
             </div>
           </div>
 

@@ -42,7 +42,7 @@ export default function ModalElementStageTwo() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const currentMime = (data?.mime || data?.type || "").toString().toLowerCase();
+  const currentMime = (data?.mime || data?._mime || data?.type || "").toString().toLowerCase();
   const isAudio = currentMime.includes("audio");
   const isVideo = currentMime.includes("video");
 

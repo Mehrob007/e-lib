@@ -140,7 +140,6 @@ export default function ModalELement({
         },
       };
 
-
       if (editItem?.id) {
         await editElementById(editItem.id as string, payload);
       } else {
@@ -173,7 +172,7 @@ export default function ModalELement({
         (editItem.preview_url || details.preview_url || "") as string,
       );
       const type = (editItem.type || details.type || "") as string;
-      const mime = (editItem.mime || details.mime || "") as string;
+      const mime = details.type as string;
 
       setData("type", type);
       setData("mime", mime);
@@ -183,6 +182,9 @@ export default function ModalELement({
       setData("type", "");
     }
   }, [editItem, setData, setClear]);
+
+  console.log("data", data);
+  console.log("editItem", editItem);
 
   return (
     <motion.div

@@ -170,7 +170,6 @@ export default function BookDetailsPage() {
     }
   }, [book?.fileUrlFull]);
 
-
   if (loading) {
     return (
       <div className="book-details-page">
@@ -220,8 +219,12 @@ export default function BookDetailsPage() {
       </div>
 
       <main className="details-content">
-        <div className={`main-column ${book.mediaType === "video" ? "video-layout" : ""}`}>
-          <section className={`cover-section ${book.mediaType === "video" ? "video-layout" : ""}`}>
+        <div
+          className={`main-column ${book.mediaType === "video" ? "video-layout" : ""}`}
+        >
+          <section
+            className={`cover-section ${book.mediaType === "video" ? "video-layout" : ""}`}
+          >
             <div
               className={`book-cover ${book.mediaType === "video" ? "video-mode" : ""}`}
             >
@@ -248,9 +251,7 @@ export default function BookDetailsPage() {
                   />
                 </div>
               ) : (
-                <div className="book-cover-placeholder">
-                  {book.title}
-                </div>
+                <div className="book-cover-placeholder">{book.title}</div>
               )}
             </div>
           </section>
@@ -321,32 +322,34 @@ export default function BookDetailsPage() {
                 </button>
               )}
 
-              <button
-                className="download-btn"
-                title="Download"
-                onClick={async () => {
-                  if (book.fileUrlFull) {
-                    try {
-                      const res = await fetch(book.fileUrlFull, {
-                        headers: { "ngrok-skip-browser-warning": "1" }
-                      });
-                      const blob = await res.blob();
-                      const url = window.URL.createObjectURL(blob);
-                      const link = document.createElement("a");
-                      link.href = url;
-                      link.download = `${book.title}.${book.fileUrl.split(".").pop() || "file"}`;
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
-                      window.URL.revokeObjectURL(url);
-                    } catch (e) {
-                      window.open(book.fileUrlFull, "_blank");
+              {book.mediaType !== "video" && (
+                <button
+                  className="download-btn"
+                  title="Download"
+                  onClick={async () => {
+                    if (book.fileUrlFull) {
+                      try {
+                        const res = await fetch(book.fileUrlFull, {
+                          headers: { "ngrok-skip-browser-warning": "1" },
+                        });
+                        const blob = await res.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.download = `${book.title}.${book.fileUrl.split(".").pop() || "file"}`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        window.URL.revokeObjectURL(url);
+                      } catch (e) {
+                        window.open(book.fileUrlFull, "_blank");
+                      }
                     }
-                  }
-                }}
-              >
-                <HiOutlineArrowDownTray fontSize={35} />
-              </button>
+                  }}
+                >
+                  <HiOutlineArrowDownTray fontSize={35} />
+                </button>
+              )}
             </div>
           </section>
 
@@ -359,9 +362,11 @@ export default function BookDetailsPage() {
         </div>
 
         <aside className="sidebar">
-          <div 
-            className="sidebar-title clickable" 
-            onClick={() => router.push(`/home/catalog?category_id=${book.categoryId}`)}
+          <div
+            className="sidebar-title clickable"
+            onClick={() =>
+              router.push(`/home/catalog?category_id=${book.categoryId}`)
+            }
           >
             {book.mediaType === "audio"
               ? t("other_audios")
@@ -420,7 +425,6 @@ export default function BookDetailsPage() {
           </div>
         </aside>
       </main>
-
     </div>
   );
 }

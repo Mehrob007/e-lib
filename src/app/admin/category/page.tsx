@@ -1,6 +1,5 @@
 "use client";
 import { deleteBranchREQ, getCategorysREQ } from "@/api/category";
-import { getContentById } from "@/api/element";
 import ModalCategory from "@/components/ui/modal/ModalCategory";
 import ModalTransferBranch from "@/components/ui/modal/ModalTransferBranch";
 import { LIMIT_REQ } from "@/const/def";

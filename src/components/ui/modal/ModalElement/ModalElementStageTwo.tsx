@@ -95,7 +95,7 @@ export default function ModalElementStageTwo() {
                     ? "audio/*"
                     : isVideo
                       ? "video/*"
-                      : "application/pdf,.doc,.docx"
+                    : "application/pdf,.doc,.docx,.epub,.txt,application/epub+zip,text/plain"
                 }
                 style={{ display: "none" }}
               />

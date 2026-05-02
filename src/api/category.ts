@@ -28,7 +28,7 @@ export const postCategoryREQ = async (data: dataT) => {
   try {
     const res = await apiClient.post("/admin/save_category", {
       ...data,
-      mime: data?.mime === "branch" ? null : data?.mime,
+      _mime: data?._mime === "branch" ? null : data?._mime,
     });
     return res.data;
   } catch (e) {

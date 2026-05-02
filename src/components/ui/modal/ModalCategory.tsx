@@ -35,32 +35,36 @@ export default function ModalCategory({
     if (!valid) return;
     setLoading(true);
     try {
-      const payload = {
-        mime: data?.mime || "branch",
-        translations: [
-          {
-            language_code: "tj",
-            name: data?.tj_name,
-            details: {},
-          },
-          {
-            language_code: "ru",
-            name: data?.ru_name,
-            details: {},
-          },
-          {
-            language_code: "en",
-            name: data?.en_name,
-            details: {},
-          },
-        ],
-        ...(parentId && { _parent_id: parentId }),
-      };
-
       if (editItem?.id) {
-        await editElementById(editItem.id as string, payload);
+        const updatePayload = {
+          translations: [
+            {
+              language_code: "tj",
+              name: data?.tj_name,
+              details: {},
+            },
+            {
+              language_code: "ru",
+              name: data?.ru_name,
+              details: {},
+            },
+            {
+              language_code: "en",
+              name: data?.en_name,
+              details: {},
+            },
+          ],
+        };
+        await editElementById(editItem.id as string, updatePayload);
       } else {
-        await postCategoryREQ(payload as any);
+        const createPayload = {
+          tj_name: data?.tj_name,
+          ru_name: data?.ru_name,
+          en_name: data?.en_name,
+          _mime: data?.mime || "branch",
+          ...(parentId && { _parent_id: parentId }),
+        };
+        await postCategoryREQ(createPayload as any);
       }
 
       onSuccess(parentId);

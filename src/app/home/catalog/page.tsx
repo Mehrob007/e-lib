@@ -41,20 +41,45 @@ function CatalogContent() {
       hasChildren?: boolean;
     }[]
   >([]);
-  const [activeCategoryId, setActiveCategoryId] = useState<string>("");
-  const [activeSubCategoryId, setActiveSubCategoryId] = useState<string>("");
+  const [activeCategoryId, setActiveCategoryId] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("catalog_active_category_id") || "";
+    }
+    return "";
+  });
+  const [activeSubCategoryId, setActiveSubCategoryId] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("catalog_active_sub_category_id") || "";
+    }
+    return "";
+  });
   const [content, setContent] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(true);
-  const [sortField, setSortField] = useState<string>("name");
+  const [sortField, setSortField] = useState<string>("title");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const searchParams = useSearchParams();
   const categoryIdParam = searchParams.get("category_id");
   const searchQuery = searchParams.get("search");
   const limit = 10;
   const { lang, t, getLocalized } = useTranslation();
+
+  // Save selection to localStorage
+  useEffect(() => {
+    if (activeCategoryId) {
+      localStorage.setItem("catalog_active_category_id", activeCategoryId);
+    }
+  }, [activeCategoryId]);
+
+  useEffect(() => {
+    if (activeSubCategoryId) {
+      localStorage.setItem("catalog_active_sub_category_id", activeSubCategoryId);
+    } else {
+      localStorage.removeItem("catalog_active_sub_category_id");
+    }
+  }, [activeSubCategoryId]);
 
   const fetchRootCategories = useCallback(async () => {
     try {
@@ -65,14 +90,14 @@ function CatalogContent() {
         setCategories(res);
         if (categoryIdParam) {
           setActiveCategoryId(categoryIdParam);
-        } else {
+        } else if (!activeCategoryId) {
           setActiveCategoryId(res[0].id as string);
         }
       }
     } catch (e) {
       console.error(e);
     }
-  }, [categoryIdParam, lang]);
+  }, [categoryIdParam, lang, activeCategoryId]);
 
   const fetchSubCategories = useCallback(
     async (parentId: string) => {
@@ -97,8 +122,18 @@ function CatalogContent() {
             hasChildren?: boolean;
           }[],
         );
+        
+        // Only set default if no subcategory is currently active or if the active one isn't in the new list
         if (mapped?.length) {
-          setActiveSubCategoryId(mapped[0].id);
+          const isCurrentValid = mapped.some(m => m.id === activeSubCategoryId);
+          if (!activeSubCategoryId || !isCurrentValid) {
+            // If we have a saved ID but it's not in this branch, we don't reset to [0] 
+            // unless we specifically want to auto-select the first one of the NEW branch.
+            // But if it's just a lang change, isCurrentValid will be true.
+            if (!activeSubCategoryId) {
+              setActiveSubCategoryId(mapped[0].id);
+            }
+          }
         } else {
           setActiveSubCategoryId("");
         }
@@ -106,7 +141,7 @@ function CatalogContent() {
         console.error(e);
       }
     },
-    [lang, getLocalized],
+    [lang, getLocalized, activeSubCategoryId],
   );
   const fetchContent = useCallback(
     async (catId: string) => {
@@ -163,8 +198,8 @@ function CatalogContent() {
 
   useEffect(() => {
     if (activeCategoryId) {
-      setSubCategories([]);
-      setActiveSubCategoryId("");
+      // Don't reset subCategory here, let fetchSubCategories handle it
+      // to avoid losing selection on language change
       fetchSubCategories(activeCategoryId);
     }
   }, [activeCategoryId, fetchSubCategories]);
@@ -189,14 +224,16 @@ function CatalogContent() {
   };
 
   const activeCategory = categories.find((c) => c.id === activeCategoryId);
-  const activeSubCategory = subCategories.find((s) => s.id === activeSubCategoryId);
-  
+  const activeSubCategory = subCategories.find(
+    (s) => s.id === activeSubCategoryId,
+  );
+
   const displayTitle = searchQuery
     ? `${t("search_results")}: ${searchQuery}`
-    : activeSubCategory 
-      ? activeSubCategory.name 
-      : activeCategory 
-        ? getLocalized(activeCategory.name) 
+    : activeSubCategory
+      ? activeSubCategory.name
+      : activeCategory
+        ? getLocalized(activeCategory.name)
         : "";
 
   const currentMime = activeSubCategory?.mime || "book";
@@ -227,23 +264,26 @@ function CatalogContent() {
           <div className="catalog-header-area">
             <h1 className="catalog-title">{displayTitle}</h1>
             <div className="catalog-controls">
-            <select
-              className="sort-select"
-              title="sort-select"
-              value={`${sortField}:${sortOrder}`}
-              onChange={handleSortChange}
-            >
-              <option value="name:asc">{t("by_title")}</option>
-              {currentMime === "video" ? (
-                <option value="created:asc">{t("by_date")}</option>
-              ) : (
-                <option value="author:asc">{t("by_author")}</option>
-              )}
-            </select>
+              <select
+                className="sort-select"
+                title="sort-select"
+                value={`${sortField}:${sortOrder}`}
+                onChange={handleSortChange}
+              >
+                <option value="title:asc">{t("by_title")}</option>
+                {currentMime === "video" ? (
+                  <>
+                    <option value="created:asc">{t("by_date")}</option>
+                    <option value="added:desc">{t("by_added")}</option>
+                  </>
+                ) : (
+                  <option value="author:asc">{t("by_author")}</option>
+                )}
+              </select>
+            </div>
           </div>
-        </div>
 
-        {loading ? (
+          {loading ? (
             <div
               style={{
                 display: "flex",

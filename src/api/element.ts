@@ -29,7 +29,6 @@ export const getCategoryContentREQ = async (
         (res.data?.length === (params?._limit || 10)
           ? 1000
           : res.data?.length || 0),
-      // Fallback: if we can't get total, we use a large number if we have a full page, else current length
     };
   } catch (e) {
     console.error(e);

@@ -12,6 +12,7 @@
   .progress-container {
     position: relative;
     width: 100%;
+    margin: 0;
     height: 6px;
     background: #f0f0f0;
     cursor: pointer;
@@ -44,11 +45,11 @@
       &::after {
         content: '';
         position: absolute;
-        right: -6px;
+        right: -10px;
         top: 50%;
         transform: translateY(-50%);
-        width: 12px;
-        height: 12px;
+        width: 19px;
+        height: 19.5px;
         background: #2962ff;
         border-radius: 50%;
         box-shadow: 0 0 10px rgba(41, 98, 255, 0.4);

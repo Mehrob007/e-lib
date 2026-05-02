@@ -29,12 +29,81 @@ export default function CatalogSideNav({
   onSelect,
 }: Props) {
   const lang = useI18nStore((s) => s.lang);
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("catalog_expanded_ids");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) return new Set(parsed);
+        } catch (e) {
+          console.error("Failed to parse expandedIds from localStorage", e);
+        }
+      }
+    }
+    return new Set();
+  });
   const [nestedData, setNestedData] = useState<Record<string, SubCategory[]>>(
     {},
   );
   const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
   const [isMobile, setIsMobile] = useState(false);
+
+  // Save expandedIds to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(
+      "catalog_expanded_ids",
+      JSON.stringify(Array.from(expandedIds)),
+    );
+  }, [expandedIds]);
+
+  // Refetch nested data when language changes or expandedIds are restored
+  useEffect(() => {
+    const fetchAllNested = async () => {
+      const ids = Array.from(expandedIds);
+      for (const id of ids) {
+        // If we already have data for this lang and id, skip (though lang change should trigger refetch)
+        // Actually, on lang change we should probably clear nestedData or just overwrite.
+        if (loadingIds.has(id)) continue;
+
+        setLoadingIds((prev) => new Set(prev).add(id));
+        try {
+          const res = await getCategorysREQ({
+            lang,
+            _parent_id: id,
+          });
+
+          if (res && Array.isArray(res)) {
+            const mapped: SubCategory[] = res.map(
+              (cat: {
+                id: string;
+                name: string;
+                mime: "video" | "audio" | "text" | "book";
+                has_children?: boolean;
+              }) => ({
+                id: cat.id,
+                name: cat.name,
+                mime: cat.mime,
+                hasChildren: cat.has_children,
+              }),
+            );
+            setNestedData((prev) => ({ ...prev, [id]: mapped }));
+          }
+        } catch (error) {
+          console.error(`Failed to fetch subcategories for ${id}:`, error);
+        } finally {
+          setLoadingIds((prev) => {
+            const next = new Set(prev);
+            next.delete(id);
+            return next;
+          });
+        }
+      }
+    };
+
+    fetchAllNested();
+    // We want to refetch when lang changes to get localized names or when new IDs are expanded
+  }, [lang, expandedIds]); 
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -82,47 +151,11 @@ export default function CatalogSideNav({
 
     if (newExpandedIds.has(id)) {
       newExpandedIds.delete(id);
-      setExpandedIds(newExpandedIds);
     } else {
       newExpandedIds.add(id);
-      setExpandedIds(newExpandedIds);
-
-      // Fetch if not already fetched
-      if (!nestedData[id] && !loadingIds.has(id)) {
-        setLoadingIds((prev) => new Set(prev).add(id));
-        try {
-          const res = await getCategorysREQ({
-            lang,
-            _parent_id: id,
-          });
-
-          if (res && Array.isArray(res)) {
-            const mapped: SubCategory[] = res.map(
-              (cat: {
-                id: string;
-                name: string;
-                mime: "video" | "audio" | "text" | "book";
-                has_children?: boolean;
-              }) => ({
-                id: cat.id,
-                name: cat.name,
-                mime: cat.mime,
-                hasChildren: cat.has_children,
-              }),
-            );
-            setNestedData((prev) => ({ ...prev, [id]: mapped }));
-          }
-        } catch (error) {
-          console.error("Failed to fetch sub-subcategories:", error);
-        } finally {
-          setLoadingIds((prev) => {
-            const next = new Set(prev);
-            next.delete(id);
-            return next;
-          });
-        }
-      }
+      // Data fetching is now handled by the useEffect above
     }
+    setExpandedIds(newExpandedIds);
   };
 
   const renderItem = (

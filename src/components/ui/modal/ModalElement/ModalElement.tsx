@@ -172,7 +172,11 @@ export default function ModalELement({
         "photo_preview",
         (editItem.preview_url || details.preview_url || "") as string,
       );
-      setData("type", (editItem.type || details.type || "") as string);
+      const type = (editItem.type || details.type || "") as string;
+      const mime = (editItem.mime || details.mime || "") as string;
+
+      setData("type", type);
+      setData("mime", mime);
       setStage(2); // Go directly to data stage for editing
     } else {
       setClear();

@@ -42,8 +42,9 @@ export default function ModalElementStageTwo() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const isAudio = data?.mime === "audio" || data?.type === "audio";
-  const isVideo = data?.mime === "video" || data?.type === "video";
+  const currentMime = (data?.mime || data?.type || "").toString().toLowerCase();
+  const isAudio = currentMime.includes("audio");
+  const isVideo = currentMime.includes("video");
 
   return (
     <div className="stage-two">

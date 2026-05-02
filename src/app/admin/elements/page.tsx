@@ -39,9 +39,12 @@ export default function Page() {
       const items = (res?.data as unknown as ItemT[])?.map((item) => {
         const details =
           (item.details as { [key: string]: string | number }) || {};
+        const parent =
+          (item.parent as { [key: string]: string | number }) || {};
         return {
           ...item,
           ...details,
+          ...parent,
         } as ItemT;
       });
       setData(items || null);
@@ -62,10 +65,14 @@ export default function Page() {
     try {
       const res = await searchElementsREQ(val);
       const items = (res as ItemT[])?.map((item) => {
-        const details = (item.details as Record<string, string | number>) || {};
+        let details = (item.details as Record<string, string | number>) || {};
+        const parent = (item.parent as Record<string, string | number>) || {};
+        details = { ...details, added: details?.created };
+
         return {
           ...item,
           ...details,
+          ...parent,
         } as ItemT;
       });
       setData(items || null);
@@ -122,7 +129,7 @@ export default function Page() {
           setCategory={(c) => {
             setCategory(c);
             setPage(0);
-            setSearch(""); // Reset search when category changes
+            setSearch("");
           }}
           category={category}
         />

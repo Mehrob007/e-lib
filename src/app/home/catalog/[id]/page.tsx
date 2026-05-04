@@ -281,13 +281,14 @@ export default function BookDetailsPage() {
                 </>
               )}
               <div className="metadata-item">
-                <span className="label">
-                  {book.mediaType === "video"
-                    ? t("by_date")
-                    : t("year_publish")}
-                </span>
+                {" "}
+                {book.mediaType === "video" ? (
+                  ""
+                ) : (
+                  <span className="label">{t("year_publish")}</span>
+                )}
                 <span className="value">{book.year}</span>
-              </div>
+              </div>2
             </div>
 
             <div className="actions-block">

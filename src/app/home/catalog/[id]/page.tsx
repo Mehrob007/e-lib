@@ -162,7 +162,6 @@ export default function BookDetailsPage() {
     }
   }, [id, lang, t]);
 
-
   const fetchDow = useCallback(async () => {
     if (!id) return;
     try {
@@ -278,7 +277,9 @@ export default function BookDetailsPage() {
           <section className="info-section">
             <div className="metadata-list">
               <div className="metadata-item">
-                <span className="label">{t("name")}</span>
+                {book.mediaType !== "video" && (
+                  <span className="label">{t("name")}</span>
+                )}
                 <span className="value">{book.title}</span>
               </div>
               {book.mediaType !== "video" && (
@@ -308,7 +309,7 @@ export default function BookDetailsPage() {
                 )}
                 <span className="value">{book.year}</span>
               </div>
-              2
+              {/* 2 */}
             </div>
 
             <div className="actions-block">

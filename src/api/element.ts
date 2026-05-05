@@ -191,3 +191,12 @@ export const searchElementsREQ = async (query: string) => {
     console.error(e);
   }
 };
+
+export const getContentDownloadUrlREQ = async (content_id: string) => {
+  try {
+    const res = await apiClient.get(`/library/content/${content_id}/download`);
+    return res.data as { download_url: string };
+  } catch (e) {
+    console.error(e);
+  }
+};

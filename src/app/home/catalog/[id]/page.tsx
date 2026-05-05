@@ -9,6 +9,7 @@ import {
   getContentById,
   getCategoryContentREQ,
   getContentByIdView,
+  getContentDownloadUrlREQ,
 } from "@/api/element";
 import { getCategorysREQ } from "@/api/category";
 import { ItemT } from "@/types/table";
@@ -61,6 +62,7 @@ export default function BookDetailsPage() {
   );
   const [categories, setCategories] = useState<ItemT[]>([]);
   const [loading, setLoading] = useState(true);
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const setGlobalAudio = useAudioStore((s) => s.setAudio);
   const stopAudio = useAudioStore((s) => s.stop);
   const { t, lang, getLocalized } = useTranslation();
@@ -160,9 +162,26 @@ export default function BookDetailsPage() {
     }
   }, [id, lang, t]);
 
+
+  const fetchDow = useCallback(async () => {
+    if (!id) return;
+    try {
+      const res = await getContentDownloadUrlREQ(id as string);
+      if (res?.download_url) {
+        setDownloadUrl(res.download_url);
+      }
+    } catch (e) {
+      console.error("fetchDow error:", e);
+    }
+  }, [id]);
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  useEffect(() => {
+    fetchDow();
+  }, [fetchDow]);
 
   useEffect(() => {
     if (book?.fileUrlFull) {
@@ -288,7 +307,8 @@ export default function BookDetailsPage() {
                   <span className="label">{t("year_publish")}</span>
                 )}
                 <span className="value">{book.year}</span>
-              </div>2
+              </div>
+              2
             </div>
 
             <div className="actions-block">
@@ -328,23 +348,23 @@ export default function BookDetailsPage() {
                   className="download-btn"
                   title="Download"
                   onClick={async () => {
-                    if (book.fileUrlFull) {
-                      try {
-                        const res = await fetch(book.fileUrlFull, {
-                          headers: { "ngrok-skip-browser-warning": "1" },
-                        });
-                        const blob = await res.blob();
-                        const url = window.URL.createObjectURL(blob);
-                        const link = document.createElement("a");
-                        link.href = url;
-                        link.download = `${book.title}.${book.fileUrl.split(".").pop() || "file"}`;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        window.URL.revokeObjectURL(url);
-                      } catch (e) {
-                        window.open(book.fileUrlFull, "_blank");
-                      }
+                    const url = downloadUrl || book.fileUrlFull;
+                    if (!url) return;
+                    try {
+                      const res = await fetch(url, {
+                        headers: { "ngrok-skip-browser-warning": "1" },
+                      });
+                      const blob = await res.blob();
+                      const objectUrl = window.URL.createObjectURL(blob);
+                      const link = document.createElement("a");
+                      link.href = objectUrl;
+                      link.download = book.title || "file";
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                      window.URL.revokeObjectURL(objectUrl);
+                    } catch (e) {
+                      window.open(url, "_blank");
                     }
                   }}
                 >

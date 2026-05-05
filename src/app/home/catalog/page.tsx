@@ -91,16 +91,20 @@ function CatalogContent() {
       })) as unknown as ItemT[];
       if (res?.length) {
         setCategories(res);
-        if (categoryIdParam) {
-          setActiveCategoryId(categoryIdParam);
-        } else if (!activeCategoryId) {
-          setActiveCategoryId(res[0].id as string);
+        if (typeof window !== "undefined") {
+          if (!localStorage.getItem("catalog_active_category_id")) {
+            if (categoryIdParam) {
+              setActiveCategoryId(categoryIdParam);
+            } else {
+              setActiveCategoryId((prev) => prev || (res[0].id as string));
+            }
+          }
         }
       }
     } catch (e) {
       console.error(e);
     }
-  }, [categoryIdParam, lang, activeCategoryId]);
+  }, [categoryIdParam, lang]);
 
   const fetchSubCategories = useCallback(
     async (parentId: string) => {
@@ -203,8 +207,6 @@ function CatalogContent() {
 
   useEffect(() => {
     if (activeCategoryId) {
-      // Don't reset subCategory here, let fetchSubCategories handle it
-      // to avoid losing selection on language change
       fetchSubCategories(activeCategoryId);
     }
   }, [activeCategoryId, fetchSubCategories]);
@@ -242,6 +244,8 @@ function CatalogContent() {
         : "";
 
   const currentMime = activeSubCategory?.mime || "book";
+
+  console.log("activeCategoryId", activeCategoryId);
 
   return (
     <div className="home-page catalog-page">

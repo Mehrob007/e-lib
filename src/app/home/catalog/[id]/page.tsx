@@ -38,6 +38,7 @@ interface BookDetails {
   path: { id: string; name: string }[];
   categoryId: string;
   mediaType: MediaType;
+  parentId: string;
 }
 
 const getMediaType = (url: string = ""): MediaType => {
@@ -125,6 +126,7 @@ export default function BookDetailsPage() {
           image: previewUrlFull,
           fileUrl: fileUrlRaw,
           fileUrlFull: fileUrlProxied,
+          parentId: res.parent_id,
           path: pathArr,
           categoryId: pathArr.length > 0 ? pathArr[0].id : "",
           mediaType: getMediaType(fileUrlRaw),
@@ -132,7 +134,7 @@ export default function BookDetailsPage() {
         setBook(bookData);
 
         if (bookData.categoryId) {
-          const res = await getCategoryContentREQ(bookData.categoryId, {
+          const res = await getCategoryContentREQ(bookData.parentId, {
             _limit: 4,
             lang,
           });

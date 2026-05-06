@@ -90,14 +90,16 @@ function CatalogContent() {
         lang,
       })) as unknown as ItemT[];
       if (res?.length) {
+        // console.log("res", res?.[0]);
+
         setCategories(res);
         if (typeof window !== "undefined") {
           if (!localStorage.getItem("catalog_active_category_id")) {
-            if (categoryIdParam) {
-              setActiveCategoryId(categoryIdParam);
-            } else {
-              setActiveCategoryId((prev) => prev || (res[0].id as string));
-            }
+            // if (categoryIdParam) {
+            //   setActiveCategoryId(categoryIdParam);
+            // } else {
+            setActiveCategoryId((prev) => prev || (res[0].id as string));
+            // }
           }
         }
       }
@@ -117,7 +119,6 @@ function CatalogContent() {
         const mapped = res?.map((cat) => ({
           id: cat.id as string,
           name: getLocalized(cat.name),
-          // mapping logic based on name or metadata, for now defaulting
           mime: cat.mime,
           hasChildren: cat.has_children as boolean,
         }));
@@ -130,15 +131,13 @@ function CatalogContent() {
           }[],
         );
 
-        // Only set default if no subcategory is currently active or if the active one isn't in the new list
+        console.log("mapped[0].id)", mapped[0]);
+
         if (mapped?.length) {
           const isCurrentValid = mapped.some(
             (m) => m.id === activeSubCategoryId,
           );
           if (!activeSubCategoryId || !isCurrentValid) {
-            // If we have a saved ID but it's not in this branch, we don't reset to [0]
-            // unless we specifically want to auto-select the first one of the NEW branch.
-            // But if it's just a lang change, isCurrentValid will be true.
             if (!activeSubCategoryId) {
               setActiveSubCategoryId(mapped[0].id);
             }
@@ -255,6 +254,7 @@ function CatalogContent() {
         activeId={activeCategoryId}
         onSelect={(id) => {
           setActiveCategoryId(id);
+          setActiveSubCategoryId("");
           setPage(1);
         }}
       />

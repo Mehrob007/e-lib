@@ -311,6 +311,14 @@ export default function BookDetailsPage() {
                 )}
                 <span className="value">{book.year}</span>
               </div>
+              {book.mediaType === "audio" ? (
+                <div className="metadata-item">
+                  <span className="label">{t("duration")}</span>
+                  <span className="value">{book?.pages}</span>
+                </div>
+              ) : (
+                ""
+              )}
               {/* 2 */}
             </div>
 

@@ -28,9 +28,16 @@ const formatTime = (time: number) => {
   return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 };
 
-export default function AudioPlayer({ id, src, title, author, image, onClose }: AudioPlayerProps) {
+export default function AudioPlayer({
+  id,
+  src,
+  title,
+  author,
+  image,
+  onClose,
+}: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  
+
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -83,7 +90,10 @@ export default function AudioPlayer({ id, src, title, author, image, onClose }: 
 
   const skipTime = (amount: number) => {
     if (audioRef.current) {
-      audioRef.current.currentTime = Math.min(Math.max(audioRef.current.currentTime + amount, 0), duration);
+      audioRef.current.currentTime = Math.min(
+        Math.max(audioRef.current.currentTime + amount, 0),
+        duration,
+      );
     }
   };
 
@@ -100,7 +110,14 @@ export default function AudioPlayer({ id, src, title, author, image, onClose }: 
   };
 
   const togglePlaybackRate = () => {
-    const nextRate = playbackRate === 1 ? 1.25 : playbackRate === 1.25 ? 1.5 : playbackRate === 1.5 ? 2 : 1;
+    const nextRate =
+      playbackRate === 1
+        ? 1.25
+        : playbackRate === 1.25
+          ? 1.5
+          : playbackRate === 1.5
+            ? 2
+            : 1;
     setPlaybackRate(nextRate);
     if (audioRef.current) {
       audioRef.current.playbackRate = nextRate;
@@ -147,8 +164,8 @@ export default function AudioPlayer({ id, src, title, author, image, onClose }: 
           onChange={handleSeek}
           className="progress-slider"
         />
-        <div 
-          className="progress-filled" 
+        <div
+          className="progress-filled"
           style={{ width: `${(currentTime / (duration || 1)) * 100}%` }}
         ></div>
       </div>
@@ -159,7 +176,7 @@ export default function AudioPlayer({ id, src, title, author, image, onClose }: 
             <MdReplay10 />
           </button>
           <button className="control-btn play-btn" onClick={togglePlayPause}>
-            {isPlaying ? <FaPause /> : <FaPlay style={{ marginLeft: "4px" }}/>}
+            {isPlaying ? <FaPause /> : <FaPlay style={{ marginLeft: "4px" }} />}
           </button>
           <button className="control-btn" onClick={() => skipTime(10)}>
             <MdForward10 />
@@ -169,7 +186,12 @@ export default function AudioPlayer({ id, src, title, author, image, onClose }: 
         <div className="player-center">
           <div className="cover-img">
             {image ? (
-              <Image src={image.startsWith("http") ? image : `/${image}`} alt={title} fill style={{ objectFit: 'cover' }} />
+              <Image
+                src={image.startsWith("http") ? image : `/${image}`}
+                alt={title}
+                fill
+                style={{ objectFit: "cover" }}
+              />
             ) : (
               <div className="cover-placeholder" />
             )}
@@ -186,19 +208,19 @@ export default function AudioPlayer({ id, src, title, author, image, onClose }: 
             {/* <span className="duration-slash"> / </span>
             {formatTime(duration)} */}
           </div>
-          
+
           <div className="volume-control">
             <button className="volume-btn" onClick={toggleMute}>
               {isMuted || volume === 0 ? <IoVolumeMute /> : <IoVolumeHigh />}
             </button>
-            <input 
-              type="range" 
-              min="0" 
-              max="1" 
-              step="0.01" 
-              value={isMuted ? 0 : volume} 
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={isMuted ? 0 : volume}
               onChange={handleVolumeChange}
-              className="volume-slider" 
+              className="volume-slider"
             />
           </div>
 

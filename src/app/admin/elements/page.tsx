@@ -65,9 +65,8 @@ export default function Page() {
     try {
       const res = await searchElementsREQ(val);
       const items = (res as ItemT[])?.map((item) => {
-        let details = (item.details as Record<string, string | number>) || {};
+        const details = (item.details as Record<string, string | number>) || {};
         const parent = (item.parent as Record<string, string | number>) || {};
-        details = { ...details, added: details?.created };
 
         return {
           ...item,

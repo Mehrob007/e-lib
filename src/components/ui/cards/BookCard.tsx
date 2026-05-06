@@ -23,11 +23,13 @@ export default function BookCard({
   type,
   showType = true,
 }: Props) {
+  // console.log("data", { id, title, author, date, image, type, showType });
 
-  console.log("type", type);
-  
   return (
-    <Link href={`/home/catalog/${id}`} className={`book-card ${type === "video" ? "book-card--video" : ""}`}>
+    <Link
+      href={`/home/catalog/${id}`}
+      className={`book-card ${type === "video" ? "book-card--video" : ""}`}
+    >
       <div className="book-card__image">
         {type === "video" && (
           <div className="video-hover-overlay">
@@ -36,7 +38,11 @@ export default function BookCard({
         )}
         {image ? (
           <Image
-            src={image.startsWith("http") ? image : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${image.startsWith("/") ? "" : "/"}${image}`}
+            src={
+              image.startsWith("http")
+                ? image
+                : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${image.startsWith("/") ? "" : "/"}${image}`
+            }
             alt={title}
             fill
             style={{ objectFit: "cover" }}
@@ -64,7 +70,7 @@ export default function BookCard({
       <div className="book-card__content">
         <h3 className="book-card__title">{title}</h3>
         {type !== "video" && <p className="book-card__author">{author}</p>}
-        {showType && type === "video" ? <p className="book-card__date">{date}</p> : ""}
+        {type === "video" ? <p className="book-card__date">{date}</p> : ""}
         {showType ? <TypeBadge type={type} /> : ""}
       </div>
     </Link>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import HeaderHome from "@/components/ui/header/HeaderHome";
 import CatalogTopBar from "@/components/ui/nav/CatalogTopBar";
 import CatalogSideNav from "@/components/ui/nav/CatalogSideNav";
@@ -61,6 +61,7 @@ function CatalogContent() {
   const [sortField, setSortField] = useState<string>("title");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const searchParams = useSearchParams();
+  const router = useRouter();
   const categoryIdParam = searchParams.get("category_id");
   const searchQuery = searchParams.get("search");
   const limit = 10;
@@ -70,6 +71,8 @@ function CatalogContent() {
   useEffect(() => {
     if (activeCategoryId) {
       localStorage.setItem("catalog_active_category_id", activeCategoryId);
+    } else {
+      localStorage.removeItem("catalog_active_category_id");
     }
   }, [activeCategoryId]);
 
@@ -94,7 +97,7 @@ function CatalogContent() {
 
         setCategories(res);
         if (typeof window !== "undefined") {
-          if (!localStorage.getItem("catalog_active_category_id")) {
+          if (!localStorage.getItem("catalog_active_category_id") && !searchQuery) {
             // if (categoryIdParam) {
             //   setActiveCategoryId(categoryIdParam);
             // } else {
@@ -106,7 +109,7 @@ function CatalogContent() {
     } catch (e) {
       console.error(e);
     }
-  }, [categoryIdParam, lang]);
+  }, [categoryIdParam, lang, searchQuery]);
 
   const fetchSubCategories = useCallback(
     async (parentId: string) => {
@@ -149,6 +152,14 @@ function CatalogContent() {
     },
     [lang, getLocalized, activeSubCategoryId],
   );
+  useEffect(() => {
+    if (searchQuery) {
+      setActiveCategoryId("");
+      setActiveSubCategoryId("");
+      setSubCategories([]);
+    }
+  }, [searchQuery]);
+
   const fetchContent = useCallback(
     async (catId: string) => {
       if (!catId && !searchQuery) return;
@@ -257,6 +268,9 @@ function CatalogContent() {
           setActiveCategoryId(id);
           setActiveSubCategoryId("");
           setPage(1);
+          if (searchQuery) {
+            router.push("/home/catalog");
+          }
         }}
       />
 
@@ -267,6 +281,9 @@ function CatalogContent() {
           onSelect={(id) => {
             setActiveSubCategoryId(id);
             setPage(1);
+            if (searchQuery) {
+              router.push("/home/catalog");
+            }
           }}
         />
 

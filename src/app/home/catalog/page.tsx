@@ -131,8 +131,6 @@ function CatalogContent() {
           }[],
         );
 
-        console.log("mapped[0].id)", mapped[0]);
-
         if (mapped?.length) {
           const isCurrentValid = mapped.some(
             (m) => m.id === activeSubCategoryId,
@@ -179,7 +177,10 @@ function CatalogContent() {
               id: item.id as string,
               title: getLocalized(item.title || item.name) || "—",
               author: getLocalized(details.author) || "—",
-              date: (item.created as string)?.split("T")?.[0] || "—",
+              date:
+                (item.created as string)?.split("T")?.[0] ||
+                (details.created as string)?.split("T")?.[0] ||
+                "—",
               image: details.preview_url || "",
               type: (contentType === "book"
                 ? "text"

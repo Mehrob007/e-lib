@@ -230,7 +230,7 @@ export default function BookDetailsPage() {
       <HeaderHome logo={branding?.logo as string} />
 
       <div className="breadcrumbs-container">
-        <button className="back-button" onClick={() => router.back()}>
+        <button className="back-button" onClick={() => router.push("/home/catalog")}>
           <IoArrowBack /> {t("back")}
         </button>
         <div className="breadcrumbs">

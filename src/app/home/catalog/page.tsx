@@ -41,8 +41,17 @@ function CatalogContent() {
       hasChildren?: boolean;
     }[]
   >([]);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const categoryIdParam = searchParams.get("category_id");
+  const searchQuery = searchParams.get("search");
+
   const [activeCategoryId, setActiveCategoryId] = useState<string>(() => {
     if (typeof window !== "undefined") {
+      const fromUrl = new URLSearchParams(window.location.search).get(
+        "category_id",
+      );
+      if (fromUrl) return fromUrl;
       return localStorage.getItem("catalog_active_category_id") || "";
     }
     return "";
@@ -60,12 +69,16 @@ function CatalogContent() {
   const [hasNextPage, setHasNextPage] = useState(true);
   const [sortField, setSortField] = useState<string>("title");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const categoryIdParam = searchParams.get("category_id");
-  const searchQuery = searchParams.get("search");
   const limit = 10;
   const { lang, t, getLocalized } = useTranslation();
+
+  // Sync with URL param
+  useEffect(() => {
+    if (categoryIdParam) {
+      setActiveCategoryId(categoryIdParam);
+      setActiveSubCategoryId("");
+    }
+  }, [categoryIdParam]);
 
   // Save selection to localStorage
   useEffect(() => {
@@ -93,23 +106,22 @@ function CatalogContent() {
         lang,
       })) as unknown as ItemT[];
       if (res?.length) {
-        // console.log("res", res?.[0]);
-
         setCategories(res);
         if (typeof window !== "undefined") {
-          if (!localStorage.getItem("catalog_active_category_id") && !searchQuery) {
-            // if (categoryIdParam) {
-            //   setActiveCategoryId(categoryIdParam);
-            // } else {
-            setActiveCategoryId((prev) => prev || (res[0].id as string));
-            // }
+          // If no category is active (neither from URL nor localStorage), set the first one as default
+          if (
+            !activeCategoryId &&
+            !localStorage.getItem("catalog_active_category_id") &&
+            !searchQuery
+          ) {
+            setActiveCategoryId(res[0].id as string);
           }
         }
       }
     } catch (e) {
       console.error(e);
     }
-  }, [categoryIdParam, lang, searchQuery]);
+  }, [activeCategoryId, lang, searchQuery]);
 
   const fetchSubCategories = useCallback(
     async (parentId: string) => {
@@ -139,9 +151,7 @@ function CatalogContent() {
             (m) => m.id === activeSubCategoryId,
           );
           if (!activeSubCategoryId || !isCurrentValid) {
-            if (!activeSubCategoryId) {
-              setActiveSubCategoryId(mapped[0].id);
-            }
+            setActiveSubCategoryId(mapped[0].id);
           }
         } else {
           setActiveSubCategoryId("");

@@ -241,23 +241,36 @@
         margin: 0 8px;
       }
 
-      .zoom-controls {
+      .reader-controls {
         gap: 6px;
-        button {
-          width: 28px;
-          height: 28px;
-          font-size: 16px;
+        .control-group {
+          padding: 2px 4px;
+          gap: 4px;
+          button {
+            width: 28px;
+            height: 28px;
+            font-size: 16px;
+          }
+          .control-label {
+            min-width: 35px;
+            font-size: 11px;
+          }
         }
       }
     }
 
     .reader-viewport {
       padding: 8px;
+      overflow: auto;
 
       .pdf-container {
-        width: 100% !important;
+        width: fit-content !important;
+        min-width: 100%;
+        display: flex;
+        justify-content: center;
+
         canvas {
-          max-width: 100% !important;
+          max-width: none !important;
           height: auto !important;
         }
       }

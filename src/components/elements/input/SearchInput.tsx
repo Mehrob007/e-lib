@@ -69,7 +69,7 @@ export default function SearchInput({ onSearch }: Props) {
           onFocus={() => v.trim().length > 1 && setShowResults(true)}
         />
         <button onClick={() => onSearch(v)}>
-          <IoSearchOutline /> {t("search_button")}
+          <IoSearchOutline /> <span className="mobile">{t("search_button")}</span>
         </button>
       </div>
 

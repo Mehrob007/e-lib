@@ -63,6 +63,7 @@ export default function BookDetailsPage() {
   );
   const [categories, setCategories] = useState<ItemT[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const setGlobalAudio = useAudioStore((s) => s.setAudio);
   const stopAudio = useAudioStore((s) => s.stop);
@@ -73,6 +74,10 @@ export default function BookDetailsPage() {
       stopAudio();
     }
   }, [book, stopAudio]);
+
+  useEffect(() => {
+    setIsExpanded(false);
+  }, [id]);
 
   const fetchData = useCallback(async () => {
     if (!id) return;
@@ -388,7 +393,29 @@ export default function BookDetailsPage() {
           {book.mediaType !== "video" && (
             <section className="description-section">
               <h3 className="description-title">{t("description")}</h3>
-              <p className="description-text">{book.description}</p>
+              <p className="description-text">
+                {isExpanded || book.description.length <= 300
+                  ? book.description
+                  : `${book.description.slice(0, 300)}...`}
+              </p>
+              {book.description.length > 300 && (
+                <button
+                  className="read-more-btn"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                >
+                  {isExpanded
+                    ? lang === "tj"
+                      ? "Камтар нишон додан"
+                      : lang === "en"
+                        ? "Show less"
+                        : "Показать меньше"
+                    : lang === "tj"
+                      ? "Пурра хондан"
+                      : lang === "en"
+                        ? "Read more"
+                        : "Читать полностью"}
+                </button>
+              )}
             </section>
           )}
         </div>

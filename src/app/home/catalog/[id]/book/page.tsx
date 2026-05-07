@@ -85,6 +85,9 @@ export default function BookReaderPage() {
     }, [id, lang]);
 
   useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setScale(0.6);
+    }
     fetchBook();
   }, [fetchBook]);
 
@@ -164,26 +167,6 @@ export default function BookReaderPage() {
               <HiOutlinePlus />
             </button>
           </div>
-
-          <div className="control-group">
-            <button onClick={() => setFontSize((f) => Math.max(12, f - 2))} title="Font Smaller">
-              A-
-            </button>
-            <span className="control-label">{fontSize}px</span>
-            <button onClick={() => setFontSize((f) => Math.min(32, f + 2))} title="Font Larger">
-              A+
-            </button>
-          </div>
-
-          <div className="control-group">
-            <button onClick={() => setMaxWidth((w) => Math.max(600, w - 100))} title="Narrower">
-              ↔-
-            </button>
-            <span className="control-label">{maxWidth}px</span>
-            <button onClick={() => setMaxWidth((w) => Math.min(1400, w + 100))} title="Wider">
-              ↔+
-            </button>
-          </div>
         </div>
       </header>
 
@@ -191,7 +174,7 @@ export default function BookReaderPage() {
         <div 
           className="reader-content-wrapper" 
           style={{ 
-            maxWidth: `${maxWidth}px`,
+            // maxWidth: `${maxWidth}px`,
             fontSize: isTextMode ? `${fontSize}px` : undefined,
             margin: "0 auto"
           }}

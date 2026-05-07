@@ -197,17 +197,13 @@ export default function AudioPlayer({
             )}
           </div>
           <div className="info">
-            <h4>{title}</h4>
-            <p>{author}</p>
+            <h4 title={title}>{title}</h4>
+            <p title={author}>{author}</p>
           </div>
         </div>
 
-        <div className="player-right">
-          <div className="time-display">
-            {formatTime(currentTime)}
-            {/* <span className="duration-slash"> / </span>
-            {formatTime(duration)} */}
-          </div>
+        <div className="player-right mobile">
+          <div className="time-display">{formatTime(currentTime)}</div>
 
           <div className="volume-control">
             <button className="volume-btn" onClick={toggleMute}>

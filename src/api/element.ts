@@ -18,6 +18,7 @@ export const getCategoryContentREQ = async (
     _limit?: number;
     _offset?: number;
     lang?: string;
+    type?: string;
   },
 ) => {
   try {
@@ -32,7 +33,7 @@ export const getCategoryContentREQ = async (
     };
   } catch (e) {
     console.error(e);
-   return {
+    return {
       data: [],
       total: "",
     };

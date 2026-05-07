@@ -23,19 +23,19 @@ export default function Page() {
   const [category, setCategory] = useState<ItemT>();
   const [editingItem, setEditingItem] = useState<ItemT | null>(null);
   const [search, setSearch] = useState("");
-  const [sortType, setSortType] = useState<string | null>(null);
+  const [sortType, setSortType] = useState<string>("");
 
   const fetchData = useCallback(async () => {
     if (!category?.id) return null;
-    if (search) return; // Don't fetch category data if searching
+    if (search) return;
 
     setLoading(true);
     try {
       const res = await getCategoryContentREQ(category.id as string, {
         _limit: 25,
         _offset: page * 25,
+        type: sortType || undefined,
       });
-      // Flatten details into top-level fields for table display
       const items = (res?.data as unknown as ItemT[])?.map((item) => {
         const details =
           (item.details as { [key: string]: string | number }) || {};
@@ -53,7 +53,7 @@ export default function Page() {
     } finally {
       setLoading(false);
     }
-  }, [category, page, search]);
+  }, [category, page, search, sortType]);
 
   const handleSearch = async (val: string) => {
     setSearch(val);
@@ -111,7 +111,9 @@ export default function Page() {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, [fetchData, sortType]);
+
+  console.log("sortType", sortType);
 
   return (
     <>
@@ -149,14 +151,14 @@ export default function Page() {
           >
             <TbFilter className="filter-icon" />
             <select
-              value={sortType as string}
+              value={sortType}
               onChange={(e) => setSortType(e.target.value)}
               className="category-select"
             >
               <option value="">Все типы</option>
               {SORT_TYPES.map((cat) => (
-                <option key={cat.value as string} value={cat.value as string}>
-                  {cat.label as string}
+                <option key={cat.value} value={cat.value}>
+                  {cat.label}
                 </option>
               ))}
             </select>

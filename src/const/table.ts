@@ -19,7 +19,7 @@ export const HeaderTableUser = [
 
 export const HeaderTableCategory = [
   {
-    name: "Название категори",
+    name: "Название категорий",
     key: "name",
   },
 ];

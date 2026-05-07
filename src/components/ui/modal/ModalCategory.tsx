@@ -37,6 +37,7 @@ export default function ModalCategory({
     try {
       if (editItem?.id) {
         const updatePayload = {
+          _mime: data?.mime || "branch",
           translations: [
             {
               language_code: "tj",
@@ -79,7 +80,6 @@ export default function ModalCategory({
   useEffect(() => {
     if (editItem) {
       setData("mime", (editItem.mime as string) || "branch");
-      // Use the name object from the new API structure
       const names = editItem.name as any;
       if (typeof names === "object" && names !== null) {
         setData("tj_name", names.tj || "");
@@ -91,7 +91,11 @@ export default function ModalCategory({
     } else {
       setClear();
     }
-  }, [setClear, editItem, setData]);
+
+    return () => {
+      setClear();
+    };
+  }, [editItem, setClear, setData]);
 
   return (
     <motion.div

@@ -47,6 +47,7 @@ export const useFormStore = create<FormState>((set, get) => ({
   setClear: () =>
     set(() => ({
       data: {},
+      errors: {},
     })),
   setDataMony: (data) =>
     set(() => ({

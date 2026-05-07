@@ -121,7 +121,7 @@ export default function Page() {
                   )
                 }
               />
-              <div className="book-grid">
+              <div className="book-grid home-book-grid">
                 {books.map((book) => (
                   <BookCard
                     key={book.id}

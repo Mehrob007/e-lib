@@ -51,12 +51,12 @@ button {
   background: none;
   font-family: inherit;
 }
-.mobile{
+.mobile {
   @media (max-width: 750px) {
     display: none !important;
   }
 }
-.desktop{
+.desktop {
   @media (min-width: 750px) {
     display: none !important;
   }
@@ -1397,6 +1397,10 @@ button {
       scroll-snap-align: start;
       margin-bottom: 0 !important;
     }
+  }
+  .home-book-grid {
+    margin-left: -16px !important;
+    width: calc(100% + 32px) !important;
   }
 
   .book-card {

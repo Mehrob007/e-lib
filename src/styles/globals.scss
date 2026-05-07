@@ -51,7 +51,16 @@ button {
   background: none;
   font-family: inherit;
 }
-
+.mobile{
+  @media (max-width: 750px) {
+    display: none !important;
+  }
+}
+.desktop{
+  @media (min-width: 750px) {
+    display: none !important;
+  }
+}
 .loading {
   display: flex;
   align-items: center;
@@ -920,6 +929,7 @@ button {
 .content-home {
   width: 100%;
 }
+
 .search-input {
   display: flex;
   width: 547px;
@@ -1249,11 +1259,9 @@ button {
   margin-top: 10px;
 }
 
-/* Premium Adaptive Design - Antigravity Style */
-
 @media (max-width: 1024px) {
   .header-home {
-    gap: 40px;
+    gap: 10px;
     padding: 0 40px;
   }
   .hero-banner {
@@ -1321,42 +1329,37 @@ button {
   }
 
   .hero-banner {
-    height: auto;
-    padding: 40px 24px;
-    margin: 12px 0 32px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
-    box-shadow: 0 12px 40px rgba(25, 118, 210, 0.2);
+    height: 220px;
+    padding: 0;
+    margin: 12px 0 24px;
+    border-radius: 16px;
+    background: #f0f4f8;
+    overflow: hidden;
 
     &__content {
-      flex-direction: column;
-      text-align: left;
-      align-items: flex-start;
+      flex-direction: row;
       padding: 0 !important;
+      height: 100%;
     }
 
     &__text {
-      h1 {
-        font-size: 32px;
-        line-height: 1.2;
-        letter-spacing: -0.5px;
-      }
-      p {
-        font-size: 16px;
-        opacity: 0.85;
-        margin-top: 8px;
-      }
+      display: none;
     }
 
     &__image {
-      display: none;
+      display: block;
+      width: 100%;
+      height: 100%;
     }
+
     &__nav {
       display: none;
     }
+
     &__pagination {
-      bottom: 16px;
-      right: 24px;
+      bottom: 12px;
+      right: 12px;
+      padding: 4px 8px;
     }
   }
 
@@ -1379,7 +1382,6 @@ button {
     overflow-x: auto !important;
     scroll-snap-type: x mandatory;
     gap: 16px !important;
-    margin: 0 -16px !important;
     padding: 0 16px 24px !important;
     width: calc(100%) !important;
     scrollbar-width: none;

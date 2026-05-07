@@ -4,6 +4,7 @@
   background-color: #fff;
   min-height: 100vh;
   max-width: 100% !important;
+  padding-top: 0px !important;
   .breadcrumbs-container {
     display: flex;
     align-items: center;
@@ -143,6 +144,23 @@
       line-height: 1.8;
       color: #4a4a4a;
       white-space: pre-line;
+    }
+
+    .read-more-btn {
+      background: none;
+      border: none;
+      color: #2962ff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 8px 0;
+      transition: color 0.2s;
+      margin-top: 4px;
+
+      &:hover {
+        color: #1e88e5;
+        text-decoration: underline;
+      }
     }
   }
 

@@ -109,6 +109,12 @@ export default function AudioPlayer({
     }
   };
 
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate, src]);
+
   const togglePlaybackRate = () => {
     const nextRate =
       playbackRate === 1
@@ -119,9 +125,6 @@ export default function AudioPlayer({
             ? 2
             : 1;
     setPlaybackRate(nextRate);
-    if (audioRef.current) {
-      audioRef.current.playbackRate = nextRate;
-    }
   };
 
   const toggleMute = () => {
@@ -202,7 +205,7 @@ export default function AudioPlayer({
           </div>
         </div>
 
-        <div className="player-right mobile">
+        <div className="player-right">
           <div className="time-display">{formatTime(currentTime)}</div>
 
           <div className="volume-control">

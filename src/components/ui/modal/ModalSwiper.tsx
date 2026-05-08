@@ -21,7 +21,7 @@ interface Props {
 export default function ModalSwiper({
   onClose,
   onSuccess,
-  setDataTable,
+  // setDataTable,
   editItem,
 }: Props) {
   const { errors, data, setData, validate, setClear } = useFormStore();
@@ -123,7 +123,6 @@ export default function ModalSwiper({
   }, [setClear, editItem, setData]);
 
   console.log("data", data);
-  
 
   return (
     <motion.div
@@ -153,35 +152,66 @@ export default function ModalSwiper({
 
         <div className="modal__form">
           <div className="modal__grid swiper-grid">
-            <div
-              className="swiper-upload-box"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageChange}
-                accept="image/*"
-                style={{ display: "none" }}
-              />
-              {data?.photo_preview ? (
-                <>
-                  <img
-                    src={data.photo_preview as string}
-                    alt="Banner Preview"
-                    className="swiper-preview-img"
-                  />
-                  <button className="swiper-delete-btn" onClick={removeImage}>
-                    <LuTrash2 size={16} />
-                  </button>
-                </>
-              ) : (
-                <div className="swiper-placeholder">
-                  <LuPlus size={32} />
-                  <span>Нажмите для загрузки изображения</span>
-                </div>
-              )}
-            </div>
+            <main>
+              <div
+                className="swiper-upload-box"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                  accept="image/*"
+                  style={{ display: "none" }}
+                />
+                {data?.photo_preview ? (
+                  <>
+                    <img
+                      src={data.photo_preview as string}
+                      alt="Banner Preview"
+                      className="swiper-preview-img"
+                    />
+                    <button className="swiper-delete-btn" onClick={removeImage}>
+                      <LuTrash2 size={16} />
+                    </button>
+                  </>
+                ) : (
+                  <div className="swiper-placeholder">
+                    <LuPlus size={32} />
+                    <span>Нажмите для загрузки изображения для пк</span>
+                  </div>
+                )}
+              </div>
+              <div
+                className="swiper-upload-box"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                  accept="image/*"
+                  style={{ display: "none" }}
+                />
+                {data?.photo_preview ? (
+                  <>
+                    <img
+                      src={data.photo_preview as string}
+                      alt="Banner Preview"
+                      className="swiper-preview-img"
+                    />
+                    <button className="swiper-delete-btn" onClick={removeImage}>
+                      <LuTrash2 size={16} />
+                    </button>
+                  </>
+                ) : (
+                  <div className="swiper-placeholder">
+                    <LuPlus size={32} />
+                    <span>Нажмите для загрузки изображения для телефона</span>
+                  </div>
+                )}
+              </div>
+            </main>
 
             <Input
               id="name"

@@ -986,6 +986,15 @@ button {
     }
   }
 }
+.swiper-grid {
+  > main {
+    display: flex;
+    flex-direction: column;
+    > div {
+      height: 138px;
+    }
+  }
+}
 
 .catalog-page {
   display: flex;

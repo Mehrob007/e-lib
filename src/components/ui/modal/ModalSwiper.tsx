@@ -61,9 +61,9 @@ export default function ModalSwiper({
 
     setLoading(true);
     try {
-      let mime = editItem?.mime || editItem?.details?.mime;
-      let preview_key = editItem?.preview_key || editItem?.details?.preview_key;
-      let preview_mob = editItem?.preview_mob || editItem?.details?.preview_mob;
+      let mime = editItem?.mime || (editItem?.details as any)?.mime;
+      let preview_key = editItem?.preview_key || (editItem?.details as any)?.preview_key;
+      let preview_mob = editItem?.preview_mob || (editItem?.details as any)?.preview_mob;
 
       if (data.photo instanceof File) {
         // 1. Get presigned URL PC
@@ -118,7 +118,7 @@ export default function ModalSwiper({
           mime: mime as string,
           preview_key: preview_key as string,
           preview_mob: preview_mob as string,
-          sort: editItem?.details?.sort || editItem?.sort || 1,
+          sort: (editItem?.details as any)?.sort || editItem?.sort || 1,
           title: data.name as string,
         },
       };
@@ -146,9 +146,9 @@ export default function ModalSwiper({
   useEffect(() => {
     if (editItem) {
       setData("name", editItem.name as string);
-      setData("link", (editItem.details?.link || editItem.link) as string);
+      setData("link", ((editItem.details as any)?.link || editItem.link) as string);
       setData("photo_preview", editItem.preview_url as string);
-      setData("photo_preview_mob", (editItem.preview_url_mob || editItem.details?.preview_url_mob) as string);
+      setData("photo_preview_mob", (editItem.preview_url_mob || (editItem.details as any)?.preview_url_mob) as string);
     } else {
       setClear();
     }

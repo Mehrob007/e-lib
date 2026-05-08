@@ -5,10 +5,12 @@ export const getSwiper = async ({
   _limit,
   _offset,
   lang,
+  platform,
 }: {
   _limit: number;
   _offset: number;
   lang?: string;
+  platform?: "desktop" | "mobile";
 }) => {
   try {
     const res = await apiClient("/library/get_swiper", {
@@ -16,6 +18,7 @@ export const getSwiper = async ({
         _limit: _limit,
         _offset: _offset,
         lang,
+        platform,
       },
     });
     // Ответ res

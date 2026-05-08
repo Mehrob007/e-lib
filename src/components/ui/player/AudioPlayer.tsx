@@ -175,14 +175,24 @@ export default function AudioPlayer({
 
       <div className="player-inner">
         <div className="player-left">
-          <button className="control-btn" onClick={() => skipTime(-10)}>
-            <MdReplay10 />
-          </button>
-          <button className="control-btn play-btn" onClick={togglePlayPause}>
-            {isPlaying ? <FaPause /> : <FaPlay style={{ marginLeft: "4px" }} />}
-          </button>
-          <button className="control-btn" onClick={() => skipTime(10)}>
-            <MdForward10 />
+          <div className="time-display-mobile">{formatTime(currentTime)}</div>
+          <main>
+            <button className="control-btn" onClick={() => skipTime(-10)}>
+              <MdReplay10 />
+            </button>
+            <button className="control-btn play-btn" onClick={togglePlayPause}>
+              {isPlaying ? (
+                <FaPause />
+              ) : (
+                <FaPlay style={{ marginLeft: "4px" }} />
+              )}
+            </button>
+            <button className="control-btn" onClick={() => skipTime(10)}>
+              <MdForward10 />
+            </button>
+          </main>
+          <button className="speed-btn-mobile" onClick={togglePlaybackRate}>
+            {playbackRate}x
           </button>
         </div>
 

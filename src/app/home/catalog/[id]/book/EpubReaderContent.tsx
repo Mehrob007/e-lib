@@ -6,11 +6,11 @@ import { useState } from "react";
 interface Props {
   url: string;
   title: string;
-  location?: string;
+  location?: string | number | null;
   onLocationChange: (location: string) => void;
 }
 
-export default function EpubReaderContent({ url, title, location, onLocationChange }: Props) {
+export default function EpubReaderContent({ url, title, location = null, onLocationChange }: Props) {
   return (
     <div style={{ height: "100%", width: "100%", position: "relative" }}>
       <ReactReader

@@ -75,7 +75,10 @@ export default function Page() {
 
   const fetchSwiper = useCallback(async () => {
     try {
-      const platform = typeof window !== 'undefined' && window.innerWidth <= 768 ? "mobile" : "desktop";
+      const platform =
+        typeof window !== "undefined" && window.innerWidth <= 768
+          ? "mobile"
+          : "desktop";
       const res = await getSwiper({ _limit: 10, _offset: 0, lang, platform });
       if (res) {
         setBanners(res as any[]);

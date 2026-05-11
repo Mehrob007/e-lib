@@ -230,7 +230,10 @@ export default function BookDetailsPage() {
       <HeaderHome logo={branding?.logo as string} />
 
       <div className="breadcrumbs-container">
-        <button className="back-button" onClick={() => router.push("/home/catalog")}>
+        <button
+          className="back-button"
+          onClick={() => router.push("/home/catalog")}
+        >
           <IoArrowBack /> {t("back")}
         </button>
         <div className="breadcrumbs">
@@ -471,7 +474,11 @@ export default function BookDetailsPage() {
                     </div>
                     <div className="side-info">
                       <h4>{item.localizedName as string}</h4>
-                      <p>{getLocalized(details.author) || "—"}</p>
+                      <p>
+                        {getLocalized(details.author) ||
+                          getLocalized(details.created) ||
+                          "—"}
+                      </p>
                     </div>
                   </div>
                 );

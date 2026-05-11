@@ -339,6 +339,7 @@ function CatalogContent() {
             <>
               {content.length > 0 ? (
                 <div className="book-grid">
+                 
                   {content.map((book) => (
                     <BookCard showType={false} key={book.id} {...book} />
                   ))}

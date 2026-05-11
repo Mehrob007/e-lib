@@ -39,6 +39,8 @@ interface BookDetails {
   categoryId: string;
   mediaType: MediaType;
   parentId: string;
+  fileSize?: string;
+  format?: string;
 }
 
 const getMediaType = (url: string = ""): MediaType => {
@@ -135,6 +137,8 @@ export default function BookDetailsPage() {
           path: pathArr,
           categoryId: pathArr.length > 0 ? pathArr[0].id : "",
           mediaType: getMediaType(fileUrlRaw),
+          fileSize: (details.file_size as string) || "—",
+          format: fileUrlRaw.split("?")[0].split(".").pop()?.toUpperCase() || "—",
         };
         setBook(bookData);
 
@@ -327,7 +331,16 @@ export default function BookDetailsPage() {
               ) : (
                 ""
               )}
-              {/* 2 */}
+              
+              <div className="metadata-item">
+                <span className="label">Формат</span>
+                <span className="value">{book.format}</span>
+              </div>
+              
+              <div className="metadata-item">
+                <span className="label">Размер</span>
+                <span className="value">{book.fileSize}</span>
+              </div>
             </div>
 
             <div className="actions-block">

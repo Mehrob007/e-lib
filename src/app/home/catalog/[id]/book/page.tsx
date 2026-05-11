@@ -14,26 +14,41 @@ import dynamic from "next/dynamic";
 import { useTranslation, useI18nStore } from "@/hooks/useI18nStore";
 import "./reader.scss";
 
-// Dynamically import the PDF content renderer without SSR
+// Dynamically import readers without SSR
 const ReaderContent = dynamic(() => import("./ReaderContent"), {
   ssr: false,
   loading: () => <Loading />,
 });
 
+const EpubReaderContent = dynamic(() => import("./EpubReaderContent"), {
+  ssr: false,
+  loading: () => <Loading />,
+});
+
+type ReaderType = "pdf" | "epub" | "text" | null;
+
 export default function BookReaderPage() {
   const { id } = useParams();
   const router = useRouter();
   const { t, lang } = useTranslation();
-  const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null);
+  
+  // State
+  const [readerType, setReaderType] = useState<ReaderType>(null);
   const [title, setTitle] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [fileUrl, setFileUrl] = useState<string>("");
+  
+  // PDF & Text specific
+  const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null);
+  const [textContent, setTextContent] = useState<string>("");
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.2);
   const [fontSize, setFontSize] = useState<number>(18);
-  const [maxWidth, setMaxWidth] = useState<number>(1000);
-  const [loading, setLoading] = useState(true);
-  const [isTextMode, setIsTextMode] = useState(false);
-  const [textContent, setTextContent] = useState<string>("");
+  
+  // EPUB specific
+  const [epubLocation, setEpubLocation] = useState<string | null>(null);
+
   const viewportRef = useRef<HTMLDivElement>(null);
 
   const fetchBook = useCallback(async () => {
@@ -54,35 +69,42 @@ export default function BookReaderPage() {
           }
         }
 
-          if (url) {
-            const fullUrl = url.startsWith("http")
-              ? url
-              : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${url.startsWith("/") ? "" : "/"}${url}`;
+        if (url) {
+          const fullUrl = url.startsWith("http")
+            ? url
+            : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${url.startsWith("/") ? "" : "/"}${url}`;
 
-            const isText = fullUrl.toLowerCase().endsWith(".txt");
-            if (isText) {
-              const txtRes = await axios.get(fullUrl, {
-                headers: { "ngrok-skip-browser-warning": "1" },
-                responseType: "text",
-              });
-              setTextContent(txtRes.data);
-              setIsTextMode(true);
-            } else {
-              const pdfRes = await axios.get(fullUrl, {
-                headers: { "ngrok-skip-browser-warning": "1" },
-                responseType: "arraybuffer",
-              });
-              setPdfData(pdfRes.data);
-              setIsTextMode(false);
-            }
+          setFileUrl(fullUrl);
+          const urlPath = fullUrl.split("?")[0].toLowerCase();
+
+          if (urlPath.endsWith(".txt")) {
+            const txtRes = await axios.get(fullUrl, {
+              headers: { "ngrok-skip-browser-warning": "1" },
+              responseType: "text",
+            });
+            setTextContent(txtRes.data);
+            setReaderType("text");
+          } else if (urlPath.endsWith(".epub")) {
+            setReaderType("epub");
+            const savedLoc = localStorage.getItem(`epub_loc_${id}`);
+            if (savedLoc) setEpubLocation(savedLoc);
+          } else {
+            // Default to PDF
+            const pdfRes = await axios.get(fullUrl, {
+              headers: { "ngrok-skip-browser-warning": "1" },
+              responseType: "arraybuffer",
+            });
+            setPdfData(pdfRes.data);
+            setReaderType("pdf");
           }
         }
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
       }
-    }, [id, lang]);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  }, [id, lang]);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.innerWidth < 768) {
@@ -91,35 +113,50 @@ export default function BookReaderPage() {
     fetchBook();
   }, [fetchBook]);
 
+  // PDF Handlers
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
   }
 
   const changePage = useCallback((offset: number) => {
-    setPageNumber((prev) => Math.min(Math.max(1, prev + offset), numPages || 1));
-  }, [numPages]);
+    if (readerType === "pdf") {
+      setPageNumber((prev) => Math.min(Math.max(1, prev + offset), numPages || 1));
+    }
+  }, [numPages, readerType]);
 
+  // Persistence
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") changePage(1);
-      if (e.key === "ArrowLeft") changePage(-1);
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [changePage]);
-
-  useEffect(() => {
-    if (id && pageNumber > 1) {
+    if (id && readerType === "pdf" && pageNumber > 1) {
       localStorage.setItem(`reader_page_${id}`, pageNumber.toString());
     }
-  }, [id, pageNumber]);
+  }, [id, pageNumber, readerType]);
 
   useEffect(() => {
-    if (id) {
+    if (id && readerType === "pdf") {
       const saved = localStorage.getItem(`reader_page_${id}`);
       if (saved) setPageNumber(parseInt(saved));
     }
-  }, [id]);
+  }, [id, readerType]);
+
+  // EPUB Handlers
+  const onEpubLocationChange = (loc: string) => {
+    setEpubLocation(loc);
+    if (id) {
+      localStorage.setItem(`epub_loc_${id}`, loc);
+    }
+  };
+
+  // Shared Key Events
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (readerType === "pdf") {
+        if (e.key === "ArrowRight") changePage(1);
+        if (e.key === "ArrowLeft") changePage(-1);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [changePage, readerType]);
 
   const onSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPageNumber(parseInt(e.target.value));
@@ -128,14 +165,7 @@ export default function BookReaderPage() {
   if (loading) {
     return (
       <div className="reader-page">
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100vh",
-          }}
-        >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
           <Loading />
         </div>
       </div>
@@ -143,48 +173,58 @@ export default function BookReaderPage() {
   }
 
   return (
-    <div className="reader-page">
+    <div className={`reader-page ${readerType}-mode`}>
       <header className="reader-header">
         <button className="back-btn" onClick={() => router.back()}>
           <IoArrowBack /> <span>{t("back")}</span>
         </button>
         <h1>{title}</h1>
-        <div className="reader-controls">
-          <div className="control-group">
-            <button
-              onClick={() => setScale((s) => Math.max(0.5, s - 0.1))}
-              title="Zoom Out"
-              disabled={scale <= 0.5}
-            >
-              <HiOutlineMinus />
-            </button>
-            <span className="control-label">{Math.round(scale * 100)}%</span>
-            <button
-              onClick={() => setScale((s) => Math.min(3, s + 0.1))}
-              title="Zoom In"
-              disabled={scale >= 3}
-            >
-              <HiOutlinePlus />
-            </button>
+        
+        {readerType !== "epub" && (
+          <div className="reader-controls">
+            <div className="control-group">
+              <button
+                onClick={() => setScale((s) => Math.max(0.5, s - 0.1))}
+                title="Zoom Out"
+                disabled={scale <= 0.5}
+              >
+                <HiOutlineMinus />
+              </button>
+              <span className="control-label">{Math.round(scale * 100)}%</span>
+              <button
+                onClick={() => setScale((s) => Math.min(3, s + 0.1))}
+                title="Zoom In"
+                disabled={scale >= 3}
+              >
+                <HiOutlinePlus />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </header>
 
       <main className="reader-viewport" ref={viewportRef}>
         <div 
           className="reader-content-wrapper" 
           style={{ 
-            // maxWidth: `${maxWidth}px`,
-            fontSize: isTextMode ? `${fontSize}px` : undefined,
-            margin: "0 auto"
+            fontSize: readerType === "text" ? `${fontSize}px` : undefined,
+            margin: "0 auto",
+            height: readerType === "epub" ? "100%" : "auto"
           }}
         >
-          {isTextMode ? (
+          {readerType === "text" ? (
             <div className="text-container">
               <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
                 {textContent}
               </pre>
             </div>
+          ) : readerType === "epub" ? (
+            <EpubReaderContent
+              url={fileUrl}
+              title={title}
+              location={epubLocation || undefined}
+              onLocationChange={onEpubLocationChange}
+            />
           ) : pdfData ? (
             <ReaderContent
               pdfData={pdfData}
@@ -193,43 +233,45 @@ export default function BookReaderPage() {
               onDocumentLoadSuccess={onDocumentLoadSuccess}
             />
           ) : (
-            <div className="pdf-container">
+            <div className="empty-container">
               <div style={{ padding: "100px" }}>{t("file_not_found")}</div>
             </div>
           )}
         </div>
       </main>
 
-      <footer className="reader-footer">
-        <div className="footer-nav">
-          <button
-            className="nav-btn"
-            onClick={() => changePage(-1)}
-            disabled={pageNumber <= 1}
-          >
-            <HiOutlineArrowLeft /> <span>{t("prev")}</span>
-          </button>
-          <div className="page-badge">{pageNumber}</div>
-          <button
-            className="nav-btn next-btn"
-            onClick={() => changePage(1)}
-            disabled={pageNumber >= numPages}
-          >
-            <span>{t("next")}</span> <HiOutlineArrowRight />
-          </button>
-        </div>
-        <div className="progress-section">
-          <span>1</span>
-          <input
-            type="range"
-            min="1"
-            max={numPages || 1}
-            value={pageNumber}
-            onChange={onSliderChange}
-          />
-          <span>{numPages || "—"}</span>
-        </div>
-      </footer>
+      {readerType === "pdf" && (
+        <footer className="reader-footer">
+          <div className="footer-nav">
+            <button
+              className="nav-btn"
+              onClick={() => changePage(-1)}
+              disabled={pageNumber <= 1}
+            >
+              <HiOutlineArrowLeft /> <span>{t("prev")}</span>
+            </button>
+            <div className="page-badge">{pageNumber}</div>
+            <button
+              className="nav-btn next-btn"
+              onClick={() => changePage(1)}
+              disabled={pageNumber >= numPages}
+            >
+              <span>{t("next")}</span> <HiOutlineArrowRight />
+            </button>
+          </div>
+          <div className="progress-section">
+            <span>1</span>
+            <input
+              type="range"
+              min="1"
+              max={numPages || 1}
+              value={pageNumber}
+              onChange={onSliderChange}
+            />
+            <span>{numPages || "—"}</span>
+          </div>
+        </footer>
+      )}
     </div>
   );
 }

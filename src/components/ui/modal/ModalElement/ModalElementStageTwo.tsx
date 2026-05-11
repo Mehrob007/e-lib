@@ -26,6 +26,15 @@ export default function ModalElementStageTwo() {
     const file = e.target.files?.[0];
     if (file) {
       setData("file", file);
+      
+      // Calculate and format file size
+      const sizeInBytes = file.size;
+      let formattedSize = "";
+      if (sizeInBytes < 1024) formattedSize = `${sizeInBytes} B`;
+      else if (sizeInBytes < 1024 * 1024) formattedSize = `${(sizeInBytes / 1024).toFixed(1)} KB`;
+      else formattedSize = `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
+      
+      setData("file_size", formattedSize);
     }
   };
 

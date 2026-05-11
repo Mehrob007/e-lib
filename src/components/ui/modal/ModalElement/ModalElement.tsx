@@ -137,6 +137,7 @@ export default function ModalELement({
           lang_id: (data.lang_id as string) || "",
           file_url: (fileUrl as string) || "",
           preview_url: (previewUrl as string) || "",
+          file_size: (data.file_size as string) || (editDetails.file_size as string) || "",
         },
       };
 

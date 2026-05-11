@@ -14,21 +14,24 @@ export default function Select({
   labelStyle,
   inputStyle,
 }: SelectT) {
-  const [focus, setFocus] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <label
       style={inputStyle}
-      className={`input__element ${focus ? "input__focus" : ""}`}
+      className={`input__element ${isOpen ? "select__open" : ""}`}
     >
       {title && <span>{title}</span>}
       <div className="select__wrapper" style={labelStyle}>
         <select
           value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onFocus={() => setFocus(true)}
-          onBlur={() => setFocus(false)}
-          className={`${className} ${!value ? "placeholder" : ""}`}
+          onChange={(e) => {
+            onChange(e.target.value);
+            setIsOpen(false);
+          }}
+          onClick={() => setIsOpen(!isOpen)}
+          onBlur={() => setIsOpen(false)}
+          className={`${className || ""} ${!value ? "placeholder" : ""}`}
           id={id}
           style={style}
         >

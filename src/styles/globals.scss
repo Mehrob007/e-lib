@@ -467,13 +467,16 @@ button {
     background: #ffffff0d;
     border: 1px solid #e1e1e1;
     border-radius: 12px;
-    padding: 0 16px;
+    padding: 0 40px 0 16px;
     font-family: inherit;
     font-size: 16px;
+    cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    position: relative;
+    z-index: 1;
 
     &:focus {
       outline: none;
@@ -496,10 +499,11 @@ button {
   pointer-events: none;
   display: flex;
   align-items: center;
+  z-index: 2;
   transition: transform 0.3s ease;
 }
 
-.input__focus .select__arrow {
+.select__open .select__arrow {
   transform: translateY(-50%) rotate(180deg);
 }
 .elements__content {
@@ -1307,9 +1311,6 @@ button {
 
     .header-home__select {
       order: 2;
-      .select__arrow {
-        display: none !important;
-      }
       .select__wrapper {
         width: 100px !important;
       }

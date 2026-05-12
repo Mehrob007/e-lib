@@ -1202,6 +1202,24 @@ button {
   width: 100%;
 }
 
+.home-book-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 24px;
+  width: 100%;
+
+  .book-card {
+    width: 100%;
+
+    &--video {
+      grid-column: span 2;
+      .book-card__image {
+        aspect-ratio: 1.5 / 1;
+      }
+    }
+  }
+}
+
 .catalog-controls {
   display: flex;
   justify-content: flex-end;
@@ -1413,6 +1431,13 @@ button {
     margin-left: -16px !important;
     padding-left: 16px;
     width: calc(100% + 32px) !important;
+
+    .book-card--video {
+      flex: 0 0 calc((100vw - 48px) / 1.2) !important;
+      .book-card__image {
+        aspect-ratio: 16 / 9;
+      }
+    }
   }
 
   .book-card {

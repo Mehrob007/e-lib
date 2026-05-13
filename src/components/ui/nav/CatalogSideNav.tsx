@@ -49,7 +49,6 @@ export default function CatalogSideNav({
   const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
   const [isMobile, setIsMobile] = useState(false);
 
-  // Save expandedIds to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem(
       "catalog_expanded_ids",
@@ -57,13 +56,10 @@ export default function CatalogSideNav({
     );
   }, [expandedIds]);
 
-  // Refetch nested data when language changes or expandedIds are restored
   useEffect(() => {
     const fetchAllNested = async () => {
       const ids = Array.from(expandedIds);
       for (const id of ids) {
-        // If we already have data for this lang and id, skip (though lang change should trigger refetch)
-        // Actually, on lang change we should probably clear nestedData or just overwrite.
         if (loadingIds.has(id)) continue;
 
         setLoadingIds((prev) => new Set(prev).add(id));
@@ -102,8 +98,7 @@ export default function CatalogSideNav({
     };
 
     fetchAllNested();
-    // We want to refetch when lang changes to get localized names or when new IDs are expanded
-  }, [lang, expandedIds]); 
+  }, [lang, expandedIds]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -153,10 +148,12 @@ export default function CatalogSideNav({
       newExpandedIds.delete(id);
     } else {
       newExpandedIds.add(id);
-      // Data fetching is now handled by the useEffect above
     }
     setExpandedIds(newExpandedIds);
   };
+
+//  console.log("expandedIds", expandedIds);
+ 
 
   const renderItem = (
     sub: SubCategory,
@@ -186,7 +183,10 @@ export default function CatalogSideNav({
                 {isLoading ? (
                   <div className="catalog-side-nav__loader" />
                 ) : (
-                  <LuChevronDown size={20} className="catalog-side-nav__arrow" />
+                  <LuChevronDown
+                    size={20}
+                    className="catalog-side-nav__arrow"
+                  />
                 )}
               </div>
             )}

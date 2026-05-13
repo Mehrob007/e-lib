@@ -72,7 +72,6 @@ function CatalogContent() {
   const limit = 10;
   const { lang, t, getLocalized } = useTranslation();
 
-  // Sync with URL param
   useEffect(() => {
     if (categoryIdParam) {
       setActiveCategoryId(categoryIdParam);
@@ -80,7 +79,6 @@ function CatalogContent() {
     }
   }, [categoryIdParam]);
 
-  // Save selection to localStorage
   useEffect(() => {
     if (activeCategoryId) {
       localStorage.setItem("catalog_active_category_id", activeCategoryId);
@@ -108,7 +106,6 @@ function CatalogContent() {
       if (res?.length) {
         setCategories(res);
         if (typeof window !== "undefined") {
-          // If no category is active (neither from URL nor localStorage), set the first one as default
           if (
             !activeCategoryId &&
             !localStorage.getItem("catalog_active_category_id") &&
@@ -266,7 +263,9 @@ function CatalogContent() {
 
   const currentMime = activeSubCategory?.mime || "book";
 
-  console.log("activeCategoryId", activeCategoryId);
+  // console.log("activeCategoryId", activeCategoryId);
+  console.log("activeSubCategoryId", activeSubCategoryId);
+  
 
   return (
     <div className="home-page catalog-page">

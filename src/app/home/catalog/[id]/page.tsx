@@ -333,12 +333,12 @@ export default function BookDetailsPage() {
               )}
               
               <div className="metadata-item">
-                <span className="label">Формат</span>
+                <span className="label">{t("format")}</span>
                 <span className="value">{book.format}</span>
               </div>
               
               <div className="metadata-item">
-                <span className="label">Размер</span>
+                <span className="label">{t("file_size")}</span>
                 <span className="value">{book.fileSize}</span>
               </div>
             </div>

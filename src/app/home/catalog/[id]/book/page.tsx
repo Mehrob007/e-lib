@@ -13,6 +13,7 @@ import Loading from "@/components/ui/loading/Loading";
 import dynamic from "next/dynamic";
 import { useTranslation, useI18nStore } from "@/hooks/useI18nStore";
 import "./reader.scss";
+import EpubReaderContent from "./EpubReaderContent";
 
 // Dynamically import readers without SSR
 const ReaderContent = dynamic(() => import("./ReaderContent"), {
@@ -20,12 +21,12 @@ const ReaderContent = dynamic(() => import("./ReaderContent"), {
   loading: () => <Loading />,
 });
 
-const EpubReaderContent = dynamic(() => import("./EpubReaderContent"), {
+const Fb2ReaderContent = dynamic(() => import("./Fb2ReaderContent"), {
   ssr: false,
   loading: () => <Loading />,
 });
 
-type ReaderType = "pdf" | "epub" | "text" | null;
+type ReaderType = "pdf" | "epub" | "text" | "fb2" | null;
 
 export default function BookReaderPage() {
   const { id } = useParams();
@@ -41,6 +42,7 @@ export default function BookReaderPage() {
   // PDF & Text specific
   const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null);
   const [textContent, setTextContent] = useState<string>("");
+  const [fb2Content, setFb2Content] = useState<string>("");
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.2);
@@ -84,6 +86,13 @@ export default function BookReaderPage() {
             });
             setTextContent(txtRes.data);
             setReaderType("text");
+          } else if (urlPath.endsWith(".fb2")) {
+            const fb2Res = await axios.get(fullUrl, {
+              headers: { "ngrok-skip-browser-warning": "1" },
+              responseType: "text",
+            });
+            setFb2Content(fb2Res.data);
+            setReaderType("fb2");
           } else if (urlPath.endsWith(".epub")) {
             setReaderType("epub");
             const savedLoc = localStorage.getItem(`epub_loc_${id}`);
@@ -207,7 +216,7 @@ export default function BookReaderPage() {
         <div 
           className="reader-content-wrapper" 
           style={{ 
-            fontSize: readerType === "text" ? `${fontSize}px` : undefined,
+            fontSize: (readerType === "text" || readerType === "fb2") ? `${fontSize}px` : undefined,
             margin: "0 auto",
             height: readerType === "epub" ? "100%" : "auto"
           }}
@@ -218,6 +227,8 @@ export default function BookReaderPage() {
                 {textContent}
               </pre>
             </div>
+          ) : readerType === "fb2" ? (
+            <Fb2ReaderContent content={fb2Content} />
           ) : readerType === "epub" ? (
             <EpubReaderContent
               url={fileUrl}

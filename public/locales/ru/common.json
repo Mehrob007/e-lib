@@ -49,5 +49,7 @@
   "by_date": "По дате добавления",
   "by_added": "Недавно добавленные",
   "search_results": "Результаты поиска",
-  "no_elements_available": "Элементы не найдены"
+  "no_elements_available": "Элементы не найдены",
+  "format": "Формат:",
+  "file_size": "Размер:"
 }

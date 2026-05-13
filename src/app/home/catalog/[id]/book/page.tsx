@@ -11,12 +11,15 @@ import { HiOutlinePlus, HiOutlineMinus } from "react-icons/hi";
 import { HiOutlineArrowLeft, HiOutlineArrowRight } from "react-icons/hi2";
 import Loading from "@/components/ui/loading/Loading";
 import dynamic from "next/dynamic";
-import { useTranslation, useI18nStore } from "@/hooks/useI18nStore";
+import { useTranslation } from "@/hooks/useI18nStore";
 import "./reader.scss";
-import EpubReaderContent from "./EpubReaderContent";
 
-// Dynamically import readers without SSR
 const ReaderContent = dynamic(() => import("./ReaderContent"), {
+  ssr: false,
+  loading: () => <Loading />,
+});
+
+const EpubReaderContent = dynamic(() => import("./EpubReaderContent"), {
   ssr: false,
   loading: () => <Loading />,
 });
@@ -41,6 +44,7 @@ export default function BookReaderPage() {
   
   // PDF & Text specific
   const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null);
+  const [epubData, setEpubData] = useState<ArrayBuffer | null>(null);
   const [textContent, setTextContent] = useState<string>("");
   const [fb2Content, setFb2Content] = useState<string>("");
   const [numPages, setNumPages] = useState<number>(0);
@@ -50,6 +54,8 @@ export default function BookReaderPage() {
   
   // EPUB specific
   const [epubLocation, setEpubLocation] = useState<string | null>(null);
+  const [epubNextTrigger, setEpubNextTrigger] = useState(0);
+  const [epubPrevTrigger, setEpubPrevTrigger] = useState(0);
 
   const viewportRef = useRef<HTMLDivElement>(null);
 
@@ -94,6 +100,11 @@ export default function BookReaderPage() {
             setFb2Content(fb2Res.data);
             setReaderType("fb2");
           } else if (urlPath.endsWith(".epub")) {
+            const epubRes = await axios.get(fullUrl, {
+              headers: { "ngrok-skip-browser-warning": "1" },
+              responseType: "arraybuffer",
+            });
+            setEpubData(epubRes.data);
             setReaderType("epub");
             const savedLoc = localStorage.getItem(`epub_loc_${id}`);
             if (savedLoc) setEpubLocation(savedLoc);
@@ -130,6 +141,9 @@ export default function BookReaderPage() {
   const changePage = useCallback((offset: number) => {
     if (readerType === "pdf") {
       setPageNumber((prev) => Math.min(Math.max(1, prev + offset), numPages || 1));
+    } else if (readerType === "epub") {
+      if (offset > 0) setEpubNextTrigger((t) => t + 1);
+      else setEpubPrevTrigger((t) => t + 1);
     }
   }, [numPages, readerType]);
 
@@ -158,7 +172,7 @@ export default function BookReaderPage() {
   // Shared Key Events
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (readerType === "pdf") {
+      if (readerType === "pdf" || readerType === "epub") {
         if (e.key === "ArrowRight") changePage(1);
         if (e.key === "ArrowLeft") changePage(-1);
       }
@@ -189,27 +203,33 @@ export default function BookReaderPage() {
         </button>
         <h1>{title}</h1>
         
-        {readerType !== "epub" && (
-          <div className="reader-controls">
-            <div className="control-group">
-              <button
-                onClick={() => setScale((s) => Math.max(0.5, s - 0.1))}
-                title="Zoom Out"
-                disabled={scale <= 0.5}
-              >
-                <HiOutlineMinus />
-              </button>
-              <span className="control-label">{Math.round(scale * 100)}%</span>
-              <button
-                onClick={() => setScale((s) => Math.min(3, s + 0.1))}
-                title="Zoom In"
-                disabled={scale >= 3}
-              >
-                <HiOutlinePlus />
-              </button>
-            </div>
+        <div className="reader-controls">
+          <div className="control-group">
+            <button
+              onClick={() => {
+                if (readerType === "pdf") setScale((s) => Math.max(0.5, s - 0.1));
+                else setFontSize((s) => Math.max(12, s - 2));
+              }}
+              title="Zoom Out / Decrease Font"
+              disabled={readerType === "pdf" ? scale <= 0.5 : fontSize <= 12}
+            >
+              <HiOutlineMinus />
+            </button>
+            <span className="control-label">
+              {readerType === "pdf" ? `${Math.round(scale * 100)}%` : `${fontSize}px`}
+            </span>
+            <button
+              onClick={() => {
+                if (readerType === "pdf") setScale((s) => Math.min(3, s + 0.1));
+                else setFontSize((s) => Math.min(48, s + 2));
+              }}
+              title="Zoom In / Increase Font"
+              disabled={readerType === "pdf" ? scale >= 3 : fontSize >= 48}
+            >
+              <HiOutlinePlus />
+            </button>
           </div>
-        )}
+        </div>
       </header>
 
       <main className="reader-viewport" ref={viewportRef}>
@@ -218,7 +238,11 @@ export default function BookReaderPage() {
           style={{ 
             fontSize: (readerType === "text" || readerType === "fb2") ? `${fontSize}px` : undefined,
             margin: "0 auto",
-            height: readerType === "epub" ? "100%" : "auto"
+            height: (readerType === "epub" || readerType === "pdf") ? "calc(100vh - 220px)" : "auto",
+            maxWidth: (readerType === "epub" || readerType === "pdf") ? "1000px" : "100%",
+            minHeight: (readerType === "epub" || readerType === "pdf") ? "auto" : "100%",
+            display: "flex",
+            flexDirection: "column"
           }}
         >
           {readerType === "text" ? (
@@ -229,12 +253,15 @@ export default function BookReaderPage() {
             </div>
           ) : readerType === "fb2" ? (
             <Fb2ReaderContent content={fb2Content} />
-          ) : readerType === "epub" ? (
+          ) : readerType === "epub" && epubData ? (
             <EpubReaderContent
-              url={fileUrl}
+              data={epubData}
               title={title}
               location={epubLocation || undefined}
               onLocationChange={onEpubLocationChange}
+              fontSize={fontSize}
+              nextTrigger={epubNextTrigger}
+              prevTrigger={epubPrevTrigger}
             />
           ) : pdfData ? (
             <ReaderContent
@@ -251,36 +278,38 @@ export default function BookReaderPage() {
         </div>
       </main>
 
-      {readerType === "pdf" && (
+      {(readerType === "pdf" || readerType === "epub") && (
         <footer className="reader-footer">
           <div className="footer-nav">
             <button
               className="nav-btn"
               onClick={() => changePage(-1)}
-              disabled={pageNumber <= 1}
+              disabled={readerType === "pdf" ? pageNumber <= 1 : false}
             >
               <HiOutlineArrowLeft /> <span>{t("prev")}</span>
             </button>
-            <div className="page-badge">{pageNumber}</div>
+            <div className="page-badge">{readerType === "pdf" ? pageNumber : "—"}</div>
             <button
               className="nav-btn next-btn"
               onClick={() => changePage(1)}
-              disabled={pageNumber >= numPages}
+              disabled={readerType === "pdf" ? pageNumber >= numPages : false}
             >
               <span>{t("next")}</span> <HiOutlineArrowRight />
             </button>
           </div>
-          <div className="progress-section">
-            <span>1</span>
-            <input
-              type="range"
-              min="1"
-              max={numPages || 1}
-              value={pageNumber}
-              onChange={onSliderChange}
-            />
-            <span>{numPages || "—"}</span>
-          </div>
+          {readerType === "pdf" && (
+            <div className="progress-section">
+              <span>1</span>
+              <input
+                type="range"
+                min="1"
+                max={numPages || 1}
+                value={pageNumber}
+                onChange={onSliderChange}
+              />
+              <span>{numPages || "—"}</span>
+            </div>
+          )}
         </footer>
       )}
     </div>

@@ -214,7 +214,7 @@ export default function ModalSwiper({
                   </div>
                 )}
               </div>
-              {/* <div
+              <div
                 className="swiper-upload-box"
                 onClick={() => fileInputRefMob.current?.click()}
               >
@@ -242,7 +242,7 @@ export default function ModalSwiper({
                     <span>Нажмите для загрузки изображения для телефона</span>
                   </div>
                 )}
-              </div> */}
+              </div>
             </main>
 
             <Input

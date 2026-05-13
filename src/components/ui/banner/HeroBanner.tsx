@@ -59,6 +59,7 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
             margin: 0,
             maxWidth: "none",
             position: "relative",
+            aspectRatio: "1900 / 500",
           }}
         >
           <div
@@ -67,11 +68,20 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
               width: "100%",
               height: "100%",
               margin: 0,
+              aspectRatio: "1900 / 500",
               // border: "1px solid red",
               // position: "relative",
             }}
           >
-            <Link href={banners[current].details?.link || ""}>
+            <Link
+              href={banners[current].details?.link || ""}
+              style={{
+                display: "block",
+                width: "100%",
+                aspectRatio: "1900 / 500", // подставь реальные пропорции своего баннера
+                position: "relative",
+              }}
+            >
               <Image
                 src={
                   banners[current].details.preview_url?.startsWith("http")
@@ -82,19 +92,9 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
                 }
                 alt={banners[current].name}
                 fill
-                style={{
-                  objectFit: "cover",
-                  objectPosition: "center",
-                  width: "100%",
-                }}
+                sizes="100vw"
+                style={{ objectFit: "cover", objectPosition: "center" }}
                 priority
-                onLoadingComplete={() => {}}
-                onError={() =>
-                  console.error(
-                    "Image load error:",
-                    banners[current].details.preview_url,
-                  )
-                }
               />
             </Link>
           </div>

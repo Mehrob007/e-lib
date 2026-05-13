@@ -210,11 +210,11 @@ export default function ModalSwiper({
                 ) : (
                   <div className="swiper-placeholder">
                     <LuPlus size={32} />
-                    <span>Нажмите для загрузки изображения для пк</span>
+                    <span>Нажмите для загрузки изображения</span>
                   </div>
                 )}
               </div>
-              <div
+              {/* <div
                 className="swiper-upload-box"
                 onClick={() => fileInputRefMob.current?.click()}
               >
@@ -242,7 +242,7 @@ export default function ModalSwiper({
                     <span>Нажмите для загрузки изображения для телефона</span>
                   </div>
                 )}
-              </div>
+              </div> */}
             </main>
 
             <Input

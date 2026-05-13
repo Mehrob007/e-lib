@@ -49,5 +49,7 @@
   "by_date": "By date added",
   "by_added": "Recently added",
   "search_results": "Search Results",
-  "no_elements_available": "No elements available"
+  "no_elements_available": "No elements available",
+  "format": "Format:",
+  "file_size": "Size:"
 }

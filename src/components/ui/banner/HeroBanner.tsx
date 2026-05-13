@@ -3,9 +3,7 @@ import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { objectPosition } from "three/src/nodes/accessors/Object3DNode.js";
 
 interface Banner {
   id: string;
@@ -47,6 +45,17 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
       <AnimatePresence mode="wait">
         <motion.div
           key={current}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.2}
+          onDragEnd={(e, { offset, velocity }) => {
+            const swipeThreshold = 50;
+            if (offset.x > swipeThreshold) {
+              prevSlide();
+            } else if (offset.x < -swipeThreshold) {
+              nextSlide();
+            }
+          }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -60,7 +69,9 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
             maxWidth: "none",
             position: "relative",
             aspectRatio: "1900 / 500",
+            cursor: "grab",
           }}
+          whileTap={{ cursor: "grabbing" }}
         >
           <div
             className="hero-banner__image"

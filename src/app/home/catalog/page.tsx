@@ -82,19 +82,15 @@ function CatalogContent() {
   useEffect(() => {
     if (activeCategoryId) {
       localStorage.setItem("catalog_active_category_id", activeCategoryId);
-    } else {
-      localStorage.removeItem("catalog_active_category_id");
     }
   }, [activeCategoryId]);
 
   useEffect(() => {
-    if (activeSubCategoryId) {
+    if (activeSubCategoryId || activeSubCategoryId === "") {
       localStorage.setItem(
         "catalog_active_sub_category_id",
         activeSubCategoryId,
       );
-    } else {
-      localStorage.removeItem("catalog_active_sub_category_id");
     }
   }, [activeSubCategoryId]);
 
@@ -144,12 +140,14 @@ function CatalogContent() {
         );
 
         if (mapped?.length) {
-          const isCurrentValid = mapped.some(
-            (m) => m.id === activeSubCategoryId,
-          );
-          if (!activeSubCategoryId || !isCurrentValid) {
-            setActiveSubCategoryId(mapped[0].id);
-          }
+          console.log("mapped", mapped);
+
+          // const isCurrentValid = mapped.some(
+          //   (m) => m.id === activeSubCategoryId,
+          // );
+          // if (!activeSubCategoryId || !isCurrentValid) {
+          //   setActiveSubCategoryId(mapped[0].id);
+          // }
         } else {
           setActiveSubCategoryId("");
         }
@@ -157,7 +155,7 @@ function CatalogContent() {
         console.error(e);
       }
     },
-    [lang, getLocalized, activeSubCategoryId],
+    [lang, getLocalized],
   );
   useEffect(() => {
     if (searchQuery) {
@@ -264,8 +262,7 @@ function CatalogContent() {
   const currentMime = activeSubCategory?.mime || "book";
 
   // console.log("activeCategoryId", activeCategoryId);
-  console.log("activeSubCategoryId", activeSubCategoryId);
-  
+  // console.log("activeSubCategoryId", activeSubCategoryId);
 
   return (
     <div className="home-page catalog-page">
@@ -338,7 +335,6 @@ function CatalogContent() {
             <>
               {content.length > 0 ? (
                 <div className="book-grid">
-                 
                   {content.map((book) => (
                     <BookCard showType={false} key={book.id} {...book} />
                   ))}

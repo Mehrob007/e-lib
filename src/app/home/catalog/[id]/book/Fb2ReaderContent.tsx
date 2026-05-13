@@ -17,11 +17,9 @@ export default function Fb2ReaderContent({ content }: Props) {
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(content, "text/xml");
       
-      // Check for parsing errors
       const parserError = xmlDoc.getElementsByTagName("parsererror");
       if (parserError.length > 0) {
         console.error("FB2 XML Parsing Error:", parserError[0].textContent);
-        // If XML is malformed, try to just show text or a message
         setParsedHtml("<p>Error parsing FB2: Invalid XML structure</p>");
         return;
       }

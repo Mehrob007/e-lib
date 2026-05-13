@@ -5,7 +5,7 @@ import Input from "@/components/elements/input/Input";
 import { useFormStore } from "@/hooks/useFormStore";
 
 import Button from "@/components/elements/button/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { postAuthREQ } from "@/api/auth";
 import { useRouter } from "next/navigation";
 import { decodeJwt } from "jose";
@@ -59,6 +59,13 @@ export default function Login() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const res = localStorage.getItem("refresh_token");
+    console.log("res", res);
+
+    if (!res) router.push("admin/");
+  }, []);
 
   return (
     <div className="login__page">

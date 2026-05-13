@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { objectPosition } from "three/src/nodes/accessors/Object3DNode.js";
 
 interface Banner {
   id: string;
@@ -22,7 +23,7 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
     if (banners && banners.length > 1) {
       const timer = setInterval(() => {
         setCurrent((prev) => (prev + 1) % banners.length);
-      }, 5000);
+      }, 10000000);
       return () => clearInterval(timer);
     }
   }, [banners, current]);
@@ -66,7 +67,8 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
               width: "100%",
               height: "100%",
               margin: 0,
-              position: "relative",
+              // border: "1px solid red",
+              // position: "relative",
             }}
           >
             <Link href={banners[current].details?.link || ""}>
@@ -80,7 +82,11 @@ export default function HeroBanner({ banners = [] }: { banners?: Banner[] }) {
                 }
                 alt={banners[current].name}
                 fill
-                style={{ objectFit: "cover" }}
+                style={{
+                  objectFit: "cover",
+                  objectPosition: "center",
+                  width: "100%",
+                }}
                 priority
                 onLoadingComplete={() => {}}
                 onError={() =>

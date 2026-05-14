@@ -67,7 +67,7 @@ export default function ReaderContent({
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             onDragEnd={handleDragEnd}
-            style={{ width: "100%", display: "flex", justifyContent: "center", cursor: "grab" }}
+            style={{ minWidth: "100%", display: "flex", justifyContent: "center", cursor: "grab" }}
             whileTap={{ cursor: "grabbing" }}
           >
             <Page

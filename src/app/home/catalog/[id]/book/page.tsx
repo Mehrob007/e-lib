@@ -235,7 +235,7 @@ export default function BookReaderPage() {
 
       <main className="reader-viewport" ref={viewportRef}>
         <div 
-          className="reader-content-wrapper" 
+          className="reader-content-wrapper"
           style={{ 
             fontSize: (readerType === "text" || readerType === "fb2") ? `${fontSize}px` : undefined,
             margin: "0 auto",

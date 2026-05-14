@@ -70,11 +70,18 @@ export default function EpubReaderContent({
       ...ReactReaderStyle.container,
       height: "100%",
       width: "100%",
-    }
+    },
   };
 
   return (
-    <div style={{ height: "100%", width: "100%", position: "relative", boxSizing: "border-box" }}>
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        position: "relative",
+        boxSizing: "border-box",
+      }}
+    >
       <ReactReader
         url={data}
         // title={title}
@@ -94,14 +101,14 @@ export default function EpubReaderContent({
               wordBreak: "break-word !important",
               overflowWrap: "break-word !important",
               width: "100% !important",
-              maxWidth: "100% !important"
+              maxWidth: "100% !important",
             },
           });
           rendition.themes.select("custom");
         }}
         epubOptions={{
-          flow: "paginated",
-          manager: "default"
+          flow: "scrolled",
+          manager: "continuous",
         }}
         readerStyles={ownStyles as any}
       />

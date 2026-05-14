@@ -35,12 +35,12 @@ export default function BookReaderPage() {
   const { id } = useParams();
   const router = useRouter();
   const { t, lang } = useTranslation();
-  
+
   const [readerType, setReaderType] = useState<ReaderType>(null);
   const [title, setTitle] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [fileUrl, setFileUrl] = useState<string>("");
-  
+
   // PDF & Text specific
   const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null);
   const [epubData, setEpubData] = useState<ArrayBuffer | null>(null);
@@ -50,7 +50,7 @@ export default function BookReaderPage() {
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.0);
   const [fontSize, setFontSize] = useState<number>(18);
-  
+
   // EPUB specific
   const [epubLocation, setEpubLocation] = useState<string | null>(null);
   const [epubNextTrigger, setEpubNextTrigger] = useState(0);
@@ -141,14 +141,19 @@ export default function BookReaderPage() {
     setNumPages(numPages);
   }
 
-  const changePage = useCallback((offset: number) => {
-    if (readerType === "pdf") {
-      setPageNumber((prev) => Math.min(Math.max(1, prev + offset), numPages || 1));
-    } else if (readerType === "epub") {
-      if (offset > 0) setEpubNextTrigger((t) => t + 1);
-      else setEpubPrevTrigger((t) => t + 1);
-    }
-  }, [numPages, readerType]);
+  const changePage = useCallback(
+    (offset: number) => {
+      if (readerType === "pdf") {
+        setPageNumber((prev) =>
+          Math.min(Math.max(1, prev + offset), numPages || 1),
+        );
+      } else if (readerType === "epub") {
+        if (offset > 0) setEpubNextTrigger((t) => t + 1);
+        else setEpubPrevTrigger((t) => t + 1);
+      }
+    },
+    [numPages, readerType],
+  );
 
   // Persistence
   useEffect(() => {
@@ -191,7 +196,14 @@ export default function BookReaderPage() {
   if (loading) {
     return (
       <div className="reader-page">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100vh",
+          }}
+        >
           <Loading />
         </div>
       </div>
@@ -205,12 +217,13 @@ export default function BookReaderPage() {
           <IoArrowBack /> <span>{t("back")}</span>
         </button>
         <h1>{title}</h1>
-        
+
         <div className="reader-controls">
           <div className="control-group">
             <button
               onClick={() => {
-                if (readerType === "pdf") setScale((s) => Math.max(0.1, s - 0.1));
+                if (readerType === "pdf")
+                  setScale((s) => Math.max(0.1, s - 0.1));
                 else setFontSize((s) => Math.max(1, s - 2));
               }}
               title="Zoom Out / Decrease Font"
@@ -218,7 +231,9 @@ export default function BookReaderPage() {
               <HiOutlineMinus />
             </button>
             <span className="control-label">
-              {readerType === "pdf" ? `${Math.round(scale * 100)}%` : `${fontSize}px`}
+              {readerType === "pdf"
+                ? `${Math.round(scale * 100)}%`
+                : `${fontSize}px`}
             </span>
             <button
               onClick={() => {
@@ -234,19 +249,28 @@ export default function BookReaderPage() {
       </header>
 
       <main className="reader-viewport" ref={viewportRef}>
-        <div 
+        <div
           className="reader-content-wrapper"
-          style={{ 
-            fontSize: (readerType === "text" || readerType === "fb2") ? `${fontSize}px` : undefined,
+          style={{
+            fontSize:
+              readerType === "text" || readerType === "fb2"
+                ? `${fontSize}px`
+                : undefined,
             margin: "0 auto",
-            height: readerType === "pdf" ? "calc(100vh)" : readerType === "epub" ? "100vh" : "auto",
+            height:
+              readerType === "pdf"
+                ? "calc(100vh)"
+                : readerType === "epub"
+                  ? "100vh"
+                  : "auto",
             maxWidth: readerType === "pdf" ? "100%" : "900px",
-            minHeight: (readerType === "epub" || readerType === "pdf") ? "auto" : "100%",
+            minHeight:
+              readerType === "epub" || readerType === "pdf" ? "auto" : "100%",
             display: "flex",
             flexDirection: "column",
             overflowX: "auto",
             boxSizing: "border-box",
-            minWidth: "100%"
+            minWidth: "100%",
           }}
         >
           {readerType === "text" ? (
@@ -293,7 +317,9 @@ export default function BookReaderPage() {
             >
               <HiOutlineArrowLeft /> <span>{t("prev")}</span>
             </button>
-            <div className="page-badge">{readerType === "pdf" ? pageNumber : "—"}</div>
+            <div className="page-badge">
+              {readerType === "pdf" ? pageNumber : "—"}
+            </div>
             <button
               className="nav-btn next-btn"
               onClick={() => changePage(1)}

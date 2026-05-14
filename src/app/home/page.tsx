@@ -84,7 +84,6 @@ export default function Page() {
     }
   }, [lang]);
 
-
   useEffect(() => {
     fetchContent();
     fetchSwiper();
@@ -129,7 +128,7 @@ export default function Page() {
                     id={book.id}
                     title={book.title}
                     author={book.author}
-                    date={book.date}
+                    date={book.date?.split("T")?.[0]}
                     image={book.image}
                     type={book.type}
                   />

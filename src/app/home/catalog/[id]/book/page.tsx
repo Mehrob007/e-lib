@@ -239,7 +239,7 @@ export default function BookReaderPage() {
           style={{ 
             fontSize: (readerType === "text" || readerType === "fb2") ? `${fontSize}px` : undefined,
             margin: "0 auto",
-            height: readerType === "pdf" ? "calc(100vh)" : readerType === "epub" ? "80vh" : "auto",
+            height: readerType === "pdf" ? "calc(100vh)" : readerType === "epub" ? "100vh" : "auto",
             maxWidth: readerType === "pdf" ? "100%" : "900px",
             minHeight: (readerType === "epub" || readerType === "pdf") ? "auto" : "100%",
             display: "flex",

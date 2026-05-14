@@ -88,29 +88,26 @@ export default function ModalSwiper({
         return;
       }
 
-      if (data.photo_mob instanceof File) {
-        // 1. Get presigned URL Mobile
-        const presignedResMob = await getSwiperPresigned({
-          filename: (data.photo_mob as File).name,
-        });
-        if (!presignedResMob) throw new Error("Failed to get presigned URL for mobile");
+      // if (data.photo_mob instanceof File) {
+      //   const presignedResMob = await getSwiperPresigned({
+      //     filename: (data.photo_mob as File).name,
+      //   });
+      //   if (!presignedResMob) throw new Error("Failed to get presigned URL for mobile");
 
-        const { upload_url: upload_url_mob, object_key: object_key_mob } = presignedResMob;
-        preview_mob = object_key_mob;
+      //   const { upload_url: upload_url_mob, object_key: object_key_mob } = presignedResMob;
+      //   preview_mob = object_key_mob;
 
-        // 2. Upload file to S3 Mobile
-        await axios.put(upload_url_mob, data.photo_mob, {
-          headers: {
-            "Content-Type": (data.photo_mob as File).type,
-          },
-        });
-      } else if (!editItem && !data.photo_mob) {
-        alert("Выберите изображение для баннера (Телефон)");
-        setLoading(false);
-        return;
-      }
+      //   await axios.put(upload_url_mob, data.photo_mob, {
+      //     headers: {
+      //       "Content-Type": (data.photo_mob as File).type,
+      //     },
+      //   });
+      // } else if (!editItem && !data.photo_mob) {
+      //   alert("Выберите изображение для баннера (Телефон)");
+      //   setLoading(false);
+      //   return;
+      // }
 
-      // 3. Save swiper
       const payload = {
         name: data.name as string,
         details: {
@@ -214,7 +211,7 @@ export default function ModalSwiper({
                   </div>
                 )}
               </div>
-              <div
+              {/* <div
                 className="swiper-upload-box"
                 onClick={() => fileInputRefMob.current?.click()}
               >
@@ -242,7 +239,7 @@ export default function ModalSwiper({
                     <span>Нажмите для загрузки изображения для телефона</span>
                   </div>
                 )}
-              </div>
+              </div> */}
             </main>
 
             <Input

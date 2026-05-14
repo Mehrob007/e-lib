@@ -100,8 +100,8 @@ export default function EpubReaderContent({
           rendition.themes.select("custom");
         }}
         epubOptions={{
-          flow: "scrolled",
-          manager: "continuous"
+          flow: "paginated",
+          manager: "default"
         }}
         readerStyles={ownStyles as any}
       />

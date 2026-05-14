@@ -85,20 +85,28 @@ export default function BookReaderPage() {
           setFileUrl(fullUrl);
           const urlPath = fullUrl.split("?")[0].toLowerCase();
 
-          if (urlPath.endsWith(".txt")) {
-            const txtRes = await axios.get(fullUrl, {
+          if (urlPath.endsWith(".txt") || urlPath.endsWith(".fb2")) {
+            const res = await axios.get(fullUrl, {
               headers: { "ngrok-skip-browser-warning": "1" },
-              responseType: "text",
+              responseType: "arraybuffer",
             });
-            setTextContent(txtRes.data);
-            setReaderType("text");
-          } else if (urlPath.endsWith(".fb2")) {
-            const fb2Res = await axios.get(fullUrl, {
-              headers: { "ngrok-skip-browser-warning": "1" },
-              responseType: "text",
-            });
-            setFb2Content(fb2Res.data);
-            setReaderType("fb2");
+
+            let text = "";
+            try {
+              const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
+              text = utf8Decoder.decode(res.data);
+            } catch (e) {
+              const win1251Decoder = new TextDecoder("windows-1251");
+              text = win1251Decoder.decode(res.data);
+            }
+
+            if (urlPath.endsWith(".txt")) {
+              setTextContent(text);
+              setReaderType("text");
+            } else {
+              setFb2Content(text);
+              setReaderType("fb2");
+            }
           } else if (urlPath.endsWith(".epub")) {
             const epubRes = await axios.get(fullUrl, {
               headers: { "ngrok-skip-browser-warning": "1" },

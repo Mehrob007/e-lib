@@ -15,7 +15,7 @@ import { getCategorysREQ } from "@/api/category";
 import { ItemT } from "@/types/table";
 import { useBranding } from "@/hooks/useBranding";
 import Image from "next/image";
-import { IoArrowBack, IoPlayCircleOutline } from "react-icons/io5";
+import { IoArrowBack } from "react-icons/io5";
 import { HiOutlineArrowDownTray } from "react-icons/hi2";
 import { useTranslation } from "@/hooks/useI18nStore";
 import { useAudioStore } from "@/store/useAudioStore";

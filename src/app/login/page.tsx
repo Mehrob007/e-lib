@@ -62,7 +62,7 @@ export default function Login() {
 
   useEffect(() => {
     const res = localStorage.getItem("refresh_token");
-    console.log("res", res);
+
 
     if (!res) router.push("admin/");
   }, []);

@@ -152,7 +152,7 @@ export default function CatalogSideNav({
     setExpandedIds(newExpandedIds);
   };
 
-//  console.log("expandedIds", expandedIds);
+
  
 
   const renderItem = (

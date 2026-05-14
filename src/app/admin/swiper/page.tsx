@@ -72,7 +72,7 @@ export default function SwiperPage() {
     fetchData();
   }, [fetchData]);
 
-  console.log("data", data);
+
 
   return (
     <>

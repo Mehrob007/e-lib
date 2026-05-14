@@ -316,8 +316,7 @@ function CatalogContent() {
 
   const currentMime = activeSubCategory?.mime || "book";
 
-  // console.log("activeCategoryId", activeCategoryId);
-  console.log("activeSubCategoryId", activeSubCategoryId);
+
 
   return (
     <div className="home-page catalog-page">

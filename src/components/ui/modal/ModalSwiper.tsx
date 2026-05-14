@@ -154,7 +154,7 @@ export default function ModalSwiper({
     }
   }, [setClear, editItem, setData]);
 
-  console.log("data", data);
+
 
   return (
     <motion.div

@@ -113,7 +113,7 @@ export default function Page() {
     fetchData();
   }, [fetchData, sortType]);
 
-  console.log("sortType", sortType);
+
 
   return (
     <>

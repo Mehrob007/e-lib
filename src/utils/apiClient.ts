@@ -85,7 +85,7 @@ apiClient.interceptors.response.use(
       globalState.getState().setToast({ active: true, type: "error" });
     }
 
-    console.log("error.response.status", error.response?.status);
+
     if (error.response?.status === 403 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {

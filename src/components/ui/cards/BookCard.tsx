@@ -23,7 +23,7 @@ export default function BookCard({
   type,
   showType = true,
 }: Props) {
-  // console.log("data", { id, title, author, date, image, type, showType });
+
 
   return (
     <Link

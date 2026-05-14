@@ -184,8 +184,7 @@ export default function ModalELement({
     }
   }, [editItem, setData, setClear]);
 
-  console.log("data", data);
-  console.log("editItem", editItem);
+
 
   return (
     <motion.div

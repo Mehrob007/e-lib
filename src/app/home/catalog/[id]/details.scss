@@ -403,7 +403,9 @@
         .read-button {
           padding: 10px 20px;
           font-size: 15px;
-          flex: 1;
+          // flex: 1;
+          max-width: 170px;
+          width: 100%;
         }
       }
     }

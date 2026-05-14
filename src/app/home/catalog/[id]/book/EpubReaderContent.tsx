@@ -80,7 +80,7 @@ export default function EpubReaderContent({
           manager: "default",
           spread: "none"
         }}
-        styles={ownStyles as any}
+        readerStyles={ownStyles as any}
       />
     </div>
   );

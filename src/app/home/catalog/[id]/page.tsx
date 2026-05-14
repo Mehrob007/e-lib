@@ -138,7 +138,8 @@ export default function BookDetailsPage() {
           categoryId: pathArr.length > 0 ? pathArr[0].id : "",
           mediaType: getMediaType(fileUrlRaw),
           fileSize: (details.file_size as string) || "—",
-          format: fileUrlRaw.split("?")[0].split(".").pop()?.toUpperCase() || "—",
+          format:
+            fileUrlRaw.split("?")[0].split(".").pop()?.toUpperCase() || "—",
         };
         setBook(bookData);
 
@@ -234,10 +235,7 @@ export default function BookDetailsPage() {
       <HeaderHome logo={branding?.logo as string} />
 
       <div className="breadcrumbs-container">
-        <button
-          className="back-button"
-          onClick={() => router.push("/home/catalog")}
-        >
+        <button className="back-button" onClick={() => router.back()}>
           <IoArrowBack /> {t("back")}
         </button>
         <div className="breadcrumbs">
@@ -331,12 +329,12 @@ export default function BookDetailsPage() {
               ) : (
                 ""
               )}
-              
+
               <div className="metadata-item">
                 <span className="label">{t("format")}</span>
                 <span className="value">{book.format}</span>
               </div>
-              
+
               <div className="metadata-item">
                 <span className="label">{t("file_size")}</span>
                 <span className="value">{book.fileSize}</span>

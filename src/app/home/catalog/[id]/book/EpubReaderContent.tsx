@@ -42,25 +42,42 @@ export default function EpubReaderContent({
     }
   }, [prevTrigger]);
 
-  // Custom styles to hide default arrows and make it look cleaner
   const ownStyles = {
     ...ReactReaderStyle,
     arrow: {
       ...ReactReaderStyle.arrow,
       display: "none",
     },
+    tocButton: {
+      ...ReactReaderStyle.tocButton,
+      display: "none",
+    },
+    tocArea: {
+      ...ReactReaderStyle.tocArea,
+      display: "none",
+    },
     reader: {
       ...ReactReaderStyle.reader,
-      position: "absolute",
-      inset: 0,
+      position: "static",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      height: "100%",
+      width: "100%",
+    },
+    container: {
+      ...ReactReaderStyle.container,
+      height: "100%",
+      width: "100%",
     }
   };
 
   return (
-    <div style={{ height: "100%", width: "100%", position: "relative" }}>
+    <div style={{ height: "100%", width: "100%", position: "relative", boxSizing: "border-box" }}>
       <ReactReader
         url={data}
-        title={title}
+        // title={title}
         location={location as any}
         locationChanged={onLocationChange as any}
         getRendition={(rendition: any) => {
@@ -69,16 +86,22 @@ export default function EpubReaderContent({
           rendition.themes.register("custom", {
             body: {
               fontFamily: "Georgia, serif !important",
-              color: "#333 !important",
-              lineHeight: "1.6 !important"
+              color: "#1a1a1a !important",
+              lineHeight: "1.8 !important",
+              padding: "0 10px !important",
+              margin: "0 !important",
+              backgroundColor: "transparent !important",
+              wordBreak: "break-word !important",
+              overflowWrap: "break-word !important",
+              width: "100% !important",
+              maxWidth: "100% !important"
             },
           });
           rendition.themes.select("custom");
         }}
         epubOptions={{
-          flow: "paginated",
-          manager: "default",
-          spread: "none"
+          flow: "scrolled",
+          manager: "continuous"
         }}
         readerStyles={ownStyles as any}
       />

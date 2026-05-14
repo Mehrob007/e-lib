@@ -6,8 +6,12 @@
   display: flex;
   flex-direction: column;
   color: #333;
-  padding-bottom: 120px;
+  padding-bottom: 0;
   padding-top: 70px;
+
+  &.pdf-mode {
+    padding-bottom: 120px;
+  }
 
   .reader-header {
     height: 70px;
@@ -112,7 +116,7 @@
       width: 100%;
       background: #fff;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-      padding: 60px;
+      padding: 40px;
       min-height: 100%;
       border-radius: 4px;
       transition: max-width 0.3s ease;
@@ -287,14 +291,6 @@
   &.epub-mode {
     .reader-viewport {
       background: #f0f2f5;
-      overflow: hidden;
-      
-      .reader-content-wrapper {
-        padding: 0;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-      }
     }
   }
 
@@ -305,7 +301,11 @@
       }
     }
     padding-top: 60px;
-    padding-bottom: 100px;
+    padding-bottom: 0;
+
+    &.pdf-mode {
+      padding-bottom: 100px;
+    }
 
     .reader-header {
       height: 60px;
@@ -325,7 +325,7 @@
 
       h1 {
         font-size: 14px;
-        max-width: 140px;
+        max-width: 277px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -355,6 +355,11 @@
     .reader-viewport {
       padding: 8px;
       overflow: auto;
+
+      .reader-content-wrapper {
+        padding: 20px;
+        box-shadow: none;
+      }
 
       .pdf-container {
         width: fit-content !important;

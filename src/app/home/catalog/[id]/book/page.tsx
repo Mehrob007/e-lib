@@ -36,7 +36,6 @@ export default function BookReaderPage() {
   const router = useRouter();
   const { t, lang } = useTranslation();
   
-  // State
   const [readerType, setReaderType] = useState<ReaderType>(null);
   const [title, setTitle] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -246,11 +245,14 @@ export default function BookReaderPage() {
           style={{ 
             fontSize: (readerType === "text" || readerType === "fb2") ? `${fontSize}px` : undefined,
             margin: "0 auto",
-            height: (readerType === "epub" || readerType === "pdf") ? "calc(100vh - 220px)" : "auto",
-            maxWidth: (readerType === "epub" || readerType === "pdf") ? "1000px" : "100%",
+            height: readerType === "pdf" ? "calc(100vh - 220px)" : readerType === "epub" ? "80vh" : "auto",
+            maxWidth: readerType === "pdf" ? "1000px" : "900px",
             minHeight: (readerType === "epub" || readerType === "pdf") ? "auto" : "100%",
             display: "flex",
-            flexDirection: "column"
+            flexDirection: "column",
+            overflowX: "hidden",
+            boxSizing: "border-box",
+            minWidth: readerType === "pdf" ? "auto" : "100%"
           }}
         >
           {readerType === "text" ? (
@@ -286,7 +288,7 @@ export default function BookReaderPage() {
         </div>
       </main>
 
-      {(readerType === "pdf" || readerType === "epub") && (
+      {readerType === "pdf" && (
         <footer className="reader-footer">
           <div className="footer-nav">
             <button

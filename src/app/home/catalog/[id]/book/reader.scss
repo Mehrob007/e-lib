@@ -220,6 +220,7 @@
     padding: 0 40px;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
     position: fixed;
+    z-index: 99;
     bottom: 0;
     width: 100%;
 
@@ -304,7 +305,7 @@
     padding-bottom: 0;
 
     &.pdf-mode {
-      padding-bottom: 100px;
+      padding-bottom: 80px;
     }
 
     .reader-header {
@@ -312,15 +313,18 @@
       padding: 0 12px;
 
       .back-btn {
-        padding: 5px 12px;
-        font-size: 12px;
-        gap: 6px;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 18px;
 
         span {
           display: none;
-        } // Or keep it if space allows?
-        // Let's keep icon + short text if possible, or just icon.
-        // The JSX has "Баргаштан". Let's hide text.
+        }
       }
 
       h1 {
@@ -337,65 +341,74 @@
       .reader-controls {
         gap: 6px;
         .control-group {
-          padding: 2px 4px;
-          gap: 4px;
+          padding: 4px 8px;
+          gap: 8px;
           button {
-            width: 28px;
-            height: 28px;
-            font-size: 16px;
+            width: 32px;
+            height: 32px;
+            font-size: 18px;
           }
           .control-label {
-            min-width: 35px;
-            font-size: 11px;
+            min-width: 45px;
+            font-size: 12px;
           }
         }
       }
     }
 
     .reader-viewport {
-      padding: 8px;
+      padding: 0;
       overflow: auto;
+      background: #e4e7eb;
 
       .reader-content-wrapper {
-        padding: 20px;
+        padding: 60px 0;
         box-shadow: none;
+        background: transparent;
+        border-radius: 0;
       }
 
       .pdf-container {
-        width: fit-content !important;
+        width: 100% !important;
         min-width: 100%;
         display: flex;
         justify-content: center;
+        padding: 0;
+
+        .react-pdf__Page {
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          margin-bottom: 0;
+        }
 
         canvas {
-          max-width: none !important;
+          max-width: 100% !important;
           height: auto !important;
         }
       }
     }
 
     .reader-footer {
-      height: 100px;
-      padding: 0 16px;
+      height: 80px;
+      padding: 0 12px;
 
       .footer-nav {
         margin-bottom: 15px;
 
         .nav-btn {
-          padding: 6px 12px;
-          font-size: 12px;
+          padding: 10px 20px;
+          font-size: 18px;
 
           span {
             display: none;
-          } // Just icons for previous/next
+          }
           &.next-btn {
             gap: 0;
           }
         }
 
         .page-badge {
-          padding: 4px 10px;
-          font-size: 13px;
+          padding: 6px 16px;
+          font-size: 15px;
         }
       }
 

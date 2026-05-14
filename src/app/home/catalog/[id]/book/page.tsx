@@ -48,7 +48,7 @@ export default function BookReaderPage() {
   const [fb2Content, setFb2Content] = useState<string>("");
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
-  const [scale, setScale] = useState<number>(1.2);
+  const [scale, setScale] = useState<number>(1.0);
   const [fontSize, setFontSize] = useState<number>(18);
   
   // EPUB specific
@@ -134,13 +134,9 @@ export default function BookReaderPage() {
   }, [id, lang]);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.innerWidth < 768) {
-      setScale(0.6);
-    }
     fetchBook();
   }, [fetchBook]);
 
-  // PDF Handlers
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
   }
@@ -214,11 +210,10 @@ export default function BookReaderPage() {
           <div className="control-group">
             <button
               onClick={() => {
-                if (readerType === "pdf") setScale((s) => Math.max(0.5, s - 0.1));
-                else setFontSize((s) => Math.max(12, s - 2));
+                if (readerType === "pdf") setScale((s) => Math.max(0.1, s - 0.1));
+                else setFontSize((s) => Math.max(1, s - 2));
               }}
               title="Zoom Out / Decrease Font"
-              disabled={readerType === "pdf" ? scale <= 0.5 : fontSize <= 12}
             >
               <HiOutlineMinus />
             </button>
@@ -227,11 +222,10 @@ export default function BookReaderPage() {
             </span>
             <button
               onClick={() => {
-                if (readerType === "pdf") setScale((s) => Math.min(3, s + 0.1));
-                else setFontSize((s) => Math.min(48, s + 2));
+                if (readerType === "pdf") setScale((s) => s + 0.1);
+                else setFontSize((s) => s + 2);
               }}
               title="Zoom In / Increase Font"
-              disabled={readerType === "pdf" ? scale >= 3 : fontSize >= 48}
             >
               <HiOutlinePlus />
             </button>
@@ -245,14 +239,14 @@ export default function BookReaderPage() {
           style={{ 
             fontSize: (readerType === "text" || readerType === "fb2") ? `${fontSize}px` : undefined,
             margin: "0 auto",
-            height: readerType === "pdf" ? "calc(100vh - 220px)" : readerType === "epub" ? "80vh" : "auto",
-            maxWidth: readerType === "pdf" ? "1000px" : "900px",
+            height: readerType === "pdf" ? "calc(100vh - 150px)" : readerType === "epub" ? "80vh" : "auto",
+            maxWidth: readerType === "pdf" ? "100%" : "900px",
             minHeight: (readerType === "epub" || readerType === "pdf") ? "auto" : "100%",
             display: "flex",
             flexDirection: "column",
-            overflowX: "hidden",
+            overflowX: "auto",
             boxSizing: "border-box",
-            minWidth: readerType === "pdf" ? "auto" : "100%"
+            minWidth: "100%"
           }}
         >
           {readerType === "text" ? (
@@ -279,6 +273,7 @@ export default function BookReaderPage() {
               pageNumber={pageNumber}
               scale={scale}
               onDocumentLoadSuccess={onDocumentLoadSuccess}
+              onPageChange={changePage}
             />
           ) : (
             <div className="empty-container">

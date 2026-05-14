@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, Suspense } from "react";
+import { useCallback, useEffect, useState, Suspense, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import HeaderHome from "@/components/ui/header/HeaderHome";
 import CatalogTopBar from "@/components/ui/nav/CatalogTopBar";
@@ -32,6 +32,16 @@ export default function CatalogPage() {
 }
 
 function CatalogContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { lang, t, getLocalized } = useTranslation();
+
+  // Params from URL
+  const categoryIdParam = searchParams.get("category_id");
+  const subCategoryIdParam = searchParams.get("sub_category_id");
+  const searchQuery = searchParams.get("search");
+
+  // State
   const [categories, setCategories] = useState<ItemT[]>([]);
   const [subCategories, setSubCategories] = useState<
     {
@@ -41,61 +51,6 @@ function CatalogContent() {
       hasChildren?: boolean;
     }[]
   >([]);
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const categoryIdParam = searchParams.get("category_id");
-  const searchQuery = searchParams.get("search");
-  const subCategoryIdParam = searchParams.get("sub_category_id");
-
-  const [activeCategoryId, setActiveCategoryId] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      const fromUrl = new URLSearchParams(window.location.search).get(
-        "category_id",
-      );
-      if (fromUrl) return fromUrl;
-      return localStorage.getItem("catalog_active_category_id") || "";
-    }
-    return "";
-  });
-
-  const [subHistory, setSubHistory] = useState<Record<string, string>>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("catalog_sub_history");
-      try {
-        return saved ? JSON.parse(saved) : {};
-      } catch (e) {
-        return {};
-      }
-    }
-    return {};
-  });
-
-  const [activeSubCategoryId, setActiveSubCategoryId] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      const fromUrl = new URLSearchParams(window.location.search).get(
-        "sub_category_id",
-      );
-      if (fromUrl) return fromUrl;
-
-      // Check history
-      const activeCat =
-        new URLSearchParams(window.location.search).get("category_id") ||
-        localStorage.getItem("catalog_active_category_id") ||
-        "";
-
-      if (activeCat) {
-        const savedHistory = localStorage.getItem("catalog_sub_history");
-        if (savedHistory) {
-          try {
-            const parsed = JSON.parse(savedHistory);
-            return parsed[activeCat] || "";
-          } catch (e) {}
-        }
-      }
-      return "";
-    }
-    return "";
-  });
   const [content, setContent] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState(1);
@@ -103,123 +58,122 @@ function CatalogContent() {
   const [hasNextPage, setHasNextPage] = useState(true);
   const [sortField, setSortField] = useState<string>("title");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+  const [activeCategoryId, setActiveCategoryId] = useState<string>("");
+  const [activeSubCategoryId, setActiveSubCategoryId] = useState<string>("");
+  const [subHistory, setSubHistory] = useState<Record<string, string>>({});
+
   const limit = 10;
-  const { lang, t, getLocalized } = useTranslation();
+  const isMounted = useRef(false);
 
+  // 1. Initial data loading and history restoration
   useEffect(() => {
-    if (categoryIdParam) {
-      setActiveCategoryId(categoryIdParam);
-      // Restore subcategory from URL or history
-      if (subCategoryIdParam) {
-        setActiveSubCategoryId(subCategoryIdParam);
-      } else if (subHistory[categoryIdParam]) {
-        setActiveSubCategoryId(subHistory[categoryIdParam]);
-      } else {
-        // We'll let fetchSubCategories handle the default first branch if needed
-        setActiveSubCategoryId("");
-      }
-    }
-  }, [categoryIdParam, subCategoryIdParam, subHistory]);
+    if (isMounted.current) return;
+    isMounted.current = true;
 
+    const savedHistory = localStorage.getItem("catalog_sub_history");
+    let history: Record<string, string> = {};
+    if (savedHistory) {
+      try {
+        history = JSON.parse(savedHistory);
+        setSubHistory(history);
+      } catch (e) {}
+    }
+
+    if (searchQuery) {
+      setActiveCategoryId("");
+      setActiveSubCategoryId("");
+    } else {
+      const initialCatId =
+        categoryIdParam ||
+        localStorage.getItem("catalog_active_category_id") ||
+        "";
+      const initialSubId = subCategoryIdParam || history[initialCatId] || "";
+
+    if (initialCatId) setActiveCategoryId(initialCatId);
+    if (initialSubId) setActiveSubCategoryId(initialSubId);
+    }
+  }, []); // Run once on mount
+
+  // 1.1 Sync state from URL (for back/forward navigation)
   useEffect(() => {
-    if (activeCategoryId) {
-      localStorage.setItem("catalog_active_category_id", activeCategoryId);
+    if (searchQuery) {
+      setActiveCategoryId("");
+      setActiveSubCategoryId("");
+    } else {
+      if (categoryIdParam) setActiveCategoryId(categoryIdParam);
+      if (subCategoryIdParam !== null) setActiveSubCategoryId(subCategoryIdParam);
     }
-  }, [activeCategoryId]);
+  }, [categoryIdParam, subCategoryIdParam, searchQuery]);
 
-  useEffect(() => {
-    if (activeCategoryId && (activeSubCategoryId || activeSubCategoryId === "")) {
-      // Save to history
-      setSubHistory((prev) => {
-        if (prev[activeCategoryId] === activeSubCategoryId) return prev;
-        const next = { ...prev, [activeCategoryId]: activeSubCategoryId };
-        localStorage.setItem("catalog_sub_history", JSON.stringify(next));
-        return next;
-      });
-
-      // Sync URL
-      const params = new URLSearchParams(window.location.search);
-      params.set("category_id", activeCategoryId);
-      if (activeSubCategoryId) {
-        params.set("sub_category_id", activeSubCategoryId);
-      } else {
-        params.delete("sub_category_id");
-      }
-      
-      const newUrl = `/home/catalog?${params.toString()}`;
-      if (window.location.search !== `?${params.toString()}`) {
-        window.history.replaceState(null, "", newUrl);
-      }
-    }
-  }, [activeSubCategoryId, activeCategoryId]);
-
+  // 2. Fetch root categories
   const fetchRootCategories = useCallback(async () => {
     try {
-      const res = (await getCategorysREQ({
-        lang,
-      })) as unknown as ItemT[];
+      const res = (await getCategorysREQ({ lang })) as unknown as ItemT[];
       if (res?.length) {
         setCategories(res);
-        if (typeof window !== "undefined") {
-          if (
-            !activeCategoryId &&
-            !localStorage.getItem("catalog_active_category_id") &&
-            !searchQuery
-          ) {
-            setActiveCategoryId(res[0].id as string);
-          }
+        // If no category is active and no search, pick the first one
+        if (!activeCategoryId && !searchQuery && !categoryIdParam) {
+          const firstId = res[0].id as string;
+          setActiveCategoryId(firstId);
+          localStorage.setItem("catalog_active_category_id", firstId);
         }
       }
     } catch (e) {
       console.error(e);
     }
-  }, [activeCategoryId, lang, searchQuery]);
+  }, [lang, activeCategoryId, searchQuery, categoryIdParam]);
 
+  useEffect(() => {
+    fetchRootCategories();
+  }, [fetchRootCategories]);
+
+  // 3. Fetch subcategories when active category changes
   const fetchSubCategories = useCallback(
     async (parentId: string) => {
+      if (!parentId) {
+        setSubCategories([]);
+        return;
+      }
       try {
         const res = (await getCategorysREQ({
           lang,
           _parent_id: parentId,
         })) as unknown as ItemT[];
 
-        const mapped = res?.map((cat) => ({
+        const mapped = (res || []).map((cat) => ({
           id: cat.id as string,
           name: getLocalized(cat.name),
           mime: cat.mime,
           hasChildren: cat.has_children as boolean,
         }));
-        setSubCategories(
-          (mapped || []) as {
-            id: string;
-            name: string;
-            mime: "audio" | "video" | "text" | "book";
-            hasChildren?: boolean;
-          }[],
-        );
+        setSubCategories(mapped as any[]);
 
-        if (mapped?.length) {
-          // If no subcategory is selected (and not in history), select the first one
-          if (!activeSubCategoryId && !subHistory[parentId]) {
-            setActiveSubCategoryId(mapped[0].id);
+        // Logic for default subcategory selection
+        if (mapped.length > 0 && !activeSubCategoryId && !subCategoryIdParam) {
+          const histSubId = subHistory[parentId];
+          if (histSubId && mapped.some((s) => s.id === histSubId)) {
+            setActiveSubCategoryId(histSubId);
+          } else if (!histSubId) {
+            // Only auto-select if no history exists for this branch
+            // This prevents jumping if user explicitly wants the parent category
+            // setActiveSubCategoryId(mapped[0].id); // Removed to avoid jumping
           }
-        } else {
-          setActiveSubCategoryId("");
         }
       } catch (e) {
         console.error(e);
       }
     },
-    [lang, getLocalized, activeSubCategoryId, subHistory],
+    [lang, getLocalized, activeSubCategoryId, subHistory, subCategoryIdParam],
   );
-  useEffect(() => {
-    if (searchQuery) {
-      setActiveCategoryId("");
-      setActiveSubCategoryId("");
-      setSubCategories([]);
-    }
-  }, [searchQuery]);
 
+  useEffect(() => {
+    if (activeCategoryId) {
+      fetchSubCategories(activeCategoryId);
+    }
+  }, [activeCategoryId, fetchSubCategories]);
+
+  // 4. Fetch content when selection or filters change
   const fetchContent = useCallback(
     async (catId: string) => {
       if (!catId && !searchQuery) return;
@@ -260,7 +214,7 @@ function CatalogContent() {
           });
           setContent(mapped);
           setHasNextPage(mapped.length === limit);
-          if (res.total) setTotalItems(res.total);
+          setTotalItems(res.total || 0);
         }
       } catch (e) {
         console.error(e);
@@ -269,28 +223,58 @@ function CatalogContent() {
         setLoading(false);
       }
     },
-    [page, limit, lang, sortField, sortOrder, searchQuery],
+    [page, limit, lang, sortField, sortOrder, searchQuery, getLocalized],
   );
-
-  useEffect(() => {
-    fetchRootCategories();
-  }, [fetchRootCategories]);
-
-  useEffect(() => {
-    if (activeCategoryId) {
-      fetchSubCategories(activeCategoryId);
-    }
-  }, [activeCategoryId, fetchSubCategories]);
 
   useEffect(() => {
     const targetId = activeSubCategoryId || activeCategoryId;
     if (searchQuery || targetId) {
-      setContent([]);
       fetchContent(targetId);
     } else {
       setContent([]);
     }
   }, [activeCategoryId, activeSubCategoryId, fetchContent, searchQuery]);
+
+  // Navigation sync with URL
+  const updateUrl = useCallback(
+    (catId: string, subId: string) => {
+      const params = new URLSearchParams();
+      if (catId) params.set("category_id", catId);
+      if (subId) params.set("sub_category_id", subId);
+
+      const newUrl = `/home/catalog?${params.toString()}`;
+      if (window.location.search !== `?${params.toString()}`) {
+        window.history.replaceState(null, "", newUrl);
+      }
+    },
+    [router],
+  );
+
+  useEffect(() => {
+    if (!searchQuery && activeCategoryId) {
+      updateUrl(activeCategoryId, activeSubCategoryId);
+    }
+  }, [activeCategoryId, activeSubCategoryId, searchQuery, updateUrl]);
+
+  const handleCategorySelect = (id: string) => {
+    setActiveCategoryId(id);
+    const histSubId = subHistory[id] || "";
+    setActiveSubCategoryId(histSubId);
+    setPage(1);
+    localStorage.setItem("catalog_active_category_id", id);
+    if (searchQuery) router.push("/home/catalog");
+  };
+
+  const handleSubCategorySelect = (id: string) => {
+    setActiveSubCategoryId(id);
+    setPage(1);
+    setSubHistory((prev) => {
+      const next = { ...prev, [activeCategoryId]: id };
+      localStorage.setItem("catalog_sub_history", JSON.stringify(next));
+      return next;
+    });
+    if (searchQuery) router.push("/home/catalog");
+  };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
@@ -316,36 +300,20 @@ function CatalogContent() {
 
   const currentMime = activeSubCategory?.mime || "book";
 
-
-
   return (
     <div className="home-page catalog-page">
       <HeaderHome />
       <CatalogTopBar
         categories={categories}
         activeId={activeCategoryId}
-        onSelect={(id) => {
-          setActiveCategoryId(id);
-          // Restore from history if available, else let fetchSubCategories pick first
-          setActiveSubCategoryId(subHistory[id] || "");
-          setPage(1);
-          if (searchQuery) {
-            router.push("/home/catalog");
-          }
-        }}
+        onSelect={handleCategorySelect}
       />
 
       <div className="catalog-page__content">
         <CatalogSideNav
           subCategories={subCategories}
           activeId={activeSubCategoryId as string}
-          onSelect={(id) => {
-            setActiveSubCategoryId(id);
-            setPage(1);
-            if (searchQuery) {
-              router.push("/home/catalog");
-            }
-          }}
+          onSelect={handleSubCategorySelect}
         />
 
         <main className="catalog-page__main">
@@ -354,7 +322,6 @@ function CatalogContent() {
             <div className="catalog-controls">
               <label htmlFor="sort-select" className="sort-select">
                 <select
-                  className=""
                   title="sort-select"
                   id="sort-select"
                   value={`${sortField}:${sortOrder}`}

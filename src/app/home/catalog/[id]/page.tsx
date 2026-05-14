@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState } from "react";
 import HeaderHome from "@/components/ui/header/HeaderHome";
 // import CatalogTopBar from "@/components/ui/nav/CatalogTopBar";
 import Loading from "@/components/ui/loading/Loading";
@@ -63,7 +63,7 @@ export default function BookDetailsPage() {
   const [relatedBooks, setRelatedBooks] = useState<Record<string, unknown>[]>(
     [],
   );
-  const [categories, setCategories] = useState<ItemT[]>([]);
+  const [_, setCategories] = useState<ItemT[]>([]);
   const [loading, setLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);

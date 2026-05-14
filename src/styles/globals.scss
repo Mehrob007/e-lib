@@ -503,9 +503,7 @@ button {
   transition: transform 0.3s ease;
 }
 
-.select__open .select__arrow {
-  transform: translateY(-50%) rotate(180deg);
-}
+
 .elements__content {
   > .header-elements-page {
     background-color: transparent;

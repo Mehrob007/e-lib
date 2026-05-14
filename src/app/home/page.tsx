@@ -75,11 +75,7 @@ export default function Page() {
 
   const fetchSwiper = useCallback(async () => {
     try {
-      const platform =
-        typeof window !== "undefined" && window.innerWidth <= 768
-          ? "mobile"
-          : "desktop";
-      const res = await getSwiper({ _limit: 10, _offset: 0, lang, platform });
+      const res = await getSwiper({ _limit: 10, _offset: 0, lang });
       if (res) {
         setBanners(res as any[]);
       }
@@ -87,6 +83,7 @@ export default function Page() {
       console.error("Error fetching swiper:", e);
     }
   }, [lang]);
+
 
   useEffect(() => {
     fetchContent();

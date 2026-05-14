@@ -27,29 +27,30 @@ export default function ModalSwiper({
   const { errors, data, setData, validate, setClear } = useFormStore();
   const [loading, setLoading] = useState(false);
   const fileInputRefPc = useRef<HTMLInputElement>(null);
-  const fileInputRefMob = useRef<HTMLInputElement>(null);
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>, isMob: boolean = false) => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setData(isMob ? "photo_mob" : "photo", file);
+      setData("photo", file);
+
+      if (!data.name) {
+        const fileName = file.name.split(".").slice(0, -1).join(".");
+        setData("name", fileName);
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
-        setData(isMob ? "photo_preview_mob" : "photo_preview", reader.result as string);
+        setData("photo_preview", reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const removeImage = (e: React.MouseEvent, isMob: boolean = false) => {
+  const removeImage = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setData(isMob ? "photo_mob" : "photo", "");
-    setData(isMob ? "photo_preview_mob" : "photo_preview", "");
-    if (isMob) {
-      if (fileInputRefMob.current) fileInputRefMob.current.value = "";
-    } else {
-      if (fileInputRefPc.current) fileInputRefPc.current.value = "";
-    }
+    setData("photo", "");
+    setData("photo_preview", "");
+    if (fileInputRefPc.current) fileInputRefPc.current.value = "";
   };
 
   const onSend = async () => {
@@ -63,7 +64,6 @@ export default function ModalSwiper({
     try {
       let mime = editItem?.mime || (editItem?.details as any)?.mime;
       let preview_key = editItem?.preview_key || (editItem?.details as any)?.preview_key;
-      let preview_mob = editItem?.preview_mob || (editItem?.details as any)?.preview_mob;
 
       if (data.photo instanceof File) {
         // 1. Get presigned URL PC
@@ -83,30 +83,10 @@ export default function ModalSwiper({
           },
         });
       } else if (!editItem && !data.photo) {
-        alert("Выберите изображение для баннера (ПК)");
+        alert("Выберите изображение для баннера");
         setLoading(false);
         return;
       }
-
-      // if (data.photo_mob instanceof File) {
-      //   const presignedResMob = await getSwiperPresigned({
-      //     filename: (data.photo_mob as File).name,
-      //   });
-      //   if (!presignedResMob) throw new Error("Failed to get presigned URL for mobile");
-
-      //   const { upload_url: upload_url_mob, object_key: object_key_mob } = presignedResMob;
-      //   preview_mob = object_key_mob;
-
-      //   await axios.put(upload_url_mob, data.photo_mob, {
-      //     headers: {
-      //       "Content-Type": (data.photo_mob as File).type,
-      //     },
-      //   });
-      // } else if (!editItem && !data.photo_mob) {
-      //   alert("Выберите изображение для баннера (Телефон)");
-      //   setLoading(false);
-      //   return;
-      // }
 
       const payload = {
         name: data.name as string,
@@ -114,7 +94,7 @@ export default function ModalSwiper({
           link: data?.link as string,
           mime: mime as string,
           preview_key: preview_key as string,
-          preview_mob: preview_mob as string,
+          preview_mob: (editItem?.details as any)?.preview_mob || editItem?.preview_mob || "",
           sort: (editItem?.details as any)?.sort || editItem?.sort || 1,
           title: data.name as string,
         },
@@ -142,16 +122,17 @@ export default function ModalSwiper({
 
   useEffect(() => {
     if (editItem) {
-      setData("name", editItem.name as string);
-      setData("link", ((editItem.details as any)?.link || editItem.link) as string);
-      setData("photo_preview", editItem.preview_url as string);
-      setData("photo_preview_mob", (editItem.preview_url_mob || (editItem.details as any)?.preview_url_mob) as string);
+      const details = (editItem.details as any) || {};
+      setData("name", (editItem.name || details.title || "") as string);
+      setData("link", (details.link || editItem.link || "") as string);
+      setData(
+        "photo_preview",
+        (editItem.preview_url || details.preview_url || "") as string,
+      );
     } else {
       setClear();
     }
   }, [setClear, editItem, setData]);
-
-
 
   return (
     <motion.div
@@ -189,7 +170,7 @@ export default function ModalSwiper({
                 <input
                   type="file"
                   ref={fileInputRefPc}
-                  onChange={(e) => handleImageChange(e, false)}
+                  onChange={(e) => handleImageChange(e)}
                   accept="image/*"
                   style={{ display: "none" }}
                 />
@@ -197,10 +178,13 @@ export default function ModalSwiper({
                   <>
                     <img
                       src={data.photo_preview as string}
-                      alt="Banner Preview PC"
+                      alt="Banner Preview"
                       className="swiper-preview-img"
                     />
-                    <button className="swiper-delete-btn" onClick={(e) => removeImage(e, false)}>
+                    <button
+                      className="swiper-delete-btn"
+                      onClick={(e) => removeImage(e)}
+                    >
                       <LuTrash2 size={16} />
                     </button>
                   </>
@@ -211,35 +195,6 @@ export default function ModalSwiper({
                   </div>
                 )}
               </div>
-              {/* <div
-                className="swiper-upload-box"
-                onClick={() => fileInputRefMob.current?.click()}
-              >
-                <input
-                  type="file"
-                  ref={fileInputRefMob}
-                  onChange={(e) => handleImageChange(e, true)}
-                  accept="image/*"
-                  style={{ display: "none" }}
-                />
-                {data?.photo_preview_mob ? (
-                  <>
-                    <img
-                      src={data.photo_preview_mob as string}
-                      alt="Banner Preview Mobile"
-                      className="swiper-preview-img"
-                    />
-                    <button className="swiper-delete-btn" onClick={(e) => removeImage(e, true)}>
-                      <LuTrash2 size={16} />
-                    </button>
-                  </>
-                ) : (
-                  <div className="swiper-placeholder">
-                    <LuPlus size={32} />
-                    <span>Нажмите для загрузки изображения для телефона</span>
-                  </div>
-                )}
-              </div> */}
             </main>
 
             <Input
@@ -277,3 +232,4 @@ export default function ModalSwiper({
     </motion.div>
   );
 }
+

@@ -361,7 +361,7 @@ function CatalogContent() {
                   {currentMime === "video" || searchQuery ? (
                     <>
                       <option value="created:asc">{t("by_date")}</option>
-                      <option value="added:desc">{t("by_added")}</option>
+                      {/* <option value="added:desc">{t("by_added")}</option> */}
                     </>
                   ) : null}
                   {currentMime !== "video" || searchQuery ? (

@@ -56,8 +56,12 @@ function CatalogContent() {
   const [page, setPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(true);
-  const [sortField, setSortField] = useState<string>("title");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortField, setSortField] = useState<string>(
+    searchParams.get("sort_field") || "title",
+  );
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
+    (searchParams.get("sort_order") as "asc" | "desc") || "asc",
+  );
 
   const [activeCategoryId, setActiveCategoryId] = useState<string>("");
   const [activeSubCategoryId, setActiveSubCategoryId] = useState<string>("");
@@ -97,14 +101,25 @@ function CatalogContent() {
 
   // 1.1 Sync state from URL (for back/forward navigation)
   useEffect(() => {
+    const sField = searchParams.get("sort_field");
+    const sOrder = searchParams.get("sort_order");
+    if (sField) setSortField(sField);
+    if (sOrder) setSortOrder(sOrder as "asc" | "desc");
+
     if (searchQuery) {
       setActiveCategoryId("");
       setActiveSubCategoryId("");
     } else {
       if (categoryIdParam) setActiveCategoryId(categoryIdParam);
-      if (subCategoryIdParam !== null) setActiveSubCategoryId(subCategoryIdParam);
+      if (subCategoryIdParam !== null)
+        setActiveSubCategoryId(subCategoryIdParam);
     }
-  }, [categoryIdParam, subCategoryIdParam, searchQuery]);
+  }, [
+    categoryIdParam,
+    subCategoryIdParam,
+    searchQuery,
+    searchParams,
+  ]);
 
   // 2. Fetch root categories
   const fetchRootCategories = useCallback(async () => {
@@ -128,7 +143,6 @@ function CatalogContent() {
     fetchRootCategories();
   }, [fetchRootCategories]);
 
-  // 3. Fetch subcategories when active category changes
   const fetchSubCategories = useCallback(
     async (parentId: string) => {
       if (!parentId) {
@@ -149,15 +163,12 @@ function CatalogContent() {
         }));
         setSubCategories(mapped as any[]);
 
-        // Logic for default subcategory selection
         if (mapped.length > 0 && !activeSubCategoryId && !subCategoryIdParam) {
           const histSubId = subHistory[parentId];
           if (histSubId && mapped.some((s) => s.id === histSubId)) {
             setActiveSubCategoryId(histSubId);
           } else if (!histSubId) {
-            // Only auto-select if no history exists for this branch
-            // This prevents jumping if user explicitly wants the parent category
-            // setActiveSubCategoryId(mapped[0].id); // Removed to avoid jumping
+           
           }
         }
       } catch (e) {
@@ -173,7 +184,6 @@ function CatalogContent() {
     }
   }, [activeCategoryId, fetchSubCategories]);
 
-  // 4. Fetch content when selection or filters change
   const fetchContent = useCallback(
     async (catId: string) => {
       if (!catId && !searchQuery) return;
@@ -181,7 +191,11 @@ function CatalogContent() {
       try {
         let res;
         if (searchQuery) {
-          const searchRes = await searchElementsREQ(searchQuery);
+          const searchRes = await searchElementsREQ(searchQuery, {
+            sort_field: sortField,
+            sort_order: sortOrder,
+            lang,
+          });
           res = { data: searchRes, total: searchRes?.length || 0 };
         } else {
           res = await getCategoryContentREQ(catId, {
@@ -237,24 +251,50 @@ function CatalogContent() {
 
   // Navigation sync with URL
   const updateUrl = useCallback(
-    (catId: string, subId: string) => {
+    (
+      catId: string,
+      subId: string,
+      search: string | null,
+      sField: string,
+      sOrder: string,
+    ) => {
       const params = new URLSearchParams();
-      if (catId) params.set("category_id", catId);
-      if (subId) params.set("sub_category_id", subId);
+      if (search) {
+        params.set("search", search);
+      } else {
+        if (catId) params.set("category_id", catId);
+        if (subId) params.set("sub_category_id", subId);
+      }
+
+      if (sField && sField !== "title") params.set("sort_field", sField);
+      if (sOrder && sOrder !== "asc") params.set("sort_order", sOrder);
 
       const newUrl = `/home/catalog?${params.toString()}`;
       if (window.location.search !== `?${params.toString()}`) {
         window.history.replaceState(null, "", newUrl);
       }
     },
-    [router],
+    [],
   );
 
   useEffect(() => {
-    if (!searchQuery && activeCategoryId) {
-      updateUrl(activeCategoryId, activeSubCategoryId);
+    if (searchQuery || activeCategoryId) {
+      updateUrl(
+        activeCategoryId,
+        activeSubCategoryId,
+        searchQuery,
+        sortField,
+        sortOrder,
+      );
     }
-  }, [activeCategoryId, activeSubCategoryId, searchQuery, updateUrl]);
+  }, [
+    activeCategoryId,
+    activeSubCategoryId,
+    searchQuery,
+    sortField,
+    sortOrder,
+    updateUrl,
+  ]);
 
   const handleCategorySelect = (id: string) => {
     setActiveCategoryId(id);
@@ -328,14 +368,15 @@ function CatalogContent() {
                   onChange={handleSortChange}
                 >
                   <option value="title:asc">{t("by_title")}</option>
-                  {currentMime === "video" ? (
+                  {currentMime === "video" || searchQuery ? (
                     <>
                       <option value="created:asc">{t("by_date")}</option>
                       <option value="added:desc">{t("by_added")}</option>
                     </>
-                  ) : (
+                  ) : null}
+                  {currentMime !== "video" || searchQuery ? (
                     <option value="author:asc">{t("by_author")}</option>
-                  )}
+                  ) : null}
                 </select>
               </label>
             </div>

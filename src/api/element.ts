@@ -184,14 +184,24 @@ export const getContentByIdView = async (
     console.error(e);
   }
 };
-export const searchElementsREQ = async (query: string) => {
+export const searchElementsREQ = async (
+  query: string,
+  params?: {
+    sort_field?: string;
+    sort_order?: "asc" | "desc";
+    lang?: string;
+  },
+) => {
   try {
-    const res = await apiClient.get("/library/search", { params: { query } });
+    const res = await apiClient.get("/library/search", {
+      params: { query, ...params },
+    });
     return res.data;
   } catch (e) {
     console.error(e);
   }
 };
+
 
 export const getContentDownloadUrlREQ = async (content_id: string) => {
   try {

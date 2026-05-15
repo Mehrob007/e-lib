@@ -37,7 +37,7 @@ export default function SearchInput({ onSearch }: Props) {
         setShowResults(true);
         try {
           const res = await searchElementsREQ(v);
-          setResults(res || []);
+          setResults(res?.items || []);
         } catch (e) {
           console.error(e);
         } finally {

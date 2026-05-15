@@ -36,12 +36,10 @@ function CatalogContent() {
   const router = useRouter();
   const { lang, t, getLocalized } = useTranslation();
 
-  // Params from URL
   const categoryIdParam = searchParams.get("category_id");
   const subCategoryIdParam = searchParams.get("sub_category_id");
   const searchQuery = searchParams.get("search");
 
-  // State
   const [categories, setCategories] = useState<ItemT[]>([]);
   const [subCategories, setSubCategories] = useState<
     {
@@ -70,7 +68,6 @@ function CatalogContent() {
   const limit = 10;
   const isMounted = useRef(false);
 
-  // 1. Initial data loading and history restoration
   useEffect(() => {
     if (isMounted.current) return;
     isMounted.current = true;
@@ -97,9 +94,8 @@ function CatalogContent() {
     if (initialCatId) setActiveCategoryId(initialCatId);
     if (initialSubId) setActiveSubCategoryId(initialSubId);
     }
-  }, []); // Run once on mount
+  }, []);
 
-  // 1.1 Sync state from URL (for back/forward navigation)
   useEffect(() => {
     const sField = searchParams.get("sort_field");
     const sOrder = searchParams.get("sort_order");
@@ -121,13 +117,11 @@ function CatalogContent() {
     searchParams,
   ]);
 
-  // 2. Fetch root categories
   const fetchRootCategories = useCallback(async () => {
     try {
       const res = (await getCategorysREQ({ lang })) as unknown as ItemT[];
       if (res?.length) {
         setCategories(res);
-        // If no category is active and no search, pick the first one
         if (!activeCategoryId && !searchQuery && !categoryIdParam) {
           const firstId = res[0].id as string;
           setActiveCategoryId(firstId);
@@ -154,7 +148,6 @@ function CatalogContent() {
           lang,
           _parent_id: parentId,
         })) as unknown as ItemT[];
-
         const mapped = (res || []).map((cat) => ({
           id: cat.id as string,
           name: getLocalized(cat.name),
@@ -162,7 +155,6 @@ function CatalogContent() {
           hasChildren: cat.has_children as boolean,
         }));
         setSubCategories(mapped as any[]);
-
         if (mapped.length > 0 && !activeSubCategoryId && !subCategoryIdParam) {
           const histSubId = subHistory[parentId];
           if (histSubId && mapped.some((s) => s.id === histSubId)) {
@@ -177,7 +169,6 @@ function CatalogContent() {
     },
     [lang, getLocalized, activeSubCategoryId, subHistory, subCategoryIdParam],
   );
-
   useEffect(() => {
     if (activeCategoryId) {
       fetchSubCategories(activeCategoryId);
@@ -249,7 +240,6 @@ function CatalogContent() {
     }
   }, [activeCategoryId, activeSubCategoryId, fetchContent, searchQuery]);
 
-  // Navigation sync with URL
   const updateUrl = useCallback(
     (
       catId: string,

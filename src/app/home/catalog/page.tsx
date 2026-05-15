@@ -65,7 +65,7 @@ function CatalogContent() {
   const [activeSubCategoryId, setActiveSubCategoryId] = useState<string>("");
   const [subHistory, setSubHistory] = useState<Record<string, string>>({});
 
-  const limit = 10;
+  const limit = 12;
   const isMounted = useRef(false);
 
   useEffect(() => {
@@ -91,8 +91,8 @@ function CatalogContent() {
         "";
       const initialSubId = subCategoryIdParam || history[initialCatId] || "";
 
-    if (initialCatId) setActiveCategoryId(initialCatId);
-    if (initialSubId) setActiveSubCategoryId(initialSubId);
+      if (initialCatId) setActiveCategoryId(initialCatId);
+      if (initialSubId) setActiveSubCategoryId(initialSubId);
     }
   }, []);
 
@@ -110,12 +110,7 @@ function CatalogContent() {
       if (subCategoryIdParam !== null)
         setActiveSubCategoryId(subCategoryIdParam);
     }
-  }, [
-    categoryIdParam,
-    subCategoryIdParam,
-    searchQuery,
-    searchParams,
-  ]);
+  }, [categoryIdParam, subCategoryIdParam, searchQuery, searchParams]);
 
   const fetchRootCategories = useCallback(async () => {
     try {
@@ -160,7 +155,6 @@ function CatalogContent() {
           if (histSubId && mapped.some((s) => s.id === histSubId)) {
             setActiveSubCategoryId(histSubId);
           } else if (!histSubId) {
-           
           }
         }
       } catch (e) {
@@ -199,7 +193,7 @@ function CatalogContent() {
         }
 
         if (res && res.data) {
-          const rawData = res.data as Record<string, unknown>[];
+          const rawData = res.data.items as Record<string, unknown>[];
           const mapped: ContentItem[] = rawData.map((item) => {
             const details = (item.details as Record<string, string>) || {};
             const contentType = (details.type || "book") as string;
@@ -219,7 +213,7 @@ function CatalogContent() {
           });
           setContent(mapped);
           setHasNextPage(mapped.length === limit);
-          setTotalItems(res.total || 0);
+          setTotalItems(res.data.total_items || 0);
         }
       } catch (e) {
         console.error(e);

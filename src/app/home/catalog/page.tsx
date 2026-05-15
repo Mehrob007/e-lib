@@ -195,7 +195,7 @@ function CatalogContent() {
         if (res && res.data) {
           const rawData =
             res?.data?.items || (res?.data as Record<string, unknown>[]);
-          const mapped: ContentItem[] = rawData.map((item) => {
+          const mapped: ContentItem[] = (rawData as any[]).map((item: any) => {
             const details = (item.details as Record<string, string>) || {};
             const contentType = (details.type || "book") as string;
             return {

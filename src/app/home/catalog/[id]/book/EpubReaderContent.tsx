@@ -84,6 +84,7 @@ export default function EpubReaderContent({
     >
       <ReactReader
         url={data}
+        swipeable={false}
         // title={title}
         location={location as any}
         locationChanged={onLocationChange as any}

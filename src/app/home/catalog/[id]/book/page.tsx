@@ -259,7 +259,7 @@ export default function BookReaderPage() {
             margin: "0 auto",
             height:
               readerType === "pdf"
-                ? "calc(100vh)"
+                ? "auto"
                 : readerType === "epub"
                   ? "100vh"
                   : "auto",
@@ -295,9 +295,11 @@ export default function BookReaderPage() {
             <ReaderContent
               pdfData={pdfData}
               pageNumber={pageNumber}
+              numPages={numPages}
               scale={scale}
               onDocumentLoadSuccess={onDocumentLoadSuccess}
               onPageChange={changePage}
+              onPageNumberChange={(page) => setPageNumber(page)}
             />
           ) : (
             <div className="empty-container">

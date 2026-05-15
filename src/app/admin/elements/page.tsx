@@ -36,7 +36,7 @@ export default function Page() {
         _offset: page * 25,
         type: sortType || undefined,
       });
-      const items = (res?.data as unknown as ItemT[])?.map((item) => {
+      const items = (res?.data?.items as unknown as ItemT[])?.map((item) => {
         const details =
           (item.details as { [key: string]: string | number }) || {};
         const parent =
@@ -64,7 +64,7 @@ export default function Page() {
     setLoading(true);
     try {
       const res = await searchElementsREQ(val);
-      const items = (res as ItemT[])?.map((item) => {
+      const items = (res?.items as ItemT[])?.map((item) => {
         const details = (item.details as Record<string, string | number>) || {};
         const parent = (item.parent as Record<string, string | number>) || {};
 
@@ -112,8 +112,6 @@ export default function Page() {
   useEffect(() => {
     fetchData();
   }, [fetchData, sortType]);
-
-
 
   return (
     <>

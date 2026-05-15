@@ -105,7 +105,7 @@ export default function SearchInput({ onSearch }: Props) {
                       </div>
                       <div className="result-info">
                         <span className="result-name">{getLocalized(item.name || item.title)}</span>
-                        <span className="result-author">{getLocalized(details.author) || "—"}</span>
+                        <span className="result-author">{getLocalized(details.author) || (details.created) || "—"}</span>
                       </div>
                     </div>
                   );

@@ -169,10 +169,10 @@ export default function Page() {
         <TableItems
           loading={loading}
           styleHeader={{
-            gridTemplateColumns: "100px 2fr 120px 150px 1.5fr 80px 120px 100px",
+            gridTemplateColumns: "100px 2fr 120px 150px 1.5fr 150px 120px 100px",
           }}
           styleTable={{
-            gridTemplateColumns: "100px 2fr 120px 150px 1.5fr 80px 120px 100px",
+            gridTemplateColumns: "100px 2fr 120px 150px 1.5fr 150px 120px 100px",
           }}
           styles={{ maxHeight: "calc(100vh - 360px)" }}
           header={HeaderTableELement}

@@ -190,7 +190,7 @@ export default function ModalElementStageTwo() {
             </div>
           )}
 
-          <div className="stage-two__input-row">
+         {!isVideo && <div className="stage-two__input-row">
             <label>{isVideo ? "Год выхода:" : "Год издания:"}</label>
             <input
               type="text"
@@ -198,7 +198,7 @@ export default function ModalElementStageTwo() {
               onChange={(e) => setData("created", e.target.value)}
               placeholder="2025"
             />
-          </div>
+          </div>}
         </div>
       </div>
 

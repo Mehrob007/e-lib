@@ -247,7 +247,6 @@ export default function BookReaderPage() {
           </div>
         </div>
       </header>
-
       <main className="reader-viewport" ref={viewportRef}>
         <div
           className="reader-content-wrapper"

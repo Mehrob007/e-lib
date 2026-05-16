@@ -145,11 +145,11 @@ export default function BookDetailsPage() {
 
         if (bookData.categoryId) {
           const res = await getCategoryContentREQ(bookData.parentId, {
-            _limit: 4,
+            _limit: 7,
             lang,
           });
           const relatedRes =
-            (res?.data as unknown as Record<string, unknown>[]) || [];
+            (res?.data?.items as unknown as Record<string, unknown>[]) || [];
           if (relatedRes) {
             setRelatedBooks(
               relatedRes

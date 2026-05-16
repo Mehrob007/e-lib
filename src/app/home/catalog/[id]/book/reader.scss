@@ -374,9 +374,11 @@
     .reader-viewport {
       padding: 0;
       overflow: auto;
+      display: block;
       background: #e4e7eb;
 
       .reader-content-wrapper {
+        margin: 0 auto;
         padding: 0px 0;
         padding-top: 60px;
         box-shadow: none;
@@ -389,11 +391,32 @@
       }
 
       .pdf-container {
-        width: 100% !important;
+        width: auto !important;
         min-width: 100%;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        align-items: flex-start;
         padding: 0;
+
+        .react-pdf__Document {
+          width: auto;
+          min-width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .pdf-scroll-list {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: fit-content;
+          min-width: 100%;
+        }
+
+        .pdf-page-wrapper {
+          margin-bottom: 20px;
+        }
 
         .react-pdf__Page {
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);

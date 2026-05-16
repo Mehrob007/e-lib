@@ -262,7 +262,7 @@ export default function BookReaderPage() {
                 : readerType === "epub"
                   ? "100vh"
                   : "auto",
-            maxWidth: readerType === "pdf" ? "100%" : "900px",
+            maxWidth: readerType === "pdf" ? "none" : "900px",
             minHeight:
               readerType === "epub" || readerType === "pdf" ? "auto" : "100%",
             display: "flex",
@@ -270,6 +270,7 @@ export default function BookReaderPage() {
             overflowX: "auto",
             boxSizing: "border-box",
             minWidth: "100%",
+            width: "fit-content",
           }}
         >
           {readerType === "text" ? (

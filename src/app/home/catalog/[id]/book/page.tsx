@@ -42,7 +42,7 @@ export default function BookReaderPage() {
   const [fileUrl, setFileUrl] = useState<string>("");
 
   // PDF & Text specific
-  const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null);
+  const [pdfData, setPdfData] = useState<string | null>(null);
   const [epubData, setEpubData] = useState<ArrayBuffer | null>(null);
   const [textContent, setTextContent] = useState<string>("");
   const [fb2Content, setFb2Content] = useState<string>("");
@@ -60,6 +60,22 @@ export default function BookReaderPage() {
 
   const fetchBook = useCallback(async () => {
     if (!id) return;
+    setLoading(true);
+    setReaderType(null);
+    setTitle("");
+    setFileUrl("");
+    if (pdfData && pdfData.startsWith("blob:")) {
+      URL.revokeObjectURL(pdfData);
+    }
+    setPdfData(null);
+    setEpubData(null);
+    setTextContent("");
+    setFb2Content("");
+    setNumPages(0);
+    setPageNumber(1);
+    setScale(1.0);
+    setFontSize(18);
+    setEpubLocation(null);
     try {
       const res = await getContentById(id as string, { lang });
       if (res) {
@@ -121,7 +137,17 @@ export default function BookReaderPage() {
               headers: { "ngrok-skip-browser-warning": "1" },
               responseType: "arraybuffer",
             });
-            setPdfData(pdfRes.data);
+            const blob = new Blob([pdfRes.data], { type: "application/pdf" });
+            const blobUrl = URL.createObjectURL(blob);
+            setPdfData(blobUrl);
+            
+            const saved = localStorage.getItem(`reader_page_${id}`);
+            if (saved) {
+              setPageNumber(parseInt(saved));
+            } else {
+              setPageNumber(1);
+            }
+            
             setReaderType("pdf");
           }
         }
@@ -157,17 +183,19 @@ export default function BookReaderPage() {
 
   // Persistence
   useEffect(() => {
-    if (id && readerType === "pdf" && pageNumber > 1) {
+    if (id && readerType === "pdf") {
       localStorage.setItem(`reader_page_${id}`, pageNumber.toString());
     }
   }, [id, pageNumber, readerType]);
 
+  // Cleanup PDF blob URL on unmount/change
   useEffect(() => {
-    if (id && readerType === "pdf") {
-      const saved = localStorage.getItem(`reader_page_${id}`);
-      if (saved) setPageNumber(parseInt(saved));
-    }
-  }, [id, readerType]);
+    return () => {
+      if (pdfData && pdfData.startsWith("blob:")) {
+        URL.revokeObjectURL(pdfData);
+      }
+    };
+  }, [pdfData]);
 
   // EPUB Handlers
   const onEpubLocationChange = (loc: string) => {

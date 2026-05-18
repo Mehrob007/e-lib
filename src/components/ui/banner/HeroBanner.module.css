@@ -1,11 +1,12 @@
 .banner {
   position: relative;
   width: 100%;
-  aspect-ratio: 19 / 5.5;
   overflow: hidden;
   border-radius: 16px;
   margin: 16px 0 32px;
-  background: #0d1b2a;
+  background: none;
+  max-width: 960px;
+  height: 380px;
 }
 
 .slide {
@@ -101,7 +102,8 @@
   .banner {
     border-radius: 10px;
     margin: 10px 0 20px;
-    aspect-ratio: 2 / 0.97;
+    height: 160px;
+    /* aspect-ratio: 2 / 0.92; */
   }
 
   .nav {

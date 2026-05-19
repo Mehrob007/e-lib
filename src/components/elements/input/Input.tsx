@@ -12,7 +12,7 @@ export default function Input({
   id,
   errors,
   style,
-  autoComplete,
+  autoComplete = "off",
 }: InputT) {
   const [focus, setFocus] = useState(false);
 

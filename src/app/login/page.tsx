@@ -92,7 +92,7 @@ export default function Login() {
               onChange={(e) => setData("password", e)}
               errors={errors}
               title="Пароль:"
-              autoComplete="new-password"
+              autoComplete="off"
             />
 
             {authError && <p className="login__error-msg">{authError}</p>}

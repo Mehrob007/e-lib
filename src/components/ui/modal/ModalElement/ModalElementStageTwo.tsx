@@ -158,6 +158,7 @@ export default function ModalElementStageTwo() {
               type="text"
               value={(data?.name as string) || ""}
               onChange={(e) => setData("name", e.target.value)}
+              autoComplete="off"
               placeholder={
                 isAudio
                   ? "Например, Лунная соната"
@@ -177,6 +178,7 @@ export default function ModalElementStageTwo() {
                 type="text"
                 value={(data?.author as string) || ""}
                 onChange={(e) => setData("author", e.target.value)}
+                autoComplete="off"
                 placeholder={isAudio ? "Бетховен" : "Александр Дюма"}
               />
               </div>
@@ -192,6 +194,7 @@ export default function ModalElementStageTwo() {
                 type="text"
                 value={(data?.pages as string) || ""}
                 onChange={(e) => setData("pages", e.target.value)}
+                autoComplete="off"
                 placeholder={isAudio ? "Например, 1:30:00" : "544"}
               />
               </div>
@@ -207,6 +210,7 @@ export default function ModalElementStageTwo() {
               type="text"
               value={(data?.created as string) || ""}
               onChange={(e) => setData("created", e.target.value)}
+              autoComplete="off"
               placeholder="2025"
               />
               </div>
@@ -223,6 +227,7 @@ export default function ModalElementStageTwo() {
             className={errors?.annotation ? "error" : ""}
             value={(data?.annotation as string) || ""}
             onChange={(e) => setData("annotation", e.target.value)}
+            autoComplete="off"
             placeholder="Введите аннотацию к материалу..."
           />
           {errors?.annotation && <span className="stage-two__error-text">{errors.annotation as string}</span>}

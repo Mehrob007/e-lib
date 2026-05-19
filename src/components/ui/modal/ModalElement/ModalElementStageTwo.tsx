@@ -13,7 +13,6 @@ export default function ModalElementStageTwo() {
     const file = e.target.files?.[0];
     if (file) {
       setData("photo", file);
-      // Create a preview URL for the image
       const reader = new FileReader();
       reader.onloadend = () => {
         setData("photo_preview", reader.result as string);
@@ -27,7 +26,6 @@ export default function ModalElementStageTwo() {
     if (file) {
       setData("file", file);
       
-      // Calculate and format file size
       const sizeInBytes = file.size;
       let formattedSize = "";
       if (sizeInBytes < 1024) formattedSize = `${sizeInBytes} B`;
@@ -59,10 +57,11 @@ export default function ModalElementStageTwo() {
     <div className="stage-two">
       <div className="stage-two__main">
         {/* Left Column: Cover Upload */}
-        <div
-          className="stage-two__upload-cover"
-          onClick={() => coverInputRef.current?.click()}
-        >
+        <div>
+          <div
+            className={`stage-two__upload-cover ${errors?.photo ? "error" : ""}`}
+            onClick={() => coverInputRef.current?.click()}
+          >
           <input
             type="file"
             ref={coverInputRef}
@@ -88,12 +87,14 @@ export default function ModalElementStageTwo() {
             </div>
           )}
         </div>
+        {errors?.photo && <span className="stage-two__error-text">{errors.photo as string}</span>}
+        </div>
 
         {/* Right Column: File Upload and Inputs */}
         <div className="stage-two__fields">
           <div className="stage-two__upload-file-row">
             <button
-              className={`stage-two__upload-btn ${data?.file ? "uploaded" : ""}`}
+              className={`stage-two__upload-btn ${data?.file ? "uploaded" : ""} ${errors?.file ? "error" : ""}`}
               onClick={() => fileInputRef.current?.click()}
             >
               <input
@@ -133,6 +134,7 @@ export default function ModalElementStageTwo() {
               </button>
             )}
           </div>
+          {errors?.file && <span className="stage-two__error-text">{errors.file as string}</span>}
 
           <div style={{ width: "100%", maxWidth: "200px" }}>
             <Select
@@ -150,7 +152,7 @@ export default function ModalElementStageTwo() {
             />
           </div>
 
-          <div className="stage-two__input-row">
+          <div className={`stage-two__input-row ${errors?.name ? "error" : ""}`}>
             <label>Название:</label>
             <input
               type="text"
@@ -165,51 +167,65 @@ export default function ModalElementStageTwo() {
               }
             />
           </div>
+          {errors?.name && <span className="stage-two__error-text">{errors.name as string}</span>}
 
           {!isVideo && (
-            <div className="stage-two__input-row">
-              <label>{isAudio ? "Исполнитель/Автор:" : "Автор:"}</label>
+            <>
+              <div className={`stage-two__input-row ${errors?.author ? "error" : ""}`}>
+                <label>{isAudio ? "Исполнитель/Автор:" : "Автор:"}</label>
               <input
                 type="text"
                 value={(data?.author as string) || ""}
                 onChange={(e) => setData("author", e.target.value)}
                 placeholder={isAudio ? "Бетховен" : "Александр Дюма"}
               />
-            </div>
+              </div>
+              {errors?.author && <span className="stage-two__error-text">{errors.author as string}</span>}
+            </>
           )}
 
           {!isVideo && (
-            <div className="stage-two__input-row">
-              <label>{isAudio ? "Длительность:" : "Страницы:"}</label>
+            <>
+              <div className={`stage-two__input-row ${errors?.pages ? "error" : ""}`}>
+                <label>{isAudio ? "Длительность:" : "Страницы:"}</label>
               <input
                 type="text"
                 value={(data?.pages as string) || ""}
                 onChange={(e) => setData("pages", e.target.value)}
                 placeholder={isAudio ? "Например, 1:30:00" : "544"}
               />
-            </div>
+              </div>
+              {errors?.pages && <span className="stage-two__error-text">{errors.pages as string}</span>}
+            </>
           )}
 
-         {!isVideo && <div className="stage-two__input-row">
-            <label>{isVideo ? "Год выхода:" : "Год издания:"}</label>
+         {!isVideo && (
+            <>
+              <div className={`stage-two__input-row ${errors?.created ? "error" : ""}`}>
+                <label>{isVideo ? "Год выхода:" : "Год издания:"}</label>
             <input
               type="text"
               value={(data?.created as string) || ""}
               onChange={(e) => setData("created", e.target.value)}
               placeholder="2025"
-            />
-          </div>}
+              />
+              </div>
+              {errors?.created && <span className="stage-two__error-text">{errors.created as string}</span>}
+            </>
+          )}
         </div>
       </div>
 
       {!isVideo && (
-        <div className="stage-two__annotation">
+        <div className={`stage-two__annotation ${errors?.annotation ? "error" : ""}`}>
           <label>Аннотация</label>
           <textarea
+            className={errors?.annotation ? "error" : ""}
             value={(data?.annotation as string) || ""}
             onChange={(e) => setData("annotation", e.target.value)}
             placeholder="Введите аннотацию к материалу..."
           />
+          {errors?.annotation && <span className="stage-two__error-text">{errors.annotation as string}</span>}
         </div>
       )}
     </div>

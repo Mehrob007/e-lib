@@ -65,8 +65,19 @@ export default function ModalELement({
   };
 
   const onSend = async () => {
+    const currentMime = (data?.mime || data?._mime || data?.type || "").toString().toLowerCase();
+    const isVideo = currentMime.includes("video");
+
     const valid = validate({
       name: { required: true },
+      lang_id: { required: true },
+      ...(!isVideo ? { 
+        author: { required: true }, 
+        pages: { required: true }, 
+        created: { required: true } 
+      } : {}),
+      ...((!data.photo_preview && !data.photo) ? { photo: { required: true } } : {}),
+      ...((!data.file && !editItem) ? { file: { required: true } } : {})
     });
 
     if (!valid) return;

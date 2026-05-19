@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import Script from "next/script";
 import HeaderHome from "@/components/ui/header/HeaderHome";
 // import CatalogTopBar from "@/components/ui/nav/CatalogTopBar";
 import Loading from "@/components/ui/loading/Loading";
@@ -70,6 +71,56 @@ export default function BookDetailsPage() {
   const setGlobalAudio = useAudioStore((s) => s.setAudio);
   const stopAudio = useAudioStore((s) => s.stop);
   const { t, lang, getLocalized } = useTranslation();
+
+  const [showCaptchaModal, setShowCaptchaModal] = useState(false);
+  const [recaptchaWidgetId, setRecaptchaWidgetId] = useState<number | null>(null);
+
+  const handleDownload = useCallback(async () => {
+    const url = downloadUrl || book?.fileUrlFull;
+    if (!url) return;
+    try {
+      const res = await fetch(url, {
+        headers: { "ngrok-skip-browser-warning": "1" },
+      });
+      const blob = await res.blob();
+      const objectUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = book?.title || "file";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(objectUrl);
+    } catch (e) {
+      window.open(url, "_blank");
+    }
+  }, [downloadUrl, book]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showCaptchaModal) {
+      timer = setTimeout(() => {
+        const grecaptcha = (window as any).grecaptcha;
+        if (grecaptcha) {
+          try {
+            const widget = grecaptcha.render("recaptcha-container", {
+              sitekey: "6LcyavEsAAAAAF6MnfY8iPTkXYAiykbrGUK7toYQ",
+              callback: () => {
+                handleDownload();
+                setShowCaptchaModal(false);
+              },
+            });
+            setRecaptchaWidgetId(widget);
+          } catch (err) {
+            console.error("Error rendering reCAPTCHA:", err);
+          }
+        }
+      }, 200);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [showCaptchaModal, handleDownload]);
 
   useEffect(() => {
     if (book?.mediaType === "video") {
@@ -377,25 +428,8 @@ export default function BookDetailsPage() {
                 <button
                   className="download-btn"
                   title="Download"
-                  onClick={async () => {
-                    const url = downloadUrl || book.fileUrlFull;
-                    if (!url) return;
-                    try {
-                      const res = await fetch(url, {
-                        headers: { "ngrok-skip-browser-warning": "1" },
-                      });
-                      const blob = await res.blob();
-                      const objectUrl = window.URL.createObjectURL(blob);
-                      const link = document.createElement("a");
-                      link.href = objectUrl;
-                      link.download = book.title || "file";
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
-                      window.URL.revokeObjectURL(objectUrl);
-                    } catch (e) {
-                      window.open(url, "_blank");
-                    }
+                  onClick={() => {
+                    setShowCaptchaModal(true);
                   }}
                 >
                   <HiOutlineArrowDownTray fontSize={35} />
@@ -502,6 +536,53 @@ export default function BookDetailsPage() {
           </div>
         </aside>
       </main>
+
+      <Script
+        src="https://www.google.com/recaptcha/api.js?render=explicit"
+        strategy="afterInteractive"
+      />
+
+      {showCaptchaModal && (
+        <div className="captcha-modal-overlay">
+          <div className="captcha-modal">
+            <div className="captcha-modal-header">
+              <h3>
+                {lang === "tj"
+                  ? "Тасдиқи зеркашӣ"
+                  : lang === "en"
+                    ? "Download Confirmation"
+                    : "Подтверждение скачивания"}
+              </h3>
+              <button
+                className="captcha-close-btn"
+                onClick={() => setShowCaptchaModal(false)}
+              >
+                &times;
+              </button>
+            </div>
+            <div className="captcha-modal-body">
+              <p>
+                {lang === "tj"
+                  ? "Лутфан, барои оғози зеркашии файл капчаро гузаред."
+                  : lang === "en"
+                    ? "Please complete the captcha to start downloading the file."
+                    : "Пожалуйста, пройдите проверку капчи, чтобы начать скачивание файла."}
+              </p>
+              <div id="recaptcha-container" className="recaptcha-container">
+                {!(typeof window !== "undefined" && (window as any).grecaptcha) && (
+                  <div className="captcha-loading">
+                    {lang === "tj"
+                      ? "Капча боргирӣ шуда истодааст..."
+                      : lang === "en"
+                        ? "Loading captcha..."
+                        : "Загрузка капчи..."}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

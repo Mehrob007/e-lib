@@ -458,4 +458,112 @@
       }
     }
   }
+
+  .captcha-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: captchaFadeIn 0.3s ease-out;
+
+    @keyframes captchaFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .captcha-modal {
+      background: #ffffff;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      animation: captchaScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+
+      @keyframes captchaScaleIn {
+        from { transform: scale(0.95); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+      }
+
+      .captcha-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        border-bottom: 1px solid #f0f0f0;
+
+        h3 {
+          margin: 0;
+          font-size: 18px;
+          font-weight: 700;
+          color: #1a1a1a;
+        }
+
+        .captcha-close-btn {
+          background: none;
+          border: none;
+          font-size: 28px;
+          color: #888;
+          cursor: pointer;
+          transition: color 0.2s, transform 0.2s, background-color 0.2s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+          line-height: 1;
+          border-radius: 50%;
+          width: 32px;
+          height: 32px;
+
+          &:hover {
+            color: #333;
+            background-color: #f5f5f5;
+            transform: rotate(90deg);
+          }
+        }
+      }
+
+      .captcha-modal-body {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+
+        p {
+          margin: 0;
+          font-size: 14px;
+          color: #666;
+          text-align: center;
+          line-height: 1.5;
+        }
+
+        .recaptcha-container {
+          min-height: 78px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+
+          .captcha-loading {
+            font-size: 14px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 78px;
+          }
+        }
+      }
+    }
+  }
 }
+

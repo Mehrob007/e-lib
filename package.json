@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "update": "git pull && next build && sudo systemctl restart elib-frontend",
     "start": "next start",
     "lint": "eslint"
   },

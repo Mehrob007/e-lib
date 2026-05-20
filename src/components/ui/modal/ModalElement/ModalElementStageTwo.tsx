@@ -53,6 +53,8 @@ export default function ModalElementStageTwo() {
   const isAudio = currentMime.includes("audio");
   const isVideo = currentMime.includes("video");
 
+  console.log("data", data);
+  
   return (
     <div className="stage-two">
       <div className="stage-two__main">
@@ -90,7 +92,6 @@ export default function ModalElementStageTwo() {
         {errors?.photo && <span className="stage-two__error-text">{errors.photo as string}</span>}
         </div>
 
-        {/* Right Column: File Upload and Inputs */}
         <div className="stage-two__fields">
           <div className="stage-two__upload-file-row">
             <button
@@ -110,7 +111,7 @@ export default function ModalElementStageTwo() {
                 }
                 style={{ display: "none" }}
               />
-              {data?.file ? (
+              {data?.file || data?.file_url ? (
                 <>
                   <LuCheck size={16} style={{ color: "#4caf50" }} />
                   <span>Загружено</span>

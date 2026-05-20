@@ -123,12 +123,11 @@ export default function ModalELement({
       let type = editDetails.type as string;
 
       console.log("file", file);
-      
 
       if (file || coverFile) {
         setLoading("uploading");
         const presignedData = await getPresignedUrlREQ(
-          file.name,
+          file?.name || "edit.png",
           fileUrl,
           previewUrl,
         );
@@ -181,6 +180,7 @@ export default function ModalELement({
       setLoading(null);
     }
   };
+  console.log("editItem", editItem);
 
   useEffect(() => {
     if (editItem) {
@@ -201,6 +201,10 @@ export default function ModalELement({
       );
       const type = (editItem.type || details.type || "") as string;
       const mime = details.type as string;
+      setData(
+        "file_url",
+        (editItem?.details as { file_url: string }).file_url,
+      );
 
       setData("type", type);
       setData("mime", mime);

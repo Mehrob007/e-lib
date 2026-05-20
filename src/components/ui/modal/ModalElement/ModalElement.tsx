@@ -122,10 +122,13 @@ export default function ModalELement({
       let previewUrl = editItem?.preview_url as string;
       let type = editDetails.type as string;
 
+      console.log("file", file);
+      
+
       if (file || coverFile) {
         setLoading("uploading");
         const presignedData = await getPresignedUrlREQ(
-          file?.name || "file",
+          file.name,
           fileUrl,
           previewUrl,
         );

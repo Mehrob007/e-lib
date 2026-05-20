@@ -118,11 +118,11 @@ export default function ModalELement({
     setLoading("upload");
     try {
       const editDetails = (editItem?.details as Record<string, unknown>) || {};
-      let fileUrl = editItem?.file_url as string;
-      let previewUrl = editItem?.preview_url as string;
+      let fileUrl = editDetails?.file_url as string;
+      let previewUrl = editDetails?.preview_url as string;
       let type = editDetails.type as string;
 
-      console.log("file", file);
+      console.table({ file, fileUrl, previewUrl });
 
       if (file || coverFile) {
         setLoading("uploading");
@@ -201,10 +201,7 @@ export default function ModalELement({
       );
       const type = (editItem.type || details.type || "") as string;
       const mime = details.type as string;
-      setData(
-        "file_url",
-        (editItem?.details as { file_url: string }).file_url,
-      );
+      setData("file_url", (editItem?.details as { file_url: string }).file_url);
 
       setData("type", type);
       setData("mime", mime);

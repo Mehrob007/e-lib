@@ -35,6 +35,11 @@ export default function ModalELement({
     { id: 2, title: "Данные" },
   ];
 
+  const handleClose = () => {
+    setClear();
+    onClose();
+  };
+
   const next = () => {
     if (stage === 0) {
       const valid = validate(
@@ -159,7 +164,7 @@ export default function ModalELement({
       }
 
       onSuccess();
-      onClose();
+      handleClose();
     } catch (e) {
       console.error(e);
       setLoading(null);
@@ -200,7 +205,7 @@ export default function ModalELement({
   return (
     <motion.div
       className="modal__overlay"
-      onClick={onClose}
+      onClick={handleClose}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -218,7 +223,7 @@ export default function ModalELement({
       >
         <header className="modal__header">
           <h2>{editItem ? "Изменение" : "Добавление"}</h2>
-          <button className="modal__close" onClick={onClose}>
+          <button className="modal__close" onClick={handleClose}>
             <LuX size={18} />
           </button>
         </header>
@@ -259,9 +264,7 @@ export default function ModalELement({
           <footer className="modal__footer">
             <button
               className="modal__btn-cancel"
-              onClick={() => {
-                onClose();
-              }}
+              onClick={handleClose}
             >
               Отмена
             </button>

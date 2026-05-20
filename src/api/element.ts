@@ -51,11 +51,13 @@ export const postElementREQ = async (data: dataT) => {
 
 export const getPresignedUrlREQ = async (
   // branch_id: string,
+  previewUrl: string,
+  fileUrl: string,
   filename: string,
 ) => {
   try {
     const res = await apiClient(`admin/content/presigned`, {
-      params: { filename },
+      params: { filename, fileUrl, previewUrl },
     });
     return res.data;
   } catch (e) {
@@ -201,7 +203,6 @@ export const searchElementsREQ = async (
     console.error(e);
   }
 };
-
 
 export const getContentDownloadUrlREQ = async (content_id: string) => {
   try {

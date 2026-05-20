@@ -126,6 +126,8 @@ export default function ModalELement({
         setLoading("uploading");
         const presignedData = await getPresignedUrlREQ(
           file?.name || "file",
+          fileUrl,
+          previewUrl,
         );
         if (!presignedData) throw new Error("Failed to get presigned URL");
 

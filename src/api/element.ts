@@ -50,11 +50,11 @@ export const postElementREQ = async (data: dataT) => {
 };
 
 export const getPresignedUrlREQ = async (
-  branch_id: string,
+  // branch_id: string,
   filename: string,
 ) => {
   try {
-    const res = await apiClient(`admin/content/${branch_id}/presigned`, {
+    const res = await apiClient(`admin/content/presigned`, {
       params: { filename },
     });
     return res.data;

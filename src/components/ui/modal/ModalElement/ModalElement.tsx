@@ -70,24 +70,29 @@ export default function ModalELement({
   };
 
   const onSend = async () => {
-    const currentMime = (data?.mime || data?._mime || data?.type || "").toString().toLowerCase();
+    const currentMime = (data?.mime || data?._mime || data?.type || "")
+      .toString()
+      .toLowerCase();
     const isVideo = currentMime.includes("video");
 
     const valid = validate({
       name: { required: true },
       lang_id: { required: true },
-      ...(!isVideo ? { 
-        author: { required: true }, 
-        pages: { required: true }, 
-        created: { required: true } 
-      } : {}),
-      ...((!data.photo_preview && !data.photo) ? { photo: { required: true } } : {}),
-      ...((!data.file && !editItem) ? { file: { required: true } } : {})
+      ...(!isVideo
+        ? {
+            author: { required: true },
+            pages: { required: true },
+            created: { required: true },
+          }
+        : {}),
+      ...(!data.photo_preview && !data.photo
+        ? { photo: { required: true } }
+        : {}),
+      ...(!data.file && !editItem ? { file: { required: true } } : {}),
     });
 
     if (!valid) return;
 
-    // Extract branch_id (deepest selected branch, UUID only)
     let branchId = (editItem?.branch_id as string) || "";
     if (!branchId) {
       let highestIndex = 0;
@@ -120,7 +125,7 @@ export default function ModalELement({
       if (file || coverFile) {
         setLoading("uploading");
         const presignedData = await getPresignedUrlREQ(
-          branchId as string,
+          crypto.randomUUID() as string,
           file?.name || "file",
         );
         if (!presignedData) throw new Error("Failed to get presigned URL");
@@ -138,7 +143,6 @@ export default function ModalELement({
         }
       }
 
-      // Step 4: Save metadata to DB
       setLoading("saving");
 
       const payload = {
@@ -153,7 +157,10 @@ export default function ModalELement({
           lang_id: (data.lang_id as string) || "",
           file_url: (fileUrl as string) || "",
           preview_url: (previewUrl as string) || "",
-          file_size: (data.file_size as string) || (editDetails.file_size as string) || "",
+          file_size:
+            (data.file_size as string) ||
+            (editDetails.file_size as string) ||
+            "",
         },
       };
 
@@ -193,14 +200,12 @@ export default function ModalELement({
 
       setData("type", type);
       setData("mime", mime);
-      setStage(2); // Go directly to data stage for editing
+      setStage(2);
     } else {
       setClear();
       setData("type", "");
     }
   }, [editItem, setData, setClear]);
-
-
 
   return (
     <motion.div
@@ -262,10 +267,7 @@ export default function ModalELement({
           <div className="modal__grid"></div>
 
           <footer className="modal__footer">
-            <button
-              className="modal__btn-cancel"
-              onClick={handleClose}
-            >
+            <button className="modal__btn-cancel" onClick={handleClose}>
               Отмена
             </button>
             <button

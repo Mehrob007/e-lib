@@ -119,7 +119,7 @@ export default function ModalELement({
     try {
       const editDetails = (editItem?.details as Record<string, unknown>) || {};
       let fileUrl = editDetails?.file_url as string;
-      let previewUrl = editDetails?.preview_url as string;
+      let previewUrl = editDetails?.preview_path as string;
       let type = editDetails.type as string;
 
       console.table({ file, fileUrl, previewUrl });

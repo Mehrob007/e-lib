@@ -57,7 +57,7 @@ export const getPresignedUrlREQ = async (
 ) => {
   try {
     const res = await apiClient(`admin/content/presigned`, {
-      params: { filename, fileUrl, previewUrl },
+      params: { filename, file_url: fileUrl , preview_path: previewUrl },
     });
     return res.data;
   } catch (e) {

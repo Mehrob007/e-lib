@@ -55,6 +55,7 @@ export default function ModalCategory({
               details: {},
             },
           ],
+          name: data?.tj_name,
         };
         await editElementById(editItem.id as string, updatePayload);
       } else {

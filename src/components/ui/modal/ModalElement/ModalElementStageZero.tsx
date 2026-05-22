@@ -71,7 +71,7 @@ export default function ModalElementStageZero({ defPather }: Props) {
           }
           setTimeout(() => setData("type", e), 10);
         }}
-        options={options}
+        options={[{ value: "", label: "Типы" }, ...options]}
         placeholder="Выберите тип"
         errors={errors}
       />

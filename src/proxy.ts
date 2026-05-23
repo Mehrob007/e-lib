@@ -15,7 +15,6 @@ export function proxy(request: NextRequest) {
       const payload = decodeJwt(token);
       const role = payload.role as string;
 
-
       if (role !== "Admin" && role !== "Superadmin") {
         return NextResponse.redirect(new URL("/", request.url));
       }
@@ -28,9 +27,6 @@ export function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Настройка путей, на которых будет срабатывать Middleware
 export const config = {
-  matcher: [
-    "/admin/:path*", // Все вложенные пути админки
-  ],
+  matcher: ["/admin/:path*"],
 };

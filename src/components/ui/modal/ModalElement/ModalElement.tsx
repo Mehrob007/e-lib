@@ -42,14 +42,13 @@ export default function ModalELement({
 
   const next = () => {
     if (stage === 0) {
-      const valid = validate(
-        Object.fromEntries(
-          Object.keys(data).map((key) => [key, { required: true }]),
-        ),
-      );
-      if (!valid) return;
+      // const valid = validate(
+      //   Object.fromEntries(
+      //     Object.keys(data).map((key) => [key, { required: true }]),
+      //   ),
+      // );
+      // if (!valid) return;
       setStage(1);
-      // setData("defPatherId", defPather?.id as string);
     } else if (stage === 1) {
       setStage(2);
     }

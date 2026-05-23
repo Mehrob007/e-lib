@@ -149,6 +149,7 @@ export default function ModalELement({
 
       const payload = {
         branch_id: branchId,
+        parent_id: branchId,
         name: data.name as string,
         details: {
           type: (type as string) || (editDetails.type as string) || "",
@@ -179,7 +180,7 @@ export default function ModalELement({
       setLoading(null);
     }
   };
-  console.log("editItem", editItem);
+  console.log("data", data);
 
   useEffect(() => {
     if (editItem) {

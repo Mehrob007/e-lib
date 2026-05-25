@@ -219,7 +219,6 @@ export default function BookDetailsPage() {
                   added: (item.added as string)
                     .split("T")[0]
                     .split("-")
-                    // .reverse()
                     .join("."),
                   localizedName: getLocalized(item.title || item.name) || "—",
                 })),

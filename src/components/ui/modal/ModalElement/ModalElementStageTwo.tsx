@@ -9,15 +9,81 @@ export default function ModalElementStageTwo() {
   const coverInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const compressImage = (file: File, maxWidth = 1920, quality = 0.8): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            reject(new Error("Canvas not supported"));
+            return;
+          }
+          
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
+                  type: "image/jpeg",
+                  lastModified: Date.now(),
+                });
+                resolve(compressedFile);
+              } else {
+                reject(new Error("Canvas toBlob failed"));
+              }
+            },
+            "image/jpeg",
+            quality
+          );
+        };
+        img.onerror = (error) => reject(error);
+        if (event.target?.result) {
+          img.src = event.target.result as string;
+        } else {
+          reject(new Error("FileReader failed"));
+        }
+      };
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setData("photo", file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setData("photo_preview", reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressedFile = await compressImage(file, 1200, 0.8);
+        setData("photo", compressedFile);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setData("photo_preview", reader.result as string);
+        };
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error("Image compression error:", error);
+        // Fallback to original file
+        setData("photo", file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setData("photo_preview", reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 

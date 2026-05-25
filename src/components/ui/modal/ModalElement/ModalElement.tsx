@@ -149,7 +149,7 @@ export default function ModalELement({
 
       const payload = {
         branch_id: branchId,
-        parent_id: branchId,
+        parent_id: branchId || data.parent_id,
         name: data.name as string,
         details: {
           type: (type as string) || (editDetails.type as string) || "",
@@ -187,6 +187,7 @@ export default function ModalELement({
       // Pre-fill form for editing
       const details = (editItem.details as ItemT) || {};
       setData("name", editItem.name as string);
+      setData("parent_id", editItem.parent_id as string);
       setData("author", (editItem.author || details.author || "") as string);
       setData("pages", (editItem.pages || details.pages || "") as string);
       setData("created", (editItem.created || details.created || "") as string);

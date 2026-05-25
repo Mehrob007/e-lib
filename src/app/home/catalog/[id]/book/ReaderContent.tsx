@@ -25,7 +25,7 @@ export default function ReaderContent({
   scale,
   onDocumentLoadSuccess,
 }: Props) {
-  const file = useMemo(() => ({ url: pdfData }), [pdfData]);
+  const file = pdfData;
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number>(0);
 
@@ -45,6 +45,11 @@ export default function ReaderContent({
     <div className="pdf-container" ref={containerRef}>
       <Document
         file={file}
+        options={{
+          cMapUrl: `//unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
+          cMapPacked: true,
+          disableRange: true,
+        }}
         onLoadSuccess={onDocumentLoadSuccess}
         loading={<Loading />}
       >

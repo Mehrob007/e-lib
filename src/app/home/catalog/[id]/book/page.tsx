@@ -39,6 +39,7 @@ export default function BookReaderPage() {
   const [readerType, setReaderType] = useState<ReaderType>(null);
   const [title, setTitle] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [downloadProgress, setDownloadProgress] = useState<number>(0);
   const [fileUrl, setFileUrl] = useState<string>("");
 
   // PDF & Text specific
@@ -61,6 +62,7 @@ export default function BookReaderPage() {
   const fetchBook = useCallback(async () => {
     if (!id) return;
     setLoading(true);
+    setDownloadProgress(0);
     setReaderType(null);
     setTitle("");
     setFileUrl("");
@@ -132,22 +134,25 @@ export default function BookReaderPage() {
             const savedLoc = localStorage.getItem(`epub_loc_${id}`);
             if (savedLoc) setEpubLocation(savedLoc);
           } else {
-            // Default to PDF
             const pdfRes = await axios.get(fullUrl, {
               headers: { "ngrok-skip-browser-warning": "1" },
               responseType: "arraybuffer",
+              onDownloadProgress: (progressEvent) => {
+                if (progressEvent.total) {
+                  const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                  setDownloadProgress(percentCompleted);
+                }
+              },
             });
             const blob = new Blob([pdfRes.data], { type: "application/pdf" });
             const blobUrl = URL.createObjectURL(blob);
             setPdfData(blobUrl);
-            
             const saved = localStorage.getItem(`reader_page_${id}`);
             if (saved) {
               setPageNumber(parseInt(saved));
             } else {
               setPageNumber(1);
             }
-            
             setReaderType("pdf");
           }
         }
@@ -227,12 +232,19 @@ export default function BookReaderPage() {
         <div
           style={{
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
             height: "100vh",
+            gap: "1rem",
           }}
         >
           <Loading />
+          {downloadProgress > 0 && (
+            <div style={{ marginTop: "1rem", fontWeight: "bold" }}>
+              {t("loading") || "Загрузка..."} {downloadProgress}%
+            </div>
+          )}
         </div>
       </div>
     );

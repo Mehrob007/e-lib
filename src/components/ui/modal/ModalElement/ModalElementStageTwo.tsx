@@ -9,23 +9,15 @@ export default function ModalElementStageTwo() {
   const coverInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const compressImage = (file: File, maxWidth = 1920, quality = 0.8): Promise<File> => {
+  const stripMetadata = (file: File): Promise<File> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (event) => {
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement("canvas");
-          let width = img.width;
-          let height = img.height;
-
-          if (width > maxWidth) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
-          }
-
-          canvas.width = width;
-          canvas.height = height;
+          canvas.width = img.width;
+          canvas.height = img.height;
 
           const ctx = canvas.getContext("2d");
           if (!ctx) {
@@ -33,22 +25,24 @@ export default function ModalElementStageTwo() {
             return;
           }
           
-          ctx.drawImage(img, 0, 0, width, height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
+          // Use original type if possible, or fallback to jpeg. Keep quality at 1.0 (max)
+          const outType = file.type === "image/png" ? "image/png" : "image/jpeg";
           canvas.toBlob(
             (blob) => {
               if (blob) {
-                const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
-                  type: "image/jpeg",
+                const cleanFile = new File([blob], file.name, {
+                  type: outType,
                   lastModified: Date.now(),
                 });
-                resolve(compressedFile);
+                resolve(cleanFile);
               } else {
                 reject(new Error("Canvas toBlob failed"));
               }
             },
-            "image/jpeg",
-            quality
+            outType,
+            1.0
           );
         };
         img.onerror = (error) => reject(error);
@@ -67,15 +61,15 @@ export default function ModalElementStageTwo() {
     const file = e.target.files?.[0];
     if (file) {
       try {
-        const compressedFile = await compressImage(file, 1200, 0.8);
-        setData("photo", compressedFile);
+        const cleanFile = await stripMetadata(file);
+        setData("photo", cleanFile);
         const reader = new FileReader();
         reader.onloadend = () => {
           setData("photo_preview", reader.result as string);
         };
-        reader.readAsDataURL(compressedFile);
+        reader.readAsDataURL(cleanFile);
       } catch (error) {
-        console.error("Image compression error:", error);
+        console.error("Metadata stripping error:", error);
         // Fallback to original file
         setData("photo", file);
         const reader = new FileReader();

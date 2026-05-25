@@ -73,7 +73,9 @@ export default function BookDetailsPage() {
   const { t, lang, getLocalized } = useTranslation();
 
   const [showCaptchaModal, setShowCaptchaModal] = useState(false);
-  const [recaptchaWidgetId, setRecaptchaWidgetId] = useState<number | null>(null);
+  const [recaptchaWidgetId, setRecaptchaWidgetId] = useState<number | null>(
+    null,
+  );
 
   const handleDownload = useCallback(async () => {
     const url = downloadUrl || book?.fileUrlFull;
@@ -179,7 +181,14 @@ export default function BookDetailsPage() {
           author: (details.author as string) || "—",
           language: langLabel,
           pages: (details.pages as string | number) || "—",
-          year: (details.created as string) || "—",
+          year:
+            (details.created as string) ||
+            (res.added as string)
+              .split("T")[0]
+              .split("-")
+              .reverse()
+              .join(".") ||
+            "—",
           description: (details.annotation as string) || t("no_description"),
           image: previewUrlFull,
           fileUrl: fileUrlRaw,
@@ -207,6 +216,11 @@ export default function BookDetailsPage() {
                 .filter((b) => b.id !== id)
                 .map((item) => ({
                   ...item,
+                  added: (item.added as string)
+                    .split("T")[0]
+                    .split("-")
+                    // .reverse()
+                    .join("."),
                   localizedName: getLocalized(item.title || item.name) || "—",
                 })),
             );
@@ -368,7 +382,9 @@ export default function BookDetailsPage() {
                 {book.mediaType === "video" ? (
                   ""
                 ) : (
-                  <span className="label">{t("year_publish")}</span>
+                  <>
+                    <span className="label">{t("year_publish")}</span>
+                  </>
                 )}
                 <span className="value">{book.year}</span>
               </div>
@@ -522,6 +538,7 @@ export default function BookDetailsPage() {
                       <p>
                         {getLocalized(details.author) ||
                           getLocalized(details.created) ||
+                          getLocalized(item.added) ||
                           "—"}
                       </p>
                     </div>
@@ -569,7 +586,9 @@ export default function BookDetailsPage() {
                     : "Пожалуйста, пройдите проверку капчи, чтобы начать скачивание файла."}
               </p>
               <div id="recaptcha-container" className="recaptcha-container">
-                {!(typeof window !== "undefined" && (window as any).grecaptcha) && (
+                {!(
+                  typeof window !== "undefined" && (window as any).grecaptcha
+                ) && (
                   <div className="captcha-loading">
                     {lang === "tj"
                       ? "Капча боргирӣ шуда истодааст..."

@@ -204,6 +204,8 @@ function CatalogContent() {
               author: getLocalized(details.author) || "—",
               date:
                 (item.created as string)?.split("T")?.[0] ||
+                (item.added as string).split("T")[0].split("-").join(".") ||
+                // (details.added as string)?.split("T")?.[0].slice("-").join(".") ||
                 (details.created as string)?.split("T")?.[0] ||
                 "—",
               image: details.preview_url || "",

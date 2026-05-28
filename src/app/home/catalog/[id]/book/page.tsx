@@ -39,7 +39,6 @@ export default function BookReaderPage() {
   const [readerType, setReaderType] = useState<ReaderType>(null);
   const [title, setTitle] = useState<string>("");
   const [loading, setLoading] = useState(true);
-  const [fileUrl, setFileUrl] = useState<string>("");
 
   // PDF & Text specific
   const [pdfData, setPdfData] = useState<string | null>(null);
@@ -63,7 +62,6 @@ export default function BookReaderPage() {
     setLoading(true);
     setReaderType(null);
     setTitle("");
-    setFileUrl("");
     if (pdfData && pdfData.startsWith("blob:")) {
       URL.revokeObjectURL(pdfData);
     }
@@ -97,7 +95,6 @@ export default function BookReaderPage() {
             ? url
             : `${process.env.NEXT_PUBLIC_API_URL_ADMIN?.replace(/\/api$/, "").replace(/\/$/, "")}${url.startsWith("/") ? "" : "/"}${url}`;
 
-          setFileUrl(fullUrl);
           const urlPath = fullUrl.split("?")[0].toLowerCase();
 
           if (urlPath.endsWith(".txt") || urlPath.endsWith(".fb2")) {
@@ -110,7 +107,7 @@ export default function BookReaderPage() {
             try {
               const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
               text = utf8Decoder.decode(res.data);
-            } catch (e) {
+            } catch {
               const win1251Decoder = new TextDecoder("windows-1251");
               text = win1251Decoder.decode(res.data);
             }
@@ -157,6 +154,7 @@ export default function BookReaderPage() {
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, lang]);
 
   useEffect(() => {

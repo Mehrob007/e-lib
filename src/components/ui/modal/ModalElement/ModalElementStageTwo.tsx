@@ -27,7 +27,6 @@ export default function ModalElementStageTwo() {
           
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-          // Use original type if possible, or fallback to jpeg. Keep quality at 1.0 (max)
           const outType = file.type === "image/png" ? "image/png" : "image/jpeg";
           canvas.toBlob(
             (blob) => {
@@ -81,12 +80,37 @@ export default function ModalElementStageTwo() {
     }
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const compressPDF = async (file: File): Promise<File> => {
+    try {
+      const { PDFDocument } = await import("pdf-lib");
+      const arrayBuffer = await file.arrayBuffer();
+      const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+      
+      const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
+      
+      return new File([pdfBytes as unknown as BlobPart], file.name, {
+        type: "application/pdf",
+        lastModified: Date.now(),
+      });
+    } catch (error) {
+      console.error("PDF compression error:", error);
+      return file; // Fallback to original file
+    }
+  };
+
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setData("file", file);
+      let finalFile = file;
       
-      const sizeInBytes = file.size;
+      // Check if it's a PDF
+      if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+        finalFile = await compressPDF(file);
+      }
+
+      setData("file", finalFile);
+      
+      const sizeInBytes = finalFile.size;
       let formattedSize = "";
       if (sizeInBytes < 1024) formattedSize = `${sizeInBytes} B`;
       else if (sizeInBytes < 1024 * 1024) formattedSize = `${(sizeInBytes / 1024).toFixed(1)} KB`;
@@ -133,6 +157,7 @@ export default function ModalElementStageTwo() {
           />
           {data?.photo_preview ? (
             <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={data.photo_preview as string} alt="Cover Preview" />
               <button className="stage-two__delete-cover" onClick={removeImage}>
                 <LuTrash2 size={16} />

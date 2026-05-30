@@ -88,7 +88,7 @@ export default function Page() {
     fetchContent();
     fetchSwiper();
   }, [fetchContent, fetchSwiper]);
-
+  
   return (
     <div className="home-page">
       <HeaderHome logo={branding?.logo as string} />

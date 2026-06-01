@@ -1,13 +1,16 @@
 import Select from "@/components/elements/select/Select";
 import { useFormStore } from "@/hooks/useFormStore";
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { LuPlus, LuTrash2, LuCheck } from "react-icons/lu";
 import "./ModalElementStageTwo.css";
+import apiClient from "@/utils/apiClient";
 
 export default function ModalElementStageTwo() {
   const { data, setData, errors } = useFormStore();
   const coverInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isCompressing, setIsCompressing] = useState(false);
+  const [compressError, setCompressError] = useState<string | null>(null);
 
   const stripMetadata = (file: File): Promise<File> => {
     return new Promise((resolve, reject) => {
@@ -80,21 +83,51 @@ export default function ModalElementStageTwo() {
     }
   };
 
-  const compressPDF = async (file: File): Promise<File> => {
+  const handleCompressPDF = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    const currentFile = data?.file as File;
+    if (!currentFile) return;
+
+    setIsCompressing(true);
+    setCompressError(null);
+
     try {
-      const { PDFDocument } = await import("pdf-lib");
-      const arrayBuffer = await file.arrayBuffer();
-      const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
-      
-      const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
-      
-      return new File([pdfBytes as unknown as BlobPart], file.name, {
-        type: "application/pdf",
-        lastModified: Date.now(),
+      const formData = new FormData();
+      formData.append("file", currentFile);
+
+      const response = await apiClient.post("/file_routes/file/compress-pdf", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        responseType: "blob",
       });
-    } catch (error) {
+
+      if (response.status === 200) {
+        const compressedBlob = response.data;
+        const compressedFile = new File([compressedBlob], `compressed_${currentFile.name}`, {
+          type: "application/pdf",
+          lastModified: Date.now(),
+        });
+
+        setData("file", compressedFile);
+        
+        const sizeInBytes = compressedFile.size;
+        let formattedSize = "";
+        if (sizeInBytes < 1024) formattedSize = `${sizeInBytes} B`;
+        else if (sizeInBytes < 1024 * 1024) formattedSize = `${(sizeInBytes / 1024).toFixed(1)} KB`;
+        else formattedSize = `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
+        
+        setData("file_size", formattedSize);
+      }
+    } catch (error: any) {
       console.error("PDF compression error:", error);
-      return file; // Fallback to original file
+      if (error.response?.status === 400) {
+        setCompressError("Допускаются только файлы формата PDF");
+      } else {
+        setCompressError("Произошла ошибка при обработке файла. Попробуйте загрузить другой документ");
+      }
+    } finally {
+      setIsCompressing(false);
     }
   };
 
@@ -102,10 +135,11 @@ export default function ModalElementStageTwo() {
     const file = e.target.files?.[0];
     if (file) {
       let finalFile = file;
+
       
       // Check if it's a PDF
       if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
-        finalFile = await compressPDF(file);
+        // finalFile = await compressPDF(file);
       }
 
       setData("file", finalFile);
@@ -117,6 +151,7 @@ export default function ModalElementStageTwo() {
       else formattedSize = `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
       
       setData("file_size", formattedSize);
+      setCompressError(null);
     }
   };
 
@@ -182,6 +217,7 @@ export default function ModalElementStageTwo() {
             <button
               className={`stage-two__upload-btn ${data?.file ? "uploaded" : ""} ${errors?.file ? "error" : ""}`}
               onClick={() => fileInputRef.current?.click()}
+              disabled={isCompressing}
             >
               <input
                 type="file"
@@ -195,11 +231,12 @@ export default function ModalElementStageTwo() {
                     : "application/pdf,.doc,.docx,.epub,.txt,application/epub+zip,text/plain"
                 }
                 style={{ display: "none" }}
+                disabled={isCompressing}
               />
               {data?.file || data?.file_url ? (
                 <>
                   <LuCheck size={16} style={{ color: "#4caf50" }} />
-                  <span>Загружено</span>
+                  <span>Загружено {data?.file_size ? `(${data.file_size})` : ""}</span>
                 </>
               ) : (
                 <>
@@ -215,11 +252,24 @@ export default function ModalElementStageTwo() {
               )}
             </button>
             {data?.file && (
-              <button className="stage-two__delete-file" onClick={removeFile}>
-                <LuTrash2 size={18} />
-              </button>
+              <>
+                <button className="stage-two__delete-file" onClick={removeFile} disabled={isCompressing}>
+                  <LuTrash2 size={18} />
+                </button>
+                {data.file instanceof File && (data.file.type === "application/pdf" || data.file.name.toLowerCase().endsWith(".pdf")) && (
+                  <button 
+                    className="stage-two__compress-file-btn" 
+                    onClick={handleCompressPDF}
+                    disabled={isCompressing}
+                    style={{ marginLeft: "10px", padding: "5px 15px", cursor: isCompressing ? "not-allowed" : "pointer", background: isCompressing ? "#e0e0e0" : "#4caf50", color: "#fff", border: "none", borderRadius: "4px", fontSize: "14px", fontWeight: "bold" }}
+                  >
+                    {isCompressing ? "Сжатие..." : "Сжать"}
+                  </button>
+                )}
+              </>
             )}
           </div>
+          {compressError && <span className="stage-two__error-text" style={{ display: 'block', marginTop: '5px' }}>{compressError}</span>}
           {errors?.file && <span className="stage-two__error-text">{errors.file as string}</span>}
 
           <div style={{ width: "100%", maxWidth: "200px" }}>

@@ -6,6 +6,7 @@ import HeaderHome from "@/components/ui/header/HeaderHome";
 import CatalogTopBar from "@/components/ui/nav/CatalogTopBar";
 import CatalogSideNav from "@/components/ui/nav/CatalogSideNav";
 import BookCard from "@/components/ui/cards/BookCard";
+import BookCardSkeleton from "@/components/ui/cards/BookCardSkeleton";
 import Loading from "@/components/ui/loading/Loading";
 import { getCategorysREQ } from "@/api/category";
 import { getCategoryContentREQ, searchElementsREQ } from "@/api/element";
@@ -370,16 +371,13 @@ function CatalogContent() {
           </div>
 
           {loading ? (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                padding: "100px",
-              }}
-            >
-              <Loading
-                styles={{ width: "60px", height: "60px", borderWidth: "8px" }}
-              />
+            <div className="book-grid">
+              {[...Array(12)].map((_, index) => (
+                <BookCardSkeleton 
+                  key={index} 
+                  type={currentMime === "video" ? "video" : "book"} 
+                />
+              ))}
             </div>
           ) : (
             <>

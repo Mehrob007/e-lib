@@ -27,10 +27,11 @@ export default function ModalElementStageTwo() {
             reject(new Error("Canvas not supported"));
             return;
           }
-          
+
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-          const outType = file.type === "image/png" ? "image/png" : "image/jpeg";
+          const outType =
+            file.type === "image/png" ? "image/png" : "image/jpeg";
           canvas.toBlob(
             (blob) => {
               if (blob) {
@@ -44,7 +45,7 @@ export default function ModalElementStageTwo() {
               }
             },
             outType,
-            1.0
+            1.0,
           );
         };
         img.onerror = (error) => reject(error);
@@ -95,7 +96,7 @@ export default function ModalElementStageTwo() {
       const formData = new FormData();
       formData.append("file", currentFile);
 
-      const response = await apiClient.post("/file_routes/file/compress-pdf", formData, {
+      const response = await apiClient.post("file/compress-pdf", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -104,19 +105,24 @@ export default function ModalElementStageTwo() {
 
       if (response.status === 200) {
         const compressedBlob = response.data;
-        const compressedFile = new File([compressedBlob], `compressed_${currentFile.name}`, {
-          type: "application/pdf",
-          lastModified: Date.now(),
-        });
+        const compressedFile = new File(
+          [compressedBlob],
+          `compressed_${currentFile.name}`,
+          {
+            type: "application/pdf",
+            lastModified: Date.now(),
+          },
+        );
 
         setData("file", compressedFile);
-        
+
         const sizeInBytes = compressedFile.size;
         let formattedSize = "";
         if (sizeInBytes < 1024) formattedSize = `${sizeInBytes} B`;
-        else if (sizeInBytes < 1024 * 1024) formattedSize = `${(sizeInBytes / 1024).toFixed(1)} KB`;
+        else if (sizeInBytes < 1024 * 1024)
+          formattedSize = `${(sizeInBytes / 1024).toFixed(1)} KB`;
         else formattedSize = `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
-        
+
         setData("file_size", formattedSize);
       }
     } catch (error: any) {
@@ -124,7 +130,9 @@ export default function ModalElementStageTwo() {
       if (error.response?.status === 400) {
         setCompressError("Допускаются только файлы формата PDF");
       } else {
-        setCompressError("Произошла ошибка при обработке файла. Попробуйте загрузить другой документ");
+        setCompressError(
+          "Произошла ошибка при обработке файла. Попробуйте загрузить другой документ",
+        );
       }
     } finally {
       setIsCompressing(false);
@@ -136,20 +144,23 @@ export default function ModalElementStageTwo() {
     if (file) {
       let finalFile = file;
 
-      
       // Check if it's a PDF
-      if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+      if (
+        file.type === "application/pdf" ||
+        file.name.toLowerCase().endsWith(".pdf")
+      ) {
         // finalFile = await compressPDF(file);
       }
 
       setData("file", finalFile);
-      
+
       const sizeInBytes = finalFile.size;
       let formattedSize = "";
       if (sizeInBytes < 1024) formattedSize = `${sizeInBytes} B`;
-      else if (sizeInBytes < 1024 * 1024) formattedSize = `${(sizeInBytes / 1024).toFixed(1)} KB`;
+      else if (sizeInBytes < 1024 * 1024)
+        formattedSize = `${(sizeInBytes / 1024).toFixed(1)} KB`;
       else formattedSize = `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
-      
+
       setData("file_size", formattedSize);
       setCompressError(null);
     }
@@ -168,12 +179,14 @@ export default function ModalElementStageTwo() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const currentMime = (data?.mime || data?._mime || data?.type || "").toString().toLowerCase();
+  const currentMime = (data?.mime || data?._mime || data?.type || "")
+    .toString()
+    .toLowerCase();
   const isAudio = currentMime.includes("audio");
   const isVideo = currentMime.includes("video");
 
   console.log("data", data);
-  
+
   return (
     <div className="stage-two">
       <div className="stage-two__main">
@@ -183,33 +196,40 @@ export default function ModalElementStageTwo() {
             className={`stage-two__upload-cover ${errors?.photo ? "error" : ""}`}
             onClick={() => coverInputRef.current?.click()}
           >
-          <input
-            type="file"
-            ref={coverInputRef}
-            onChange={handleImageChange}
-            accept="image/*"
-            style={{ display: "none" }}
-          />
-          {data?.photo_preview ? (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={data.photo_preview as string} alt="Cover Preview" />
-              <button className="stage-two__delete-cover" onClick={removeImage}>
-                <LuTrash2 size={16} />
-              </button>
-            </>
-          ) : (
-            <div className="stage-two__upload-placeholder">
-              <LuPlus size={32} />
-              <span>
-                Загрузить
-                <br />
-                Обложку
-              </span>
-            </div>
+            <input
+              type="file"
+              ref={coverInputRef}
+              onChange={handleImageChange}
+              accept="image/*"
+              style={{ display: "none" }}
+            />
+            {data?.photo_preview ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={data.photo_preview as string} alt="Cover Preview" />
+                <button
+                  className="stage-two__delete-cover"
+                  onClick={removeImage}
+                >
+                  <LuTrash2 size={16} />
+                </button>
+              </>
+            ) : (
+              <div className="stage-two__upload-placeholder">
+                <LuPlus size={32} />
+                <span>
+                  Загрузить
+                  <br />
+                  Обложку
+                </span>
+              </div>
+            )}
+          </div>
+          {errors?.photo && (
+            <span className="stage-two__error-text">
+              {errors.photo as string}
+            </span>
           )}
-        </div>
-        {errors?.photo && <span className="stage-two__error-text">{errors.photo as string}</span>}
         </div>
 
         <div className="stage-two__fields">
@@ -228,7 +248,7 @@ export default function ModalElementStageTwo() {
                     ? "audio/*"
                     : isVideo
                       ? "video/*"
-                    : "application/pdf,.doc,.docx,.epub,.txt,application/epub+zip,text/plain"
+                      : "application/pdf,.doc,.docx,.epub,.txt,application/epub+zip,text/plain"
                 }
                 style={{ display: "none" }}
                 disabled={isCompressing}
@@ -236,7 +256,9 @@ export default function ModalElementStageTwo() {
               {data?.file || data?.file_url ? (
                 <>
                   <LuCheck size={16} style={{ color: "#4caf50" }} />
-                  <span>Загружено {data?.file_size ? `(${data.file_size})` : ""}</span>
+                  <span>
+                    Загружено {data?.file_size ? `(${data.file_size})` : ""}
+                  </span>
                 </>
               ) : (
                 <>
@@ -253,24 +275,51 @@ export default function ModalElementStageTwo() {
             </button>
             {data?.file && (
               <>
-                <button className="stage-two__delete-file" onClick={removeFile} disabled={isCompressing}>
+                <button
+                  className="stage-two__delete-file"
+                  onClick={removeFile}
+                  disabled={isCompressing}
+                >
                   <LuTrash2 size={18} />
                 </button>
-                {data.file instanceof File && (data.file.type === "application/pdf" || data.file.name.toLowerCase().endsWith(".pdf")) && (
-                  <button 
-                    className="stage-two__compress-file-btn" 
-                    onClick={handleCompressPDF}
-                    disabled={isCompressing}
-                    style={{ marginLeft: "10px", padding: "5px 15px", cursor: isCompressing ? "not-allowed" : "pointer", background: isCompressing ? "#e0e0e0" : "#4caf50", color: "#fff", border: "none", borderRadius: "4px", fontSize: "14px", fontWeight: "bold" }}
-                  >
-                    {isCompressing ? "Сжатие..." : "Сжать"}
-                  </button>
-                )}
+                {data.file instanceof File &&
+                  (data.file.type === "application/pdf" ||
+                    data.file.name.toLowerCase().endsWith(".pdf")) && (
+                    <button
+                      className="stage-two__compress-file-btn"
+                      onClick={handleCompressPDF}
+                      disabled={isCompressing}
+                      style={{
+                        marginLeft: "10px",
+                        padding: "5px 15px",
+                        cursor: isCompressing ? "not-allowed" : "pointer",
+                        background: isCompressing ? "#e0e0e0" : "#4caf50",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "4px",
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {isCompressing ? "Сжатие..." : "Сжать"}
+                    </button>
+                  )}
               </>
             )}
           </div>
-          {compressError && <span className="stage-two__error-text" style={{ display: 'block', marginTop: '5px' }}>{compressError}</span>}
-          {errors?.file && <span className="stage-two__error-text">{errors.file as string}</span>}
+          {compressError && (
+            <span
+              className="stage-two__error-text"
+              style={{ display: "block", marginTop: "5px" }}
+            >
+              {compressError}
+            </span>
+          )}
+          {errors?.file && (
+            <span className="stage-two__error-text">
+              {errors.file as string}
+            </span>
+          )}
 
           <div style={{ width: "100%", maxWidth: "200px" }}>
             <Select
@@ -288,7 +337,9 @@ export default function ModalElementStageTwo() {
             />
           </div>
 
-          <div className={`stage-two__input-row ${errors?.name ? "error" : ""}`}>
+          <div
+            className={`stage-two__input-row ${errors?.name ? "error" : ""}`}
+          >
             <label>Название:</label>
             <input
               type="text"
@@ -304,60 +355,84 @@ export default function ModalElementStageTwo() {
               }
             />
           </div>
-          {errors?.name && <span className="stage-two__error-text">{errors.name as string}</span>}
+          {errors?.name && (
+            <span className="stage-two__error-text">
+              {errors.name as string}
+            </span>
+          )}
 
           {!isVideo && (
             <>
-              <div className={`stage-two__input-row ${errors?.author ? "error" : ""}`}>
+              <div
+                className={`stage-two__input-row ${errors?.author ? "error" : ""}`}
+              >
                 <label>{isAudio ? "Исполнитель/Автор:" : "Автор:"}</label>
-              <input
-                type="text"
-                value={(data?.author as string) || ""}
-                onChange={(e) => setData("author", e.target.value)}
-                autoComplete="off"
-                placeholder={isAudio ? "Бетховен" : "Александр Дюма"}
-              />
+                <input
+                  type="text"
+                  value={(data?.author as string) || ""}
+                  onChange={(e) => setData("author", e.target.value)}
+                  autoComplete="off"
+                  placeholder={isAudio ? "Бетховен" : "Александр Дюма"}
+                />
               </div>
-              {errors?.author && <span className="stage-two__error-text">{errors.author as string}</span>}
+              {errors?.author && (
+                <span className="stage-two__error-text">
+                  {errors.author as string}
+                </span>
+              )}
             </>
           )}
 
           {!isVideo && (
             <>
-              <div className={`stage-two__input-row ${errors?.pages ? "error" : ""}`}>
+              <div
+                className={`stage-two__input-row ${errors?.pages ? "error" : ""}`}
+              >
                 <label>{isAudio ? "Длительность:" : "Страницы:"}</label>
-              <input
-                type="text"
-                value={(data?.pages as string) || ""}
-                onChange={(e) => setData("pages", e.target.value)}
-                autoComplete="off"
-                placeholder={isAudio ? "Например, 1:30:00" : "544"}
-              />
+                <input
+                  type="text"
+                  value={(data?.pages as string) || ""}
+                  onChange={(e) => setData("pages", e.target.value)}
+                  autoComplete="off"
+                  placeholder={isAudio ? "Например, 1:30:00" : "544"}
+                />
               </div>
-              {errors?.pages && <span className="stage-two__error-text">{errors.pages as string}</span>}
+              {errors?.pages && (
+                <span className="stage-two__error-text">
+                  {errors.pages as string}
+                </span>
+              )}
             </>
           )}
 
-         {!isVideo && (
+          {!isVideo && (
             <>
-              <div className={`stage-two__input-row ${errors?.created ? "error" : ""}`}>
+              <div
+                className={`stage-two__input-row ${errors?.created ? "error" : ""}`}
+              >
                 <label>{isVideo ? "Год выхода:" : "Год издания:"}</label>
-            <input
-              type="text"
-              value={(data?.created as string) || ""}
-              onChange={(e) => setData("created", e.target.value)}
-              autoComplete="off"
-              placeholder="2025"
-              />
+                <input
+                  type="text"
+                  value={(data?.created as string) || ""}
+                  onChange={(e) => setData("created", e.target.value)}
+                  autoComplete="off"
+                  placeholder="2025"
+                />
               </div>
-              {errors?.created && <span className="stage-two__error-text">{errors.created as string}</span>}
+              {errors?.created && (
+                <span className="stage-two__error-text">
+                  {errors.created as string}
+                </span>
+              )}
             </>
           )}
         </div>
       </div>
 
       {!isVideo && (
-        <div className={`stage-two__annotation ${errors?.annotation ? "error" : ""}`}>
+        <div
+          className={`stage-two__annotation ${errors?.annotation ? "error" : ""}`}
+        >
           <label>Аннотация</label>
           <textarea
             className={errors?.annotation ? "error" : ""}
@@ -366,7 +441,11 @@ export default function ModalElementStageTwo() {
             autoComplete="off"
             placeholder="Введите аннотацию к материалу..."
           />
-          {errors?.annotation && <span className="stage-two__error-text">{errors.annotation as string}</span>}
+          {errors?.annotation && (
+            <span className="stage-two__error-text">
+              {errors.annotation as string}
+            </span>
+          )}
         </div>
       )}
     </div>

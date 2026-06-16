@@ -216,7 +216,7 @@ export default function ModalELement({
   return (
     <motion.div
       className="modal__overlay"
-      onClick={handleClose}
+      // onClick={handleClose}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

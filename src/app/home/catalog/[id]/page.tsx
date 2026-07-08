@@ -246,9 +246,7 @@ export default function BookDetailsPage() {
     fetchData();
   }, [fetchData]);
 
-  useEffect(() => {
-    fetchDow();
-  }, [fetchDow]);
+ 
 
   useEffect(() => {
     if (book?.fileUrlFull) {

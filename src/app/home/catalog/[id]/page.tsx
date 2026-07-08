@@ -242,7 +242,13 @@ export default function BookDetailsPage() {
     }
   }, [id]);
 
- 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    fetchDow();
+  }, [fetchDow]);
 
   useEffect(() => {
     if (book?.fileUrlFull) {

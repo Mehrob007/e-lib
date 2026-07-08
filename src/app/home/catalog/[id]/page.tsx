@@ -77,19 +77,6 @@ export default function BookDetailsPage() {
     null,
   );
 
-  const handleDownload = useCallback(() => {
-    const url = downloadUrl || book?.fileUrlFull;
-    if (!url) return;
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = book?.title || "file";
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }, [downloadUrl, book]);
-
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (showCaptchaModal) {

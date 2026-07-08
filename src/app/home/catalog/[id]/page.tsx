@@ -122,9 +122,7 @@ export default function BookDetailsPage() {
     }
   }, [book, stopAudio]);
 
-  useEffect(() => {
-    setIsExpanded(false);
-  }, [id]);
+  
 
   const fetchData = useCallback(async () => {
     if (!id) return;

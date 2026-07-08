@@ -122,7 +122,9 @@ export default function BookDetailsPage() {
     }
   }, [book, stopAudio]);
 
-  
+  useEffect(() => {
+    setIsExpanded(false);
+  }, [id]);
 
   const fetchData = useCallback(async () => {
     if (!id) return;
@@ -240,13 +242,7 @@ export default function BookDetailsPage() {
     }
   }, [id]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  useEffect(() => {
-    fetchDow();
-  }, [fetchDow]);
+ 
 
   useEffect(() => {
     if (book?.fileUrlFull) {

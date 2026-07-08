@@ -77,25 +77,17 @@ export default function BookDetailsPage() {
     null,
   );
 
-  const handleDownload = useCallback(async () => {
+  const handleDownload = useCallback(() => {
     const url = downloadUrl || book?.fileUrlFull;
     if (!url) return;
-    try {
-      const res = await fetch(url, {
-        headers: { "ngrok-skip-browser-warning": "1" },
-      });
-      const blob = await res.blob();
-      const objectUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = objectUrl;
-      link.download = book?.title || "file";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(objectUrl);
-    } catch (e) {
-      window.open(url, "_blank");
-    }
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = book?.title || "file";
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }, [downloadUrl, book]);
 
   useEffect(() => {
